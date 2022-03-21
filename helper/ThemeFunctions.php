@@ -297,7 +297,8 @@ class ThemeFunctions extends AbstractHelper
                 'action' => '',
             ];
             $params = $this->view->params()->fromRoute();
-            $controller = $params['__CONTROLLER__'] ?? $params['controller'] ?? false;
+            $standardController = $params['controller'] ?? false;
+            $controller = $params['__CONTROLLER__'] ?? $standardController;
             if (!$controller) {
                 return $simpleRoute;
             }
@@ -336,6 +337,24 @@ class ThemeFunctions extends AbstractHelper
                 $simpleRoute = [
                     'controller' => $controller,
                     'action' => $action,
+                ];
+            } elseif ($standardController === 'Guest\Controller\Site\GuestController') {
+                $simpleRoute = [
+                    'controller' => 'guest',
+                    'action' => $params['action'] ?? 'me',
+                    'route' => 'site/guest/guest'
+                ];
+            } elseif ($standardController === 'Contribute\Controller\Site\GuestBoard') {
+                $simpleRoute = [
+                    'controller' => 'guest',
+                    'action' => 'contribution',
+                    'route' => 'site/guest/contribution'
+                ];
+            } elseif ($standardController === 'Selection\Controller\Site\GuestBoard') {
+                $simpleRoute = [
+                    'controller' => 'guest',
+                    'action' => 'selection',
+                    'route' => 'site/guest/selection'
                 ];
             }
         }

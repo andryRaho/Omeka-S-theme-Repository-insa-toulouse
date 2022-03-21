@@ -155,7 +155,7 @@ p:empty {
     textarea,
     button,
     .button,
-    .resource-list.preview + a {
+    .resources-list.preview + a {
         font-size: 20px;
         line-height: 30px;
         margin: 0;
@@ -228,7 +228,7 @@ p:empty {
 
     button,
     a.button,
-    .resource-list.preview + a,
+    .resources-list.preview + a,
     [type="submit"] {
         background-color: #dedede;
         border-radius: 2px;

@@ -1,0 +1,157 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var \Contribute\Api\Representation\ContributionRepresentation[] $contributions
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$i18n = $plugins->get('i18n');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$pageTitle = $plugins->get('pageTitle');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$siteSlug = $site->slug();
+
+$partial('contribute/site/contribution/asset-include');
+
+$this->htmlElement('body')->appendAttribute('class', 'contribution resource browse');
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $siteSlug]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><a href="' . $url('site/guest', ['site-slug' => $siteSlug, 'action' => 'me']) . '">' . $escape($translate('Mon compte')) . '</a></li>
+        <li><span>' . $escape($translate('Documents déposés')) . '</span></li>
+    </ul>
+</nav>';
+
+$themeFunctions->appendVarsToView([
+    'ariane' => $ariane,
+    'mainClass' => 'user-account',
+]);
+
+$name = $themeFunctions->danteUserName($user);
+?>
+
+<div class="content">
+    <?= $pageTitle($name, 1) ?>
+
+    <?= $this->messages() ?>
+
+    <?= $this->partial('guest/site/guest/menu') ?>
+
+    <div class="user-content">
+
+        <div class="document-count-parent">
+            <?php if (count($contributions) > 1): ?>
+            <p class="document-count">Vous avez <strong><?= count($contributions) ?></strong> documents déposés ou en cours de dépot.</p>
+            <?php elseif (count($contributions) === 1): ?>
+            <p class="document-count">Vous avez <strong>1</strong> document déposé ou en cours de dépot.</p>
+            <?php else: ?>
+            <p class="document-count no-results">Vous n’avez pas de documents déposés ou en cours de dépot.</p>
+            <?php endif; ?>
+        </div>
+
+        <?php $this->trigger('view.browse.before'); ?>
+
+        <?php if (count($contributions)): ?>
+        <ul class="resources-list">
+            <?php
+            $index = 0;
+            foreach ($contributions as $contribution):
+                ++$index;
+                /** @var \Omeka\Api\Representation\ItemRepresentation $contributionResource */
+                $contributionResource = $contribution->resource();
+                if ($contributionResource) {
+                    $resourceType = $contributionResource->resourceName();
+                    $resourceUrl = $contributionResource->siteUrl($siteSlug);
+                    $documentType = $themeFunctions->danteDocumentType($contributionResource);
+                    $access = $themeFunctions->danteAccess($contributionResource);
+                    $citation = $themeFunctions->danteCitation($contributionResource, true);
+                    $medias = $contributionResource->media();
+                } else {
+                    $medias = [];
+                    $resourceType = '';
+                    $resourceTemplate = $contribution->resourceTemplate();
+                    $documentType = $resourceTemplate ? $resourceTemplate->label() : 'Type indéfini';
+                    $access = 'Non consultable';
+                    $citation = '';
+                    $medias = [];
+                }
+                ?>
+            <li class="resource <?= $resourceType ?> contribution">
+                <div class="document-index"><?= $index ?>.</div>
+                <div class="document-details">
+                    <div class="document-type-and-access">
+                        <div class="document-type"><?= $documentType ?></div>
+                        <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
+                    </div>
+                    <div class="document-link">
+                        <?php if ($contributionResource): ?>
+                        <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
+                        <?php else: ?>
+                        <span><?= $citation ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <?php if (count($medias)): ?>
+                    <ul class="media-list document-parts document-edition">
+                        <?php foreach ($medias as $media):
+                        if ($media instanceof \Omeka\Api\Representation\MediaRepresentation) {
+                            $originalUrl = $media->originalUrl();
+                        } else {
+                            $originalUrl = '';
+                        }
+                        ?>
+                        <li>
+                            <span class="document-part-name"><?= $media->displayTitle() ?></span>
+                            <?php if ($originalUrl): ?>
+                            <ul class="form-buttons">
+                                <li><a href="" class="form-button preview-button">Visualiser</a></li>
+                                <li><a href="" class="form-button download-button">Télécharger</a></li>
+                            </ul>
+                            <?php endif; ?>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php endif; ?>
+                    <div class="document-edition">
+                        <?php if ($contributionResource): ?>
+                        <ul class="document-status-infos">
+                            <li class="document-edition-status"><?= $translate($contribution->isReviewed() ? 'Document validé' : 'Document en cours de validation') ?></li>
+                            <li class="document-edition-date">Dernière modification le <?= $escape($i18n->dateFormat($contributionResource->modified() ?: $contributionResource->created(), 'medium', 'none')) ?></li>
+                        </ul>
+                        <?php elseif ($contribution->isSubmitted()): ?>
+                        <ul class="document-status-infos">
+                            <li class="document-edition-status">Document en cours de validation</li>
+                            <li class="document-edition-date">Dernière modification le <?= $escape($i18n->dateFormat($contribution->modified() ?: $contribution->created(), 'medium', 'none')) ?></li>
+                        </ul>
+                        <?php else: ?>
+                        <ul class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
+                            <?php if ($contribution->userIsAllowed('update')): ?>
+                            <li><a class="form-button edit-button edit-contribution" href="<?= $escapeAttr($url('site/contribution-id', ['action' => 'edit', 'resource' => 'contribution', 'id' => $contribution->id()], true)) ?>"><?= $escape($translate('Éditer')) ?></a></li>
+                            <?php endif; ?>
+                            <?php if ($contribution->userIsAllowed('delete')): ?>
+                            <li><a class="button delete-button remove-contribution" data-contribution-id="<?= $contribution->id() ?>" href="#"><?= $escape($translate('Supprimer')) ?></a></li>
+                            <?php endif; ?>
+                        </ul>
+                        <ul class="document-status-infos">
+                            <li class="document-edition-status">Document en cours de dépôt</li>
+                            <li class="document-edition-date">Dernière modification le <?= $escape($i18n->dateFormat($contribution->modified() ?: $contribution->created(), 'medium', 'none')) ?></li>
+                        </ul>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+        <?php endif; ?>
+
+        <?php $this->trigger('view.browse.after'); ?>
+
+    </div>
+</div>

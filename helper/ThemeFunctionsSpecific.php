@@ -4,6 +4,7 @@ namespace OmekaTheme\Helper;
 
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Entity\User;
 
 trait ThemeFunctionsSpecific
 {
@@ -24,9 +25,9 @@ trait ThemeFunctionsSpecific
      *
      * Le type n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
      */
-    public function danteDocumentType(ItemRepresentation $resource): string
+    public function danteDocumentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
     {
-        return $resource->displayResourceClassLabel('Travail étudiant');
+        return $resource->displayResourceClassLabel($default);
     }
 
     /**
@@ -128,5 +129,38 @@ trait ThemeFunctionsSpecific
             '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
             $auteur, $escape($annee), $escape($titre), $escape($documentType)
         );
+    }
+
+    public function danteUserAuteur(User $user): ?ItemRepresentation
+    {
+        static $author = false;
+
+        if ($author !== false) {
+            return $author;
+        }
+
+        $api = $this->view->api();
+
+        // L'api ne permet pas la recherche sur le nom de la classe directement.
+        $resourceClass = $api->searchOne('resource_classes', ['term' => 'foaf:Person'])->getContent();
+        $author = $api->searchOne('items', [
+            'resource_class_id' => $resourceClass->id(),
+            // FIXME Utiliser l'email, pas le nom.
+            'property' => [['property' => 'foaf:mbox', 'type' => 'eq', 'text' => $user->getEmail()]]
+        ])->getContent();
+        if (!$author) {
+            $author = $api->searchOne('items', [
+                'resource_class_id' => $resourceClass->id(),
+                // FIXME Utiliser l'email, pas le nom.
+                'property' => [['property' => 'foaf:name', 'type' => 'eq', 'text' => $user->getName()]]
+            ])->getContent();
+        }
+        return $author;
+    }
+
+    public function danteUserName(User $user): string
+    {
+        $author = $this->danteUserAuteur($user);
+        return $author ? $author->value('foaf:familyName', ['default' => $user->getName()]) : $user->getName();
     }
 }

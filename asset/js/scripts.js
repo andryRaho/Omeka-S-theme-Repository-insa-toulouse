@@ -52,6 +52,7 @@ $(function () {
     navigationDepotSuivant.on('click', function(e) {
         e.preventDefault();
         if (depotContent.hasClass('depot-form-1')) {
+            // TODO Charger le bon formulaire.
             depotContent.removeClass('depot-form-1').addClass('depot-form-2');
         } else if (depotContent.hasClass('depot-form-2')) {
             depotContent.removeClass('depot-form-2').addClass('depot-form-3');
@@ -63,6 +64,7 @@ $(function () {
     navigationDepotPrecedent.on('click', function(e) {
         e.preventDefault();
         if (depotContent.hasClass('depot-form-2')) {
+            // TODO Alerte sur le chargement de formulaire.
             depotContent.removeClass('depot-form-2').addClass('depot-form-1');
         } else if (depotContent.hasClass('depot-form-3')) {
             depotContent.removeClass('depot-form-3').addClass('depot-form-2');

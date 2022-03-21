@@ -1,0 +1,35 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$translate = $plugins->get('translate');
+// $guestWidget = $plugins->get('guestWidget');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$hasContribute = $plugins->has('linkContribute');
+$hasSelection = $plugins->has('showSelectionLink');
+
+$route = $themeFunctions->simpleRoute()['route'] ?? 'site/guest/guest';
+?>
+
+<ul class="user-tabs">
+    <li<?= $route === 'site/guest/guest' ? ' class="active"' : '' ?>>
+        <a href="<?= $url('site/guest', [], true) ?>"><?= $translate('Profil') ?></a>
+    </li>
+    <?php if ($hasContribute): ?>
+    <li<?= $route === 'site/guest/contribution' ? ' class="active"' : '' ?>>
+        <a href="<?= $url('site/guest/contribution', [], true) ?>"><?= $translate('Documents déposés') ?></a>
+    </li>
+    <?php endif; ?>
+    <?php if ($hasSelection): ?>
+    <li<?= $route === 'site/guest/selection' ? ' class="active"' : '' ?>>
+        <a href="<?= $url('site/guest/selection', [], true) ?>"><?= $translate('Documents sauvegardés') ?></a>
+    </li>
+    <?php endif; ?>
+</ul>
+
