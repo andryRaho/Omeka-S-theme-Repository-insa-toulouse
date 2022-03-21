@@ -2,6 +2,8 @@
 
 namespace OmekaTheme\Helper;
 
+require_once __DIR__ . '/ThemeFunctionsSpecific.php';
+
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
@@ -10,6 +12,8 @@ use Omeka\Api\Representation\ValueRepresentation;
 
 class ThemeFunctions extends AbstractHelper
 {
+    use ThemeFunctionsSpecific;
+
     public function __invoke(): self
     {
         return $this;
@@ -43,6 +47,9 @@ class ThemeFunctions extends AbstractHelper
             ->getVariable('site');
     }
 
+    /**
+     * Add a value to the root view model.
+     */
     public function appendVarToView($key, $value): void
     {
         $this->view
@@ -476,6 +483,7 @@ class ThemeFunctions extends AbstractHelper
     public function browseValueForTerm(ValueRepresentation $value, string $termOrField): array
     {
         static $hasModuleAdvancedSearch;
+        static $hasModuleSearchSolr;
         static $hyperlink;
         static $baseSearchUrl;
         static $baseSearchQuery;
@@ -491,7 +499,8 @@ class ThemeFunctions extends AbstractHelper
 
             // Avoid multiple useless calls to the helper url().
             $hasModuleAdvancedSearch = $this->isModuleActive('AdvancedSearch');
-            if ($this->isModuleActive('AdvancedSearch')) {
+            $hasModuleSearchSolr = $this->isModuleActive('SearchSolr');
+            if ($hasModuleAdvancedSearch) {
                 $baseSearchUrl = $this->view->searchingUrl();
                 $baseSearchQuery = http_build_query(['filter' => [
                     ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
@@ -524,7 +533,7 @@ class ThemeFunctions extends AbstractHelper
 
         // In most of the cases, the terms to search are indexed as multiple
         // strings ("_ss" in default config of Solr).
-        if ($hasModuleAdvancedSearch && strpos($termOrField, ':')) {
+        if ($hasModuleSearchSolr && strpos($termOrField, ':')) {
             $termOrField = str_replace(':', '_', $termOrField) . '_ss';
         }
 
