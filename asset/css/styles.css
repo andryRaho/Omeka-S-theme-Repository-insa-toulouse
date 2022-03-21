@@ -2019,6 +2019,7 @@ p:empty {
     ul.document-list > li.document-list-more-link {
         text-align: center;
         justify-content: center;
+        text-transform: uppercase;
     }
 
     ul.document-list > li.document-list-more-link a {

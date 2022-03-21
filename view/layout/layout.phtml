@@ -8,6 +8,9 @@
  * (breadcrumbs est parfois déjà utilisé).
  * @var string $ariane
  *
+ * Peut être ajouté par une page sur l'élément "main".
+ * @var string $mainClass
+ *
  * Le popup de contact auteur se trouve dans ce gabarit et la resource est donc disponible.
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
  */
@@ -113,6 +116,7 @@ $headScript
     ->appendFile($assetUrl('js/top.js'), 'text/javascript', ['defer' => 'defer'])
     ->appendFile($assetUrl('js/scripts.js'), 'text/javascript', ['defer' => 'defer']);
 
+$user = $this->identity();
 $userBar = $this->userBar();
 
 $baseAssetUrl = $assetUrl('', null, false, false);
@@ -166,7 +170,11 @@ $baseSiteUrl = $site->url('site', [], true);
                     <a href="" class="search-menu-toggle"><span><?= $translate('Menu recherche') ?></span></a>
                     <a href="<?= $baseSiteUrl ?>/page/contact" class="contact-link"><span><?= $translate('Contact') ?></span></a>
                     <a href="<?= $baseSiteUrl ?>/page/aide" class="support-link"><span><?= $translate('Aide') ?></span></a>
+                    <?php if ($user): ?>
+                    <a href="<?= $hasGuest ? $baseSiteUrl . '/guest' : '/admin/user/' . $user->getId() ?>" class="login-link"><span><?= $translate('Mon compte') ?></span></a>
+                    <?php else: ?>
                     <a href="<?= $hasGuest ? $baseSiteUrl . '/guest/login' : '/login' ?>" class="login-link"><span><?= $translate('S’identifier') ?></span></a>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="header-bottom">
@@ -181,7 +189,7 @@ $baseSiteUrl = $site->url('site', [], true);
             <?= $ariane ?>
         </nav>
         <?php endif; ?>
-        <main id="content" role="main" class="content-with-margin">
+        <main id="content" role="main" class="content-with-margin<?= empty($mainClass) ? '' : ' ' . $mainClass ?>">
             <?= $this->content ?>
         </main>
         <footer id="footer" class="content-with-padding" aria-label="Footer navigation" role="navigation">

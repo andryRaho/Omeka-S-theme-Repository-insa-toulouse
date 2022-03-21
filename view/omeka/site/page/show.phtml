@@ -1,0 +1,50 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\SitePageRepresentation $page
+ * @var string $pageBodyClass "page" and "site-page-" + page slug
+ * @var bool $displayNavigation Always true when called directly
+ */
+
+$plugins = $this->getHelperPluginManager();
+// $assetUrl = $plugins->get('assetUrl');
+$siteSetting = $plugins->get('siteSetting');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$showPagePagination = $siteSetting('show_page_pagination', true);
+
+// $this->headLink()->appendStylesheet($assetUrl('css/page-blocks.css', 'Omeka'));
+$this->htmlElement('body')->appendAttribute('class', $pageBodyClass ?? 'page');
+$this->pageTitle($page->title(), 2);
+
+$nav = $site->publicNav();
+$container = $nav->getContainer();
+$activePage = $nav->findActive($container);
+
+$isHomePage = $themeFunctions->isHomePage();
+
+if ($isHomePage):
+    $themeFunctions->appendVarToView('mainClass', 'home-content');
+else:
+
+    if ($activePage && $activePage['depth'] !== 0):
+        $this->vars()->offsetSet('ariane', trim($nav->breadcrumbs()->setSeparator('')));
+        $themeFunctions->appendVarToView('ariane', $this->partial('common/breadcrumbs-fix'));
+    endif;
+
+    /* // TODO On ne gère qu'un seul niveau de menu pour l'instant. ?>
+    <?php if ($activePage && $displayNavigation && $activePage['page']->hasPages()): ?>
+    <nav class="sub-menu"><?= $nav->menu()->renderSubMenu() ?></nav>
+    <?php endif; ?>
+    */
+endif;
+?>
+
+<?php $this->trigger('view.show.before'); ?>
+<?= $this->content ?>
+<?php $this->trigger('view.show.after'); ?>
+
+<?php if ($showPagePagination): ?>
+<?= $this->sitePagePagination() ?>
+<?php endif; ?>

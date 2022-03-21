@@ -1,0 +1,64 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var string $resourceType
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var string $heading
+ * @var string $linkText
+ * @var array $components
+ * @var array $query
+ * @var array $sortHeadings
+ * @var array|false $pagination
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$themeFunctions = $plugins->get('ThemeFunctions');
+?>
+
+<div class="content block preview-block">
+
+    <?php if (!empty($heading)): ?>
+    <h1><?= $heading ?></h1>
+    <?php endif; ?>
+
+    <ul class="document-list preview">
+    <?php
+    $index = 0;
+    foreach ($resources as $resource):
+        ++$index;
+
+        // TODO Dans le thème, ce n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
+        $documentType = $resource->displayResourceClassLabel('Travail étudiant');
+
+        // Toutes les métadonnées sont accessibles : le type d'accès est donc défini par le premier média.
+        // On ne regarde pas l'embargo ici : il est déjà pris en compte (mise en public).
+        $media = $resource->primaryMedia();
+        if ($media) {
+            $access = $media->value('curation:access')
+                ?? ($media->value('curation:reserved') ? 'Accès restreint' : 'Accès libre');
+        } else {
+            // S'il n'y a pas de fichier, c'est qu'il est non consultable de fait.
+            $access = 'Non consultable';
+        }
+
+        $citation = $themeFunctions->danteCitation($resource, true);
+        ?>
+        <li class="<?= $resourceType ?> resource">
+            <div class="document-index"><?= $index ?>.</div>
+            <div class="document-details">
+                <div class="document-type-and-access">
+                    <div class="document-type"><?= $documentType ?></div>
+                    <div class="document-access <?= $themeFunctions->danteAcces($access) ?>"><?= $access ?></div>
+                </div>
+                <div class="document-link">
+                    <a href="item.html"><?= $citation ?></a>
+                </div>
+            </div>
+        </li>
+        <?php endforeach; ?>
+        <li class="document-list-more-link"><a href=""><?= $translate('Lire la suite') ?></a></li>
+    </ul>
+
+</div>

@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\SitePageRepresentation $page
+ * @var string $pageBodyClass "page" and "site-page-" + page slug
+ * @var bool $displayNavigation Always true when called directly
+ * @var \Laminas\View\Helper\ViewModel $view
+ */
+
+// Gère le cas particulier des blocs "aside".
+
+$blockLayout = $this->plugin('blockLayout');
+
+$main = '';
+$asides = '';
+$countAsides = 0;
+
+$layouts = [];
+foreach ($page->blocks() as $block) {
+    $layout = $block->layout();
+    if (!array_key_exists($layout, $layouts)) {
+        // Prepare render only once per layout type.
+        $layouts[$layout] = null;
+        $blockLayout->prepareRender($layout);
+    }
+    if ($layout === 'html' && strpos((string) $block->dataValue('template'), 'aside')) {
+        $asides .= $blockLayout->render($block);
+        ++$countAsides;
+    } else {
+        $main .= $blockLayout->render($block);
+    }
+}
+
+if ($countAsides > 1): ?>
+<div class="asides">
+    <?= $asides ?>
+</div>
+<?php else:
+    echo $asides;
+endif; ?>
+
+<div class="content">
+    <?= $main ?>
+</div>

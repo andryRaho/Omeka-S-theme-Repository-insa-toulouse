@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var string $html
+ * @var string $divclass
+ * @var string $heading
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+?>
+
+<aside class="aside-exclamation <?= $divclass ? $escapeAttr($divclass) : '' ?>">
+    <div class="aside-content">
+        <?php if ($heading): ?>
+        <h4><?= $escape($heading) ?></h4>
+        <?php endif; ?>
+        <?= $html ?>
+    </div>
+</aside>

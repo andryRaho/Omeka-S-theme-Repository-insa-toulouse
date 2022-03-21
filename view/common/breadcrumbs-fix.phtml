@@ -1,0 +1,24 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var string $ariane
+ */
+
+// TODO Modifier les styles.
+
+// Supprimer ce qu'il y a après le dernier > pour ajouter un span afin de gérer
+// l'élément en cours qui n'a pas de span et que les styles affichent mal.
+// De plus, ce fil d'Ariane utilise ul/li.
+
+$last = mb_strripos($ariane, '</a>');
+?>
+
+<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <?= $last
+            ? str_replace(['<a ', '</a>'], ['<li><a ', "</a></li>\n"], mb_substr($ariane, 0, $last + 4))
+                . '<li><span>' . mb_substr($ariane, $last + 4) . "</span><li>\n"
+            : '<li><span>' . $ariane . "</span></li>\n" ?>
+    </ul>
+</nav>
