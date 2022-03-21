@@ -1,0 +1,152 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\ItemRepresentation $item
+ * @var \Omeka\Api\Representation\ItemRepresentation $resource
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ */
+
+// Attention : les médias ne fonctionnent qu'avec les fichiers et il n'y a pas de visionneuse.
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$setting = $plugins->get('setting');
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$themeSetting = $plugins->get('themeSetting');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$hasContactUs = $plugins->has('contactUs');
+
+$this->htmlElement('body')->appendAttribute('class', 'item resource show');
+$embedMedia = $siteSetting('item_media_embed', false);
+$medias = $item->media();
+
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$siteLang = $plugins->get('lang')();
+$lang = $filterLocale ? $siteLang : null;
+$langValue = $filterLocale ? [$siteLang, ''] : null;
+$siteSlug = $site->slug();
+
+$searchingUrl = $plugins->has('searchingUrl') ? $plugins->get('searchingUrl')() : $url('site/resource', ['site-slug' => $siteSlug]);
+
+$resourceUrl = $resource->siteUrl($siteSlug);
+
+$documentType = $themeFunctions->danteDocumentType($resource);
+$access = $themeFunctions->danteAccess($resource);
+$citation = $themeFunctions->danteCitation($resource);
+
+$resourceTitle = $resource->displayTitle(null, $lang);
+$itemSets = $item->itemSets();
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $siteSlug]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><a href="' . $searchingUrl . '">' . $escape($translate('Recherche')) . '</a></li>
+        <li><span>' . $escape($resourceTitle) . '</span></li>
+    </ul>
+</nav>';
+
+$themeFunctions->appendVarsToView([
+    'resource' => $resource,
+    'ariane' => $ariane,
+    'mainClass' => 'item-content',
+]);
+?>
+
+<div class="content">
+
+    <?php $this->trigger('view.show.before'); ?>
+
+    <div class="item-content-header">
+        <?= $this->pageTitle($resourceTitle, 1) ?>
+        <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->danteAuteur($resource), $themeFunctions->danteAnnee($resource)) ?></ul>
+        <div class="document-type-and-access">
+            <div class="document-type"><?= $documentType ?></div>
+            <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
+        </div>
+    </div>
+
+    <div class="resource-metadata-and-document-parts">
+        <ul class="resource-metadata">
+            <?= $resource->displayValues(['resource' => $resource]) ?>
+            <?php if (count($itemSets)): ?>
+            <li>
+                <label><?= $translate('Item sets') ?></label>
+                <ul>
+                    <?php foreach ($itemSets as $itemSet): ?>
+                    <li><a href="<?= $escapeAttr($itemSet->url()); ?>"><?= $itemSet->displayTitle(null, $lang); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+            <?php endif; ?>
+            <?php if ($siteSetting('show_attached_pages', true) && ($sitePages = $item->sitePages($site->id()))): ?>
+            <li>
+                <label><?php echo $translate('Site pages'); ?></label>
+                <ul>
+                    <?php foreach ($sitePages as $sitePage): ?>
+                    <li><?= $sitePage->link($sitePage->title()); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+            <?php endif; ?>
+            <?php /*
+            $page = $this->params()->fromQuery('page', 1);
+            $property = $this->params()->fromQuery('property');
+            $subjectValues = $item->displaySubjectValues($page, 25, $property);
+            ?>
+            <?php if ($subjectValues): ?>
+            <li>
+                <label><?= $translate('Linked resources') ?></label>
+                <?= $subjectValues ?>
+            </li>
+            <?php endif; ?>
+            */ ?>
+        </ul>
+        <aside class="aside-document-parts">
+            <div class="aside-content">
+                <?php if (!count($medias)): ?>
+                <p><?= $translate('Pas de fichier disponible') ?></p>
+                <?php else: ?>
+                <ul class="media-list">
+                    <?php foreach ($medias as $media):
+                        $access = $themeFunctions->danteAccess($media);
+                        $accessCode = $themeFunctions->danteAccessClass($access);
+                    ?>
+                    <li class="document-parts">
+                        <span class="document-part-name"><?= $media->displayTitle() ?></span>
+                        <div class="document-access <?= $accessCode ?>"><?= $access ?></div>
+                        <div class="document-edition">
+                            <?php if ($accessCode === 'free-access' || $accessCode === 'limited-access'): ?>
+                            <ul class="form-buttons">
+                                <?php if ($accessCode === 'limited-access'): ?>
+                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
+                                <?php elseif ($accessCode === 'free-access'):
+                                    $originalUrl = $media->originalUrl(); ?>
+                                    <?php if ($originalUrl): ?>
+                                <li><a href="<?= $originalUrl ?>" class="form-button preview-button"><?= $translate('Visualiser') ?></a></li>
+                                <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="download"><?= $translate('Télécharger') ?></a></li>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            </ul>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php endif; ?>
+            </div>
+        </aside>
+    </div>
+
+    <div class="item-reference">
+        <h3><?= $translate('Citation bibliographique') ?></h3>
+        <p><?= $citation ?></p>
+    </div>
+
+    <?php $this->trigger('view.show.after'); ?>
+
+</div>

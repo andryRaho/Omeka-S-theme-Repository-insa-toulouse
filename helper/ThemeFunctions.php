@@ -42,7 +42,7 @@ class ThemeFunctions extends AbstractHelper
     {
         return $this->view->site ?? $this->view->site = $this->view
             ->getHelperPluginManager()
-            ->get('Laminas\View\Helper\ViewModel')
+            ->get(\Laminas\View\Helper\ViewModel::class)
             ->getRoot()
             ->getVariable('site');
     }
@@ -50,13 +50,30 @@ class ThemeFunctions extends AbstractHelper
     /**
      * Add a value to the root view model.
      */
-    public function appendVarToView($key, $value): void
+    public function appendVarToView($key, $value): self
     {
         $this->view
             ->getHelperPluginManager()
-            ->get('Laminas\View\Helper\ViewModel')
+            ->get(\Laminas\View\Helper\ViewModel::class)
             ->getRoot()
             ->setVariable($key, $value);
+        return $this;
+    }
+
+    /**
+     * Add values to the root view model.
+     */
+    public function appendVarsToView($values): self
+    {
+        $rootModel = $this->view
+            ->getHelperPluginManager()
+            ->get(\Laminas\View\Helper\ViewModel::class)
+            ->getRoot();
+        foreach ($values as $key => $value) {
+            $rootModel
+                ->setVariable($key, $value);
+        }
+        return $this;
     }
 
     /**
@@ -480,7 +497,7 @@ class ThemeFunctions extends AbstractHelper
     /**
      * Convertit une valeur en recherche pour les rebonds.
      */
-    public function browseValueForTerm(ValueRepresentation $value, string $termOrField): array
+    public function browseValueForTerm(ValueRepresentation $value, string $termOrField, $lang = null): array
     {
         static $hasModuleAdvancedSearch;
         static $hasModuleSearchSolr;
@@ -539,7 +556,7 @@ class ThemeFunctions extends AbstractHelper
 
         if ($vr = $value->valueResource()) {
             $val['class'] .= ' resource ' . $vr->resourceName();
-            $val['value'] = $vr->displayTitle();
+            $val['value'] = $vr->displayTitle(null, $lang);
             $val['url'] = $baseSearchUrl . '?'
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode((string) $vr->id())], $baseSearchQueryVr);
         } elseif ($uri = $value->uri()) {
@@ -549,7 +566,7 @@ class ThemeFunctions extends AbstractHelper
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($uri)], $baseSearchQuery);
         } else {
             $val['class'] .= ' literal';
-            $val['value'] = (string) $value->value();
+            $val['value'] = $value->asHtml(null, $lang);
             $val['url'] = $baseSearchUrl . '?'
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($val['value'])], $baseSearchQuery);
         }

@@ -1,0 +1,86 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $values
+ * @var array $templateProperties If any.
+ * Options:
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$labelInfo = $siteSetting('property_label_information');
+
+$showLocale = (bool) $siteSetting('show_locale_label', true);
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$lang = $plugins->get('lang')();
+$langHtml = $filterLocale ? $lang : null;
+
+$browseTerms = [
+    'dcterms:creator',
+    'dcterms:subject',
+    'curation:tag',
+    'curation:access',
+];
+$notBrowseTerms = [
+    'dcterms:title',
+    'dcterms:abstract',
+    'dcterms:tableOfContents',
+    'dcterms:description',
+    'extracttext:extracted_text',
+    'bibo:content',
+    'dcterms:identifier',
+    'bibo:identifier',
+    'bibo:uri',
+];
+?>
+
+<?php foreach ($values as $term => $propertyData): ?>
+    <li>
+       <label>
+            <?php if ($propertyData['alternate_label']): ?>
+            <?= $escape($propertyData['alternate_label']) ?>
+            <?php else: ?>
+            <?= $escape($translate($propertyData['property']->label())) ?>
+            <?php endif; ?>
+            <?php if ('term' === $labelInfo): ?>
+            <span class="field-term">(<?= $escape($propertyData['property']->term()) ?>)</span>
+            <?php elseif ('vocab' === $labelInfo): ?>
+            <span class="field-term">(<?= $escape($propertyData['property']->vocabulary()->label()) ?>)</span>
+            <?php endif; ?>
+        </label>
+       <ul>
+        <?php foreach ($propertyData['values'] as $value): ?>
+            <?php
+            $valueType = $value->type();
+            $valueLang = $value->lang();
+            $class = ['value'];
+            if (substr($valueType, 0, 8) === 'resource') {
+                $class[] = 'resource';
+                $class[] = $escape($value->valueResource()->resourceName());
+            } elseif ('uri' == $valueType) {
+                $class[] = 'uri';
+            }
+            if (!$value->isPublic()) {
+                $class[] = 'private';
+            }
+            ?>
+            <?php if (!$filterLocale || $valueLang == '' || strcasecmp($valueLang, $lang) == 0): ?>
+                <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($valueLang) ?>">
+                    <?php if ($showLocale && $valueLang): ?>
+                    <span class="language"><?= $valueLang ?></span>
+                    <?php endif; ?>
+                    <?php $val = $value->asHtml($langHtml) ?>
+                    <?= in_array($term, $browseTerms) || (!in_array($term, $notBrowseTerms) && mb_strlen(strip_tags($val)) < 50)
+                        ? $themeFunctions->browseValueForTerm($value, $term, $lang)['link']
+                        : $val ?>
+                </li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+            </ul>
+    </li>
+<?php endforeach; ?>

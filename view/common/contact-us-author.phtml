@@ -13,9 +13,13 @@
 $plugins = $this->getHelperPluginManager();
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
+
+$formText = $plugins->get('formText');
+$formRow = $plugins->get('formRow');
+$formEmail = $plugins->get('formEmail');
+/** @var \Laminas\Form\View\Helper\FormLabel $formLabel */
 $formLabel = $plugins->get('formLabel');
-$formHidden = $plugins->get('formHidden');
-$formElement = $plugins->get('formElement');
+$formTextarea = $plugins->get('formTextarea');
 
 $element = null;
 ?>
@@ -24,25 +28,47 @@ $element = null;
 <p class="explanation <?= $status ?>"><?= $message ?></p>
 <?php endif; ?>
 
-<?php if (!$form) return; ?>
+<?php if (!$form) return;
+
+    $form->get('name')
+        ->setLabel('Prénom Nom')
+        ->setAttribute('required', 'required')
+        ->setLabelAttributes(['class' => 'required'])
+        ->setAttribute('placeholder', 'Jean Dupont');
+    $form->get('from')
+        // ->setLabel('Mail' . ' <span class="required">*</span>')->setLabelOptions(['disable_html_escape' => true])
+        ->setLabel('Courriel')
+        ->setAttribute('placeholder', 'jean@dupont.fr');
+    $form->get('message')
+        ->setLabel('Posez votre question');
+    $form->get('submit')
+        ->setAttribute('class', 'form-button submit-button')
+        ->setValue('Envoyer');
+    $user = $this->identity();
+?>
 
 <?= $this->form()->openTag($form->setAttribute('class', 'limited-access-form')) ?>
-    <?php if ($element = $form->get('name') && !$element instanceof \Laminas\Form\Element\Hidden): ?>
+    <?php if ($user): ?>
     <div>
-        <?= $formLabel($element->setLabel('Nom Prénom')); ?>
-        <?= $formElement($element); ?>
+        <p>
+            <?= $escape(sprintf($translate('Message de %s (%s)'), $user->getName(), $user->getEmail())) ?>
+        </p>
     </div>
-    <?php endif; ?>
-    <?php if ($element = $form->get('name') && !$element instanceof \Laminas\Form\Element\Hidden): ?>
+    <?php else: ?>
     <div>
-        <?= $formLabel($element->setLabel('Courriel')); ?>
-        <?= $formElement($element); ?>
+        <?= $formLabel($form->get('name')) ?>
+        <?= $formText($form->get('name')) ?>
     </div>
-    <?php endif; ?>
+    <div>
+        <?= $formLabel($form->get('from')) ?>
+        <?= $formEmail($form->get('from')) ?>
+    </div>
+    <?php endif ?>
+
     <?php $element = $form->get('message'); ?>
     <div>
         <?= $formLabel($element->setLabel('Posez votre question')); ?>
-        <?= $formElement($element); ?>
+        <?= $formTextarea($element); ?>
     </div>
     <ul class="form-buttons">
         <li><button type="submit" class="form-button submit-button"><?= $escape($translate('Envoyer')) ?></a></li>
@@ -50,7 +76,7 @@ $element = null;
     <?php
     foreach ($form->getElements() as $element):
         if ($element instanceof \Laminas\Form\Element\Csrf || $element instanceof \Laminas\Form\Element\Hidden):
-            echo $formHidden($element);
+            echo $formRow($element);
         endif;
     endforeach;
     ?>

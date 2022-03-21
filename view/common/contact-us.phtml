@@ -91,7 +91,8 @@ $formCheckbox = $plugins->get('formCheckbox');
             <p class="contact-warning"></p>
 
             <?php if ($form->has('consent')): ?>
-            <?php if ($user): ?>
+            <?php $element = $form->get('consent'); ?>
+            <?php if ($user || $element instanceof \Laminas\Form\Element\Hidden): ?>
                 <?= $formHidden($form->get('consent')) ?>
             <?php else: ?>
             <label class="contact-accept-checkbox">

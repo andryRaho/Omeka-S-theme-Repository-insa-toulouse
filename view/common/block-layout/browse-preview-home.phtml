@@ -30,23 +30,9 @@ $siteSlug = $site->slug();
     $index = 0;
     foreach ($resources as $resource):
         ++$index;
-
-        $resourceUrl = $site ? $resource->siteUrl($siteSlug) : $resource->adminUrl($siteSlug);
-
-        // TODO Dans le thème, ce n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
-        $documentType = $resource->displayResourceClassLabel('Travail étudiant');
-
-        // Toutes les métadonnées sont accessibles : le type d'accès est donc défini par le premier média.
-        // On ne regarde pas l'embargo ici : il est déjà pris en compte (mise en public).
-        $media = $resource->primaryMedia();
-        if ($media) {
-            $access = $media->value('curation:access')
-                ?? ($media->value('curation:reserved') ? 'Accès restreint' : 'Accès libre');
-        } else {
-            // S'il n'y a pas de fichier, c'est qu'il est non consultable de fait.
-            $access = 'Non consultable';
-        }
-
+        $resourceUrl = $resource->siteUrl($siteSlug);
+        $documentType = $themeFunctions->danteDocumentType($resource);
+        $access = $themeFunctions->danteAccess($resource);
         $citation = $themeFunctions->danteCitation($resource, true);
         ?>
         <li class="resource <?= $resourceType ?>">
@@ -54,7 +40,7 @@ $siteSlug = $site->slug();
             <div class="document-details">
                 <div class="document-type-and-access">
                     <div class="document-type"><?= $documentType ?></div>
-                    <div class="document-access <?= $themeFunctions->danteAcces($access) ?>"><?= $access ?></div>
+                    <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
                 </div>
                 <div class="document-link">
                     <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
