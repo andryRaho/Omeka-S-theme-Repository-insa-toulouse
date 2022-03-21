@@ -1,0 +1,57 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $query
+ * @var int $totalCount
+ * @var int $perPage
+ * @var int $offset
+ * @var int $currentPage
+ * @var int $previousPage
+ * @var int $nextPage
+ * @var int $pageCount
+ * @var string $firstPageUrl
+ * @var string $previousPageUrl
+ * @var string $nextPageUrl
+ * @var string $lastPageUrl
+ * @var string $pagelessUrl
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+unset($query['page']);
+$query = array_filter($query);
+?>
+
+<nav class="pagination resources-list-pagination resources-pagination" role="navigation">
+<?php if ($totalCount): ?>
+
+    <?php if ($currentPage <= 1): ?>
+    <span class="pagination-first" title="<?= $translate('First') ?>" aria-label="<?= $translate('First') ?>"></span>
+    <span class="pagination-previous" title="<?= $translate('No previous') ?>" aria-label="<?= $translate('No previous') ?>"></span>
+    <?php else: ?>
+    <a class="pagination-first" href="<?= $escape($firstPageUrl) ?>" title="<?= $translate('First') ?>" aria-label="<?= $translate('First') ?>"></a>
+    <a class="pagination-previous" href="<?= $escape($previousPageUrl) ?>" title="<?= $translate('Previous') ?>" aria-label="<?= $translate('Previous') ?>"></a>
+    <?php endif; ?>
+
+    <form method="GET" action="" class="pagination-current">
+        <?php //= $this->queryToHiddenInputs(['page']) ?>
+        <?= $themeFunctions->inputHiddenFromQuery($query) ?>
+        <input type="tel" name="page" value="<?= $currentPage ?>" <?= $pageCount === 1 ? 'readonly="readonly"' : '' ?> aria-label="<?= $translate('Page') ?>">
+    </form>
+    <span class="pagination-total-by"><?= $translate('sur') ?></span>
+    <span class="page-count pagination-total"><?= $pageCount ?></span>
+
+    <?php if ($currentPage >= $pageCount): ?>
+    <span class="pagination-next" title="<?= $translate('No next') ?>" aria-label="<?= $translate('No next') ?>"></span>
+    <span class="pagination-last" title="<?= $translate('Last') ?>" aria-label="<?= $translate('Last') ?>"></span>
+    <?php else: ?>
+    <a class="pagination-next" href="<?= $escape($nextPageUrl) ?>" title="<?= $translate('Next') ?>" aria-label="<?= $translate('Next') ?>"></a>
+    <a class="pagination-last" href="<?= $escape($lastPageUrl) ?>" title="<?= $translate('Last') ?>" aria-label="<?= $translate('Last') ?>"></a>
+    <?php endif; ?>
+
+
+<?php endif; ?>
+</nav>

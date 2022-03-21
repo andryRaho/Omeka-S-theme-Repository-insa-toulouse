@@ -1,0 +1,72 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchPage
+ * @var \AdvancedSearch\Query $query
+ * @var \AdvancedSearch\Response $response
+ * @var \Omeka\Api\Representation\ItemSetRepresentation $itemSet
+ * @var string $resultPart
+ * @var int $documentCount
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+
+// Default values of the module.
+$displayParts = [
+    'search_filters' => 'header',
+    'paginator' => 'header',
+    'per_pages' => 'header',
+    'sort' => 'header',
+    'grid_list' => 'header',
+    'grid_list_mode' => 'auto',
+];
+$displayParts = $searchPage ? $searchPage->setting('display', $displayParts) : $displayParts;
+$displayParts = array_filter($displayParts, function ($v) use ($resultPart) { return in_array($v, [$resultPart, 'both']); });
+
+$paginationPerPages = isset($displayParts['per_pages']) ? $searchPage->subSetting('pagination', 'per_pages') : [];
+$sortFields = isset($displayParts['sort']) ? $searchPage->subSetting('sort', 'fields') : [];
+$gridListMode = $searchPage->subSetting('display', 'grid_list_mode', 'auto');
+$multiMode = isset($displayParts['grid_list']) && !in_array($gridListMode, ['list_only', 'grid_only']);
+?>
+
+<ul class="search-results-part search-results-header resources-list-tools">
+
+    <?php if (isset($displayParts['search_filters'])): ?>
+    <?= $this->searchingFilters($searchPage, $query, ['template' => 'common/search-filters-links']) ?>
+    <?php endif; ?>
+
+    <?php if (count($sortFields) || count($paginationPerPages)): ?>
+    <li>
+        <div class="resources-list-selects">
+
+            <?php if (count($sortFields)): ?>
+            <?= $this->searchSortSelector($query, $sortFields, true) ?>
+            <?php endif; ?>
+
+            <?php if (count($paginationPerPages)): ?>
+            <?= $this->searchPaginationPerPageSelector($query, $paginationPerPages, true) ?>
+            <?php endif; ?>
+
+        </div>
+    </li>
+    <?php endif; ?>
+
+    <?php if (isset($displayParts['paginator'])): ?>
+    <li>
+        <div class="search-results-count <?= $resultPart === 'header' ? 'resources-pagination-top' : 'resources-pagination-bottom' ?>">
+            <?= $this->pagination('common/pagination') ?>
+        </div>
+    </li>
+    <?php endif; ?>
+
+    <?php if ($multiMode): // Inutile dans ce thème. ?>
+    <li>
+        <div class="search-results-display">
+            <a class="search-view-type search-view-type-list<?= $gridListMode === 'list' ? ' active' : '' ?>" href="#"><?= $translate('list') ?></a>
+            |
+            <a class="search-view-type search-view-type-grid<?= $gridListMode === 'grid' ? ' active' : '' ?>" href="#"><?= $translate('grid') ?></a>
+        </div>
+    </li>
+    <?php endif; ?>
+</ul>

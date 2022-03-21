@@ -15,6 +15,8 @@
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 $themeFunctions = $plugins->get('ThemeFunctions');
+
+$siteSlug = $site->slug();
 ?>
 
 <div class="content block preview-block">
@@ -23,11 +25,13 @@ $themeFunctions = $plugins->get('ThemeFunctions');
     <h1><?= $heading ?></h1>
     <?php endif; ?>
 
-    <ul class="document-list preview">
+    <ul class="resources-list preview">
     <?php
     $index = 0;
     foreach ($resources as $resource):
         ++$index;
+
+        $resourceUrl = $site ? $resource->siteUrl($siteSlug) : $resource->adminUrl($siteSlug);
 
         // TODO Dans le thème, ce n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
         $documentType = $resource->displayResourceClassLabel('Travail étudiant');
@@ -45,7 +49,7 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 
         $citation = $themeFunctions->danteCitation($resource, true);
         ?>
-        <li class="<?= $resourceType ?> resource">
+        <li class="resource <?= $resourceType ?>">
             <div class="document-index"><?= $index ?>.</div>
             <div class="document-details">
                 <div class="document-type-and-access">
@@ -53,12 +57,12 @@ $themeFunctions = $plugins->get('ThemeFunctions');
                     <div class="document-access <?= $themeFunctions->danteAcces($access) ?>"><?= $access ?></div>
                 </div>
                 <div class="document-link">
-                    <a href="item.html"><?= $citation ?></a>
+                    <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
                 </div>
             </div>
         </li>
         <?php endforeach; ?>
-        <li class="document-list-more-link"><a href=""><?= $translate('Lire la suite') ?></a></li>
+        <li class="resources-list-more-link"><a href=""><?= $translate('Lire la suite') ?></a></li>
     </ul>
 
 </div>

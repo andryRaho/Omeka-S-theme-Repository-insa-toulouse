@@ -1,0 +1,92 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchPage
+ * @var \AdvancedSearch\Query $query
+ * @var \AdvancedSearch\Response $response
+ * @var string $title
+ * @var string $resourceName
+ */
+
+$resources = $response->getResources($resourceName);
+// A check is done: when page is not first, the resources may be empty even with results.
+if (!$resources) return;
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$siteSlug = $site->slug();
+
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$siteLang = $plugins->get('lang')();
+$lang = $filterLocale ? $siteLang : null;
+$langValue = $filterLocale ? [$siteLang, ''] : null;
+
+$headingTerm = $siteSetting('browse_heading_property_term');
+// $bodyTerm = $siteSetting('browse_body_property_term');
+
+$gridListMode = $searchPage ? $searchPage->subSetting('display', 'grid_list_mode', 'auto') : 'auto';
+
+$documentTypes = [
+    'items' => 'Documents',
+    'item_sets' => 'Collection',
+    'media' => 'Media',
+    'site_pages' => 'Page',
+];
+?>
+
+<?php if ($title): ?>
+<h3><?= $escape($title) ?></h3>
+<?php endif; ?>
+
+<ul class="resources-list search-results-list<?= $gridListMode === 'list_only' ? ' list' : ($gridListMode === 'grid_only' ? ' grid' : '') ?>">
+    <?php /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+    $index = 0;
+    foreach ($resources as $resource):
+        ++$index;
+        $resourceType = $resource->resourceName();
+        $resourceUrl = $resource->siteUrl($siteSlug);
+        if ($resourceType === 'items') {
+            // TODO Dans le thème, ce n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
+            $documentType = $resource->displayResourceClassLabel('Travail étudiant');
+
+            // Toutes les métadonnées sont accessibles : le type d'accès est donc défini par le premier média.
+            // On ne regarde pas l'embargo ici : il est déjà pris en compte (mise en public).
+            $media = $resource->primaryMedia();
+            if ($media) {
+                $access = $media->value('curation:access')
+                ?? ($media->value('curation:reserved') ? 'Accès restreint' : 'Accès libre');
+            } else {
+                // S'il n'y a pas de fichier, c'est qu'il est non consultable de fait.
+                $access = 'Non consultable';
+            }
+
+            $citation = $themeFunctions->danteCitation($resource, true);
+        } else {
+            $documentType = $documentTypes[$resourceType] ?? 'Autre type';
+            $heading = $headingTerm ? $resource->value($headingTerm, ['lang' => $langValue]) : null;
+            $citation = $heading ? $heading->asHtml() : $escape($resource->displayTitle($translate('[Untitled]'), $lang));
+            // $body = $bodyTerm ? $resource->value($bodyTerm, ['lang' => $langValue]) : null;
+            // $body = $body ? $body->asHtml() : $escape($resource->displayDescription(null, $lang));
+            $access = $resource->isPublic() ? 'Accès libre' : 'Non consultable';
+        }
+    ?>
+
+    <li class="resource <?= $resourceType ?>">
+        <div class="document-index"><?= $index ?>.</div>
+        <div class="document-details">
+            <div class="document-type-and-access">
+                <div class="document-type"><?= $documentType ?></div>
+                <div class="document-access <?= $themeFunctions->danteAcces($access) ?>"><?= $access ?></div>
+            </div>
+            <div class="document-link">
+                <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
+            </div>
+        </div>
+    </li>
+    <?php endforeach; ?>
+</ul>

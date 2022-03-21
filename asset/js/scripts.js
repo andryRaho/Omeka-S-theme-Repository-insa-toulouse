@@ -8,14 +8,14 @@ $(function () {
     const headerSearchBtn = $('.search-menu-toggle');
     const headerTopMenu = $('.header-top .search-form-parent');
 
-    const documentListFilterToggle = $('.content a.items-list-toggle-filters');
-    const documentListFilterMenu = $('main.items-list-and-filters aside');
-    const documentListCloseFilterMenu = $('main.items-list-and-filters aside .items-list-close-filters');
-    const documentListFilterCheckboxes = $('main.items-list-and-filters aside input[type=checkbox]');
+    const documentListFilterToggle = $('.content a.resources-list-toggle-filters');
+    const documentListFilterMenu = $('main.resources-list-and-filters aside');
+    const documentListCloseFilterMenu = $('main.resources-list-and-filters aside .resources-list-close-filters');
+    const documentListFilterCheckboxes = $('main.resources-list-and-filters aside input[type=checkbox]');
 
-    const openSciencePageToggle = $('.content a.items-list-toggle-page-menu');
+    const openSciencePageToggle = $('.content a.resources-list-toggle-page-menu');
     const openSciencePageMenu = $('main.open-science-content aside');
-    const openScienceCloseMenu = $('main.open-science-content aside .items-list-close-page-menu');
+    const openScienceCloseMenu = $('main.open-science-content aside .resources-list-close-page-menu');
 
     const advancedSearchForm = $('.advanced-search-form');
     const advancedSearchTemplate = $('.advanced-search-form > .search-filters > li:first-child');
@@ -101,17 +101,17 @@ $(function () {
 
     const seeAllDocumentsLimit = 10;
 
-    let documentsParents = $('ul.document-list > li');
+    let documentsParents = $('ul.resources-list > li');
     documentsParents.each(function(no, item) {
         const documentItem = $(item);
-        if (!documentItem.hasClass('document-list-more-link')) {
+        if (!documentItem.hasClass('resources-list-more-link')) {
             if (no + 1 > seeAllDocumentsLimit) {
                 documentItem.addClass('displayed-with-toggle')
             }
         }
     });
 
-    $('.document-list-more-link a').on('click', function(e) {
+    $('.resources-list-more-link a').on('click', function(e) {
         e.preventDefault();
         $(this).closest('ul').toggleClass('opened');
     });
@@ -304,7 +304,7 @@ $(function () {
     /* Resize */
 
     const searchResultsTools = $('.search-results-tools > li:first-child');
-    const documentListTools = $('.document-list-tools');
+    const documentListTools = $('.resources-list-tools');
 
     function resizeUpdates() {
         if (searchResultsTools.length) {

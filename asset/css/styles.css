@@ -1012,7 +1012,7 @@ p:empty {
         font-size: 12px;
     }
 
-    ul.document-list > li .document-edition  a {
+    ul.resources-list > li .document-edition  a {
         margin-right: 5px;
     }
 
@@ -1983,14 +1983,14 @@ p:empty {
 
     /* Accueil */
 
-    ul.document-list {
+    ul.resources-list {
     }
 
-    .home-content ul.document-list {
+    .home-content ul.resources-list {
         margin: 25px 0 25px -8px;
     }
 
-    .user-account ul.document-list {
+    .user-account ul.resources-list {
         margin-top: 25px;
     }
 
@@ -2009,16 +2009,16 @@ p:empty {
         font-weight: 700;
     }
 
-    ul.document-list.opened > li.displayed-with-toggle,
-    ul.document-list > li {
+    ul.resources-list.opened > li.displayed-with-toggle,
+    ul.resources-list > li {
         display: flex;
     }
 
-    ul.document-list > li.displayed-with-toggle {
+    ul.resources-list > li.displayed-with-toggle {
         display: none;
     }
 
-    ul.document-list > li a {
+    ul.resources-list > li a {
         display: inline-block;
         margin-right: 20px;
         font-family: 'Open Sans', sans-serif;
@@ -2029,22 +2029,22 @@ p:empty {
         vertical-align: top;
     }
 
-    ul.document-list > li a:hover,
-    ul.document-list > li a:hover span {
+    ul.resources-list > li a:hover,
+    ul.resources-list > li a:hover span {
         color: #BA0000;
     }
 
-    ul.document-list > li a span.document-title {
+    ul.resources-list > li a span.document-title {
         font-style: italic;
     }
 
-    ul.document-list > li.document-list-more-link {
+    ul.resources-list > li.resources-list-more-link {
         text-align: center;
         justify-content: center;
         text-transform: uppercase;
     }
 
-    ul.document-list > li.document-list-more-link a {
+    ul.resources-list > li.resources-list-more-link a {
         display: flex;
         align-items: center;
         gap:10px;
@@ -2060,15 +2060,15 @@ p:empty {
         transform-origin: 0 50%;
     }
 
-    ul.document-list > li.document-list-more-link a:hover {
+    ul.resources-list > li.resources-list-more-link a:hover {
         color: #000;
     }
 
-    ul.document-list > li.document-list-more-link a:hover::after {
+    ul.resources-list > li.resources-list-more-link a:hover::after {
         transform: rotate(0deg) scale(1.15);
     }
 
-    ul.document-list > li.document-list-more-link a::after {
+    ul.resources-list > li.resources-list-more-link a::after {
         content: '';
         display: block;
         width: 12px;
@@ -2079,15 +2079,15 @@ p:empty {
         transform: rotate(0deg);
     }
 
-    ul.document-list.opened > li.document-list-more-link a::after {
+    ul.resources-list.opened > li.resources-list-more-link a::after {
         transform: rotate(180deg);
     }
 
-    ul.document-list.opened > li.document-list-more-link a:hover::after {
+    ul.resources-list.opened > li.resources-list-more-link a:hover::after {
         transform: rotate(180deg) scale(1.15);
     }
 
-    ul.document-list .document-index {
+    ul.resources-list .document-index {
         min-width: 38px;
         margin-top: 22px;
         margin-right: 12px;
@@ -2098,7 +2098,7 @@ p:empty {
         color: #EA3535;
     }
 
-    ul.document-list .document-details {
+    ul.resources-list .document-details {
         width: 100%;
         border-bottom: solid 1px #ea3535;
         margin-bottom: 16px;
@@ -2174,25 +2174,25 @@ p:empty {
 
     /* Collection - aside */
 
-    main.items-list-and-filters {
+    main.resources-list-and-filters {
         margin-top: 34px;
     }
 
-    main.items-list-and-filters aside {
+    main.resources-list-and-filters aside {
         flex: 300px 0 0;
     }
 
-    main.items-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content {
         flex: calc( 100% - 300px ) 0 0;
         padding-left: 48px;
         padding-bottom: 40px;
     }
 
-    .items-list-and-filters ul.document-list {
+    .resources-list-and-filters ul.resources-list {
         margin: 25px 0 15px 0;
     }
 
-    main.items-list-and-filters .content h1 {
+    main.resources-list-and-filters .content h1 {
         margin-left: 30px;
         text-align: left;
         text-transform: none;
@@ -2201,30 +2201,30 @@ p:empty {
         line-height: 33px;
     }
 
-    main.items-list-and-filters ul.document-list .document-index {
+    main.resources-list-and-filters ul.resources-list .document-index {
         display: none;
     }
 
-    main.items-list-and-filters .content h1 {
+    main.resources-list-and-filters .content h1 {
         margin-left: 0;
     }
 
-    main.items-list-and-filters aside {
+    main.resources-list-and-filters aside {
         padding-top: 0;
     }
 
-    main.items-list-and-filters aside form {
+    main.resources-list-and-filters aside form {
         height: auto;
     }
 
-    main.items-list-and-filters aside .items-filters > li {
+    main.resources-list-and-filters aside .resources-filters > li {
         border-radius: 1px;
         background-color: rgba(234,239,237, 0.5);
         padding: 12px 14px;
         margin-bottom: 10px;
     }
 
-    main.items-list-and-filters aside .items-filters > li > a.toggle {
+    main.resources-list-and-filters aside .resources-filters > li > a.toggle {
         position: relative;
         display: block;
         color: #333333;
@@ -2236,15 +2236,15 @@ p:empty {
         text-decoration: none;
     }
 
-    main.items-list-and-filters aside .items-filters > li.opened > a.toggle {
+    main.resources-list-and-filters aside .resources-filters > li.opened > a.toggle {
         margin-bottom: 10px;
     }
 
-    main.items-list-and-filters aside .items-filters > li.opened > a.toggle::after {
+    main.resources-list-and-filters aside .resources-filters > li.opened > a.toggle::after {
         transform: rotate(0deg);
     }
 
-    main.items-list-and-filters aside .items-filters > li > a.toggle::after {
+    main.resources-list-and-filters aside .resources-filters > li > a.toggle::after {
         content: '';
         display: block;
         width: 22px;
@@ -2258,21 +2258,21 @@ p:empty {
         transform: rotate(180deg);
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li.toggle-parent label {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label {
         position: relative;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li.toggle-parent label .search__label {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label .search__label {
         width: 100%;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li.toggle-parent label a {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label a {
         display: block;
         text-decoration: none;
         font-weight: 700;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li.toggle-parent > label::after {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent > label::after {
         content: '';
         display: block;
         width: 22px;
@@ -2287,53 +2287,53 @@ p:empty {
         pointer-events: none;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li.toggle-parent.opened > label::after {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent.opened > label::after {
         transform: rotate(0deg);
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li.toggle-parent:not(.opened) > ul {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent:not(.opened) > ul {
         display: none;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items li:not(.see-all-facets) {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li:not(.see-all-facets) {
         margin-bottom: 5px;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items {
         display: none;
     }
 
-    main.items-list-and-filters aside .items-filters > li.opened > .search-facet-items {
+    main.resources-list-and-filters aside .resources-filters > li.opened > .search-facet-items {
         display: block;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items > li label {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items > li label {
         color: #313232;
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
         line-height: 18px;
     }
 
-    main.items-list-and-filters aside .items-filters > li > .search-facet-items > li > .search-facet-items {
+    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items > li > .search-facet-items {
         margin: 10px 20px;
     }
 
-    main.items-list-and-filters aside .form-buttons {
+    main.resources-list-and-filters aside .form-buttons {
         display: flex;
         justify-content: center;
         margin-top: 20px;
     }
 
-    a.items-list-toggle-page-menu {
+    a.resources-list-toggle-page-menu {
         background: url(../img/menu-SO.svg) left center / 18px auto no-repeat;
     }
 
-    a.items-list-toggle-filters {
+    a.resources-list-toggle-filters {
         background: url(../img/filtres.svg) left center / 18px auto no-repeat;
     }
 
-    a.items-list-toggle-page-menu,
-    a.items-list-toggle-filters {
+    a.resources-list-toggle-page-menu,
+    a.resources-list-toggle-filters {
         width: auto;
         padding: 5px 5px 5px 22px;
 
@@ -2346,8 +2346,8 @@ p:empty {
         text-transform: uppercase;
     }
 
-    a.items-list-close-page-menu,
-    a.items-list-close-filters {
+    a.resources-list-close-page-menu,
+    a.resources-list-close-filters {
         position: absolute;
         right: 20px;
         width: 18px;
@@ -2355,42 +2355,42 @@ p:empty {
         background: url(../img/fermer_noir.svg) left center / 18px auto no-repeat;
     }
 
-    a.items-list-close-filters {
+    a.resources-list-close-filters {
         top: 82px;
     }
 
-    a.items-list-close-page-menu {
+    a.resources-list-close-page-menu {
         top: 70px;
     }
 
-    aside a.items-list-toggle-page-menu {
+    aside a.resources-list-toggle-page-menu {
         transform: translateY(-15px);
     }
 
-    aside a.items-list-toggle-page-menu,
-    aside a.items-list-toggle-filters {
+    aside a.resources-list-toggle-page-menu,
+    aside a.resources-list-toggle-filters {
         display: inline-block;
         pointer-events: none;
     }
 
-    a.items-list-close-page-menu,
-    aside a.items-list-close-filters,
-    .content a.items-list-toggle-page-menu,
-    .content a.items-list-toggle-filters {
+    a.resources-list-close-page-menu,
+    aside a.resources-list-close-filters,
+    .content a.resources-list-toggle-page-menu,
+    .content a.resources-list-toggle-filters {
         display: none;
     }
 
-    ul.items-list-selected-filters {
+    ul.resources-list-selected-filters {
         margin: 12px 0 8px 0;
         display: flex;
         gap:8px;
     }
 
-    ul.items-list-selected-filters > li {
+    ul.resources-list-selected-filters > li {
         display: inline-block;
     }
 
-    ul.items-list-selected-filters > li > a {
+    ul.resources-list-selected-filters > li > a {
         display: inline-block;
         padding: 2px 24px 2px 10px;
         border: 1px solid #CCCCCC;
@@ -2440,24 +2440,24 @@ p:empty {
     /* */
 
     .search-results-tools,
-    .document-list-tools {
+    .resources-list-tools {
         display: flex;
         justify-content: space-between;
         align-items: center;
     }
 
-    .document-list-tools {
+    .resources-list-tools {
         border-top: 2px solid #CDDAD5;
         border-bottom: 2px solid #CDDAD5;
         padding: 13px 10px;
         margin: 15px 0 40px;
     }
 
-    .document-list-tools .document-list-selects {
+    .resources-list-tools .resources-list-selects {
         display: flex;
     }
 
-    .document-list-tools .select-parent > select {
+    .resources-list-tools .select-parent > select {
         padding: 6px 0 2px 6px;
     }
 
@@ -2477,13 +2477,13 @@ p:empty {
         width: calc(100% + 13px);
     }
 
-    .document-list-tools .sort-list-select {
+    .resources-list-tools .sort-list-select {
         background: url(../img/trier.svg) left center / 20px auto no-repeat;
         padding-left: 15px;
         margin-right: 20px;
     }
 
-    .document-list-tools .pagination-count-select {
+    .resources-list-tools .pagination-count-select {
         background: url(../img/liste.svg) left center / 26px auto no-repeat;
         padding-left: 25px;
     }
@@ -2514,11 +2514,11 @@ p:empty {
 
     .search-results-tools,
     .search-results-tools > li,
-    .document-list-tools {
+    .resources-list-tools {
         display: flex;
     }
 
-    .search-results-tools + .document-list-tools {
+    .search-results-tools + .resources-list-tools {
         margin-top: 0;
     }
 
@@ -2551,18 +2551,18 @@ p:empty {
 
     /* */
 
-    .bottom-items-pagination .items-pagination {
+    .resources-pagination-bottom .resources-pagination {
         display: flex;
         justify-content: flex-end;
         align-items: center;
     }
 
-    .items-pagination {
+    .resources-pagination {
         display: flex;
         align-items: center;
     }
 
-    .items-pagination > * {
+    .resources-pagination > * {
         display: inline-block;
         vertical-align: top;
 
@@ -2573,21 +2573,21 @@ p:empty {
         line-height: 16px;
     }
 
-    .items-pagination a {
+    .resources-pagination a {
         text-decoration: none;
     }
 
-    .items-pagination .pagination-previous,
-    .items-pagination .pagination-next {
+    .resources-pagination .pagination-previous,
+    .resources-pagination .pagination-next {
         display: inline-block;
         line-height: 1;
     }
 
-    .items-pagination .pagination-previous {
+    .resources-pagination .pagination-previous {
         padding: 0;
     }
 
-    .items-pagination form input {
+    .resources-pagination form input {
         width: 40px;
         height: 28px;
         outline: none;
@@ -2599,22 +2599,21 @@ p:empty {
         font-weight: 700;
     }
 
-    .items-pagination form input:focus {
+    .resources-pagination form input:focus {
         border: 1px solid #ea3535;
     }
 
-    .items-pagination form input,
-    .items-pagination span.pagination-total {
+    .resources-pagination form input,
+    .resources-pagination .pagination-total {
         color: #000;
     }
 
-    .items-pagination span.pagination-total::before {
-        content: 'sur';
+    .resources-pagination .pagination-total-by {
         display: inline-block;
         margin:0 6px 0 8px;
     }
 
-    .items-pagination .pagination-previous::before {
+    .resources-pagination .pagination-previous::before {
         content: "";
         display: inline-block;
         width: 20px;
@@ -2623,11 +2622,11 @@ p:empty {
         margin-right: 5px;
     }
 
-    .items-pagination a.pagination-previous:hover::before {
+    .resources-pagination a.pagination-previous:hover::before {
         background-image: url(../img/chevron_gauche.svg);
     }
 
-    .items-pagination .pagination-next::after {
+    .resources-pagination .pagination-next::after {
         content: "";
         display: inline-block;
         width: 20px;
@@ -2636,7 +2635,7 @@ p:empty {
         margin-left: 5px;
     }
 
-    .items-pagination a.pagination-next:hover::after {
+    .resources-pagination a.pagination-next:hover::after {
         background-image: url(../img/chevron_droite.svg);
     }
 
@@ -3480,12 +3479,12 @@ p:empty {
     /* 1300 --> 300px - padding 45px */
     /* 1024 --> 236px - padding 12px */
     main.open-science-content aside,
-    main.items-list-and-filters aside {
+    main.resources-list-and-filters aside {
         flex: calc(23vw - 2px) 0 0;
     }
 
     main.open-science-content > aside + .content,
-    main.items-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content {
         flex: calc(100% - 23vw + 2px) 0 0;
         padding-left: calc(12vw - 110px);
     }
@@ -3501,7 +3500,7 @@ p:empty {
         border-bottom: 4px solid #CDDAD5;
     }
 
-    ul.document-list > li:last-child .document-details {
+    ul.resources-list > li:last-child .document-details {
         border-bottom: none;
     }
 
@@ -3552,12 +3551,12 @@ p:empty {
     /* Consulter - recherche + science ouverte */
     /* 1024 --> 236px - padding 12px */
     main.open-science-content aside,
-    main.items-list-and-filters aside {
+    main.resources-list-and-filters aside {
         flex: 236px 0 0;
     }
 
     main.open-science-content > aside + .content,
-    main.items-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content {
         flex: calc( 100% - 236px ) 0 0;
         padding-left: 12px;
     }
@@ -3654,7 +3653,7 @@ p:empty {
 
     /* */
 
-    ul.document-list > li a {
+    ul.resources-list > li a {
         margin-right: 5px;
     }
 
@@ -4105,7 +4104,7 @@ p:empty {
 
     /* */
 
-    ul.document-list .document-index {
+    ul.resources-list .document-index {
         min-width: 30px;
         margin-right: 6px;
         margin-top: 25px;
@@ -4113,22 +4112,22 @@ p:empty {
         line-height: 22px;
     }
 
-    ul.document-list > li a {
+    ul.resources-list > li a {
         font-size: 13px;
         line-height: 17px;
     }
 
-    ul.document-list > li.document-list-more-link a {
+    ul.resources-list > li.resources-list-more-link a {
         padding: 10px 25px 8px 0;
     }
 
-    aside a.items-list-close-page-menu,
-    aside a.items-list-close-filters {
+    aside a.resources-list-close-page-menu,
+    aside a.resources-list-close-filters {
         display: block;
     }
 
-    .content a.items-list-toggle-page-menu,
-    .content a.items-list-toggle-filters {
+    .content a.resources-list-toggle-page-menu,
+    .content a.resources-list-toggle-filters {
         display: inline-block;
         width: auto;
         padding: 11px 8px 10px 28px;
@@ -4178,11 +4177,11 @@ p:empty {
         margin-top: 0;
     }
 
-    ul.document-list .document-details {
+    ul.resources-list .document-details {
         padding-bottom: 0;
     }
 
-    ul.document-list .document-link {
+    ul.resources-list .document-link {
         margin-bottom: 8px;
     }
 
@@ -4224,7 +4223,7 @@ p:empty {
         margin-bottom: 0;
     }
 
-    main.user-account ul.document-list .document-link {
+    main.user-account ul.resources-list .document-link {
         margin-bottom: 10px;
     }
 
@@ -4237,13 +4236,13 @@ p:empty {
     /* Consulter */
 
     main.open-science-content,
-    main.items-list-and-filters {
+    main.resources-list-and-filters {
         flex-direction: column;
         margin-top: 72px;
     }
 
     main.open-science-content aside,
-    main.items-list-and-filters aside {
+    main.resources-list-and-filters aside {
         position: fixed;
         top: 0;
         left: 0;
@@ -4260,27 +4259,27 @@ p:empty {
     }
 
     main.open-science-content aside.opened,
-    main.items-list-and-filters aside.opened {
+    main.resources-list-and-filters aside.opened {
         transform: translateX(0%);
     }
 
     main.open-science-content aside ul,
-    main.items-list-and-filters aside ul {
+    main.resources-list-and-filters aside ul {
         display: block;
     }
 
     main.open-science-content > aside + .content,
-    main.items-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content {
         padding-left: 0;
     }
 
-    main.items-list-and-filters .content h1 {
+    main.resources-list-and-filters .content h1 {
         font-size: 20px;
         font-weight: 700;
         line-height: 33px;
     }
 
-    main.items-list-and-filters ul.document-list {
+    main.resources-list-and-filters ul.resources-list {
         margin-top: 22px;
     }
 
@@ -4518,13 +4517,13 @@ p:empty {
 
 @media screen and (max-width: 500px) {
 
-    .document-list-tools {
+    .resources-list-tools {
         flex-direction: column;
         padding: 14px 30px 14px;
         margin: 12px -12px;
     }
 
-    .document-list-tools > li {
+    .resources-list-tools > li {
         width: 100%;
     }
 
@@ -4559,12 +4558,12 @@ p:empty {
         display: none;
     }
 
-    .document-list-tools .document-list-selects {
+    .resources-list-tools .resources-list-selects {
         justify-content: space-between;
         margin-bottom: 10px;
     }
 
-    main.items-list-and-filters .items-pagination {
+    main.resources-list-and-filters .resources-pagination {
         justify-content: center;
     }
 
