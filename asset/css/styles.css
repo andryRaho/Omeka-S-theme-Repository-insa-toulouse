@@ -295,24 +295,29 @@ p:empty {
         width:1px
     }
 
-    [type="checkbox"][disabled]+.label {
+    [type="checkbox"][disabled] + .label,
+    [type="checkbox"][disabled] + label {
         opacity:.35
     }
 
-    [type="checkbox"][disabled]+.label:hover {
+    [type="checkbox"][disabled] + .label:hover,
+    [type="checkbox"][disabled] + label:hover {
         cursor:default
     }
 
-    [type="checkbox"] + .label {
+    [type="checkbox"] + .label,
+    [type="checkbox"] + label {
         display:flex;
         position:relative
     }
 
-    [type="checkbox"] + .label a {
+    [type="checkbox"] + .label a,
+    [type="checkbox"] + label a {
         text-decoration:underline
     }
 
-    [type="checkbox"] + .label::before {
+    [type="checkbox"] + .label::before,
+    [type="checkbox"] + label::before {
         content:"";
         display:inline-block;
         flex:0 0 15px;
@@ -332,8 +337,11 @@ p:empty {
         color:#fff;
         opacity:1!important
     }
-    [type="checkbox"]:focus:not([disabled])+.label::after,
-    [type="checkbox"]:hover:not([disabled])+.label::after {
+
+    [type="checkbox"]:focus:not([disabled]) + .label::after,
+    [type="checkbox"]:hover:not([disabled]) + .label::after,
+    [type="checkbox"]:focus:not([disabled]) + label::after,
+    [type="checkbox"]:hover:not([disabled]) + label::after {
         content:"";
         display:inline-block;
         position:absolute;
@@ -342,15 +350,18 @@ p:empty {
         width:15px;
         height:15px
     }
-    [type="checkbox"]:checked + .label::before {
+
+    [type="checkbox"]:checked + .label::before,
+    [type="checkbox"]:checked + label::before {
         background:#fff url(../img/checkmark.svg) center / cover no-repeat;
         content: "";
         opacity:1
     }
-    [type="checkbox"]:active+.label::before {
+
+    [type="checkbox"]:active + .label::before,
+    [type="checkbox"]:active + label::before {
         opacity:1
     }
-
 
 
     /* Default Placeholder */
@@ -367,6 +378,12 @@ p:empty {
     }
 
     ::-moz-placeholder {
+        font-style: italic;
+        font-size: 0.75em;
+        color: #222;
+    }
+
+    ::placeholder {
         font-style: italic;
         font-size: 0.75em;
         color: #222;
@@ -391,6 +408,7 @@ p:empty {
     .field .inputs > select,
     .field .inputs > textarea,
     .field .inputs > input[type="text"],
+    .field .inputs > input[type="search"],
     .field .inputs > input[type="password"],
     .field .inputs > input[type="email"],
     .field .inputs > input[type="url"] {
@@ -815,6 +833,7 @@ p:empty {
 
     form.search-form input[type="search"],
     form.search-form input[type="text"],
+    main.depot-content .content > form input[type="search"]::-webkit-input-placeholder,
     main.depot-content .content > form input[type="text"]::-webkit-input-placeholder,
     form.search-form input[type="search"]::-webkit-input-placeholder,
     form.search-form input[type="text"]::-webkit-input-placeholder {
@@ -826,6 +845,7 @@ p:empty {
         color:#474948;
     }
 
+    main.depot-content .content > form input[type="search"]::-moz-placeholder,
     main.depot-content .content > form input[type="text"]::-moz-placeholder,
     form.search-form input[type="search"]:-moz-placeholder,
     form.search-form input[type="text"]:-moz-placeholder {
@@ -837,6 +857,7 @@ p:empty {
         color:#474948;
     }
 
+    main.depot-content .content > form input[type="search"]::-moz-placeholder,
     main.depot-content .content > form input[type="text"]::-moz-placeholder,
     form.search-form input[type="search"]::-moz-placeholder,
     form.search-form input[type="text"]::-moz-placeholder {
@@ -848,6 +869,7 @@ p:empty {
         color:#474948;
     }
 
+    main.depot-content .content > form input[type="search"]::-ms-input-placeholder,
     main.depot-content .content > form input[type="text"]::-ms-input-placeholder,
     form.search-form input[type="search"]:-ms-input-placeholder,
     form.search-form input[type="text"]:-ms-input-placeholder {
@@ -905,7 +927,7 @@ p:empty {
         color: #474948;
     }
 
-    .document-edition.document-parts li .form-buttons a.form-button {
+    .document-edition.document-parts li .form-buttons .form-button {
         margin-right: 0;
     }
 
@@ -931,12 +953,12 @@ p:empty {
         margin-bottom: 15px;
     }
 
-    .form-buttons a.form-button:hover {
+    .form-buttons .form-button:hover {
         color:#BA0000;
         background-color: rgba(234,239,237, 0.5);
     }
 
-    .form-buttons a.form-button {
+    .form-buttons .form-button {
         padding: 9px 25px 11px;
         display: inline-block;
         background-color: #fff;
@@ -950,42 +972,42 @@ p:empty {
         text-align: center;
     }
 
-    a.form-button.edit-button  {
+    .form-button.edit-button  {
         padding-left: 40px;
         background: url(../img/crayon.svg) center left 22px no-repeat;
     }
 
-    a.form-button.clear-button  {
+    .form-button.clear-button  {
         padding-left: 40px;
         background: url(../img/effacer.svg) center left 12px no-repeat;
     }
 
-    a.form-button.delete-button  {
+    .form-button.delete-button  {
         padding-left: 40px;
         background: url(../img/poubelle.svg) top 7px left 18px no-repeat;
     }
 
-    a.form-button.preview-button  {
+    .form-button.preview-button  {
         padding-left: 45px;
         background: url(../img/oeil-rouge.svg) center left 18px no-repeat;
     }
 
-    a.form-button.ask-copy-button  {
+    .form-button.ask-copy-button  {
         padding-left: 45px;
         background: url(../img/mail_rouge.svg) center left 18px no-repeat;
     }
 
-    a.form-button.download-button  {
+    .form-button.download-button  {
         padding-left: 35px;
         background: url(../img/telecharger.svg) center left 18px / auto 16px no-repeat;
     }
 
-    a.form-button.filter-button {
+    .form-button.filter-button {
         padding: 7px 25px;
         font-size: 12px;
     }
 
-    a.form-button.export-button {
+    .form-button.export-button {
         padding: 7px 20px;
         font-size: 12px;
     }
@@ -1002,30 +1024,30 @@ p:empty {
         margin-top: 0;
     }
 
-    .document-edition .form-buttons a.form-button {
+    .document-edition .form-buttons .form-button {
         border: none;
         background-color: transparent !important;
     }
 
-    .document-edition a.form-button.edit-button  {
+    .document-edition .form-button.edit-button  {
         padding-left: 20px;
         padding-right: 10px;
         background-position: center left 2px;
     }
 
-    .document-edition a.form-button.delete-button  {
+    .document-edition .form-button.delete-button  {
         padding-left: 20px;
         padding-right: 10px;
         background-position: center left;
     }
 
-    .document-edition a.form-button.preview-button  {
+    .document-edition .form-button.preview-button  {
         padding-left: 25px;
         padding-right: 10px;
         background-position: center left;
     }
 
-    .document-edition a.form-button.download-button  {
+    .document-edition .form-button.download-button  {
         padding-left: 18px;
         padding-right: 10px;
         background-position: center left;
@@ -3411,7 +3433,7 @@ p:empty {
         justify-content: center;
     }
 
-    .content-form-parent .form-buttons a.form-button {
+    .content-form-parent .form-buttons .form-button {
         font-size: 12px;
     }
 
@@ -3642,7 +3664,7 @@ p:empty {
         margin-right: 3px;
     }
 
-    a.form-button.export-button {
+    .form-button.export-button {
         padding: 7px 15px;
         font-size: 11px;
     }
@@ -4071,7 +4093,7 @@ p:empty {
         display: block;
     }
 
-    .form-buttons a.form-button {
+    .form-buttons .form-button {
         font-size:12px;
         line-height: 13px;
         padding-bottom: 9px;
@@ -4168,13 +4190,13 @@ p:empty {
         margin-bottom: 10px;
     }
 
-    .form-buttons a.form-button {
+    .form-buttons .form-button {
         font-size: 12px;
         line-height: 13px;
     }
 
-    a.form-button.delete-button,
-    a.form-button.edit-button {
+    .form-button.delete-button,
+    .form-button.edit-button {
         background-size: 12px auto;
     }
 
@@ -4379,7 +4401,7 @@ p:empty {
         display: flex;
     }
 
-    main.item-content .document-edition .form-buttons a.form-button {
+    main.item-content .document-edition .form-buttons .form-button {
         padding-bottom: 5px;
     }
 

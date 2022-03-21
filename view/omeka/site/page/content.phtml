@@ -8,9 +8,14 @@
  * @var \Laminas\View\Helper\ViewModel $view
  */
 
-// Gère le cas particulier des blocs "aside".
+// Gère le cas particulier des blocs "aside" et ajoute la classe "mainClass" si présente.
 
-$blockLayout = $this->plugin('blockLayout');
+$plugins = $this->getHelperPluginManager();
+$blockLayout = $plugins->get('blockLayout');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+/** @var \BlockPlus\View\Helper\BlockMetadata $blockMetadata */
+$blockMetadata = $plugins->has('blockMetadata') ? $plugins->get('blockMetadata') : null;
 
 $main = '';
 $asides = '';
@@ -27,6 +32,10 @@ foreach ($page->blocks() as $block) {
     if ($layout === 'html' && strpos((string) $block->dataValue('template'), 'aside')) {
         $asides .= $blockLayout->render($block);
         ++$countAsides;
+    } elseif ($layout === 'pageMetadata') {
+        if ($blockMetadata && $mainClass = $blockMetadata('mainClass', $block)) {
+            $themeFunctions->appendVarToView('mainClass', $mainClass);
+        }
     } else {
         $main .= $blockLayout->render($block);
     }
@@ -36,6 +45,7 @@ if ($countAsides > 1): ?>
 <div class="asides">
     <?= $asides ?>
 </div>
+
 <?php else:
     echo $asides;
 endif; ?>

@@ -1,0 +1,13 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
+ * @var string $pageTitle
+ */
+
+$escape = $this->plugin('escapeHtml');
+?>
+
+<div class="block-title content-header">
+    <h1><?= $escape($pageTitle) ?></h1>
+</div>

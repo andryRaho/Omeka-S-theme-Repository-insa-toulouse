@@ -1,0 +1,127 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \ContactUs\Form\ContactUsForm $form
+ * @var string $heading
+ * @var string $html Passed directly from the options.
+ * @var string $message
+ * @var string $status "success" or "error"
+ * @var string $contact "us" or "author"
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+
+$formText = $plugins->get('formText');
+$formRow = $plugins->get('formRow');
+$formEmail = $plugins->get('formEmail');
+/** @var \Laminas\Form\View\Helper\FormLabel $formLabel */
+$formLabel = $plugins->get('formLabel');
+$formHidden = $plugins->get('formHidden');
+$formTextarea = $plugins->get('formTextarea');
+$formCheckbox = $plugins->get('formCheckbox');
+?>
+
+<div class="contact-us-block">
+    <?php if (!empty($heading)): ?>
+    <div class="content-header">
+        <h1><?= $escape($heading) ?></h1>
+    </div>
+    <?php endif; ?>
+
+    <div class="content-form-parent">
+
+        <?= @$html ?>
+
+        <?php if ($form):
+            $form->get('name')
+                ->setLabel('Prénom Nom')
+                ->setAttribute('required', 'required')
+                ->setLabelAttributes(['class' => 'required'])
+                ->setAttribute('placeholder', 'Jean Dupont');
+            $form->get('from')
+                // ->setLabel('Mail' . ' <span class="required">*</span>')->setLabelOptions(['disable_html_escape' => true])
+                ->setLabel('Courriel')
+                ->setAttribute('placeholder', 'jean@dupont.fr');
+            $form->get('message')
+                ->setLabel('Posez votre question');
+            $form->get('submit')
+                ->setAttribute('class', 'form-button submit-button')
+                ->setValue('Envoyer');
+            $user = $this->identity();
+            ?>
+
+         <div>
+            <p><?= $translate('Vous avez besoin d’aide ou souhaitez un renseignement ?') ?></p>
+            <img src="<?= $assetUrl('img/mail_gris.png') ?>" alt="" />
+        </div>
+        <?= $this->form()->openTag($form) ?>
+
+            <?php if ($message): ?>
+            <div>
+                <p class="explanation <?= $status ?>"><?= $message ?></p>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($user): ?>
+            <div>
+                <p>
+                    <?= $escape(sprintf($translate('Message de %s (%s)'), $user->getName(), $user->getEmail())) ?>
+                </p>
+            </div>
+            <?php else: ?>
+            <div>
+                <?= $formLabel($form->get('name')) ?>
+                <?= $formText($form->get('name')) ?>
+            </div>
+            <div>
+                <?= $formLabel($form->get('from')) ?>
+                <?= $formEmail($form->get('from')) ?>
+            </div>
+            <?php endif ?>
+
+            <div class="contact-message-fields">
+                <?= $formLabel($form->get('message')) ?>
+                <?= $formTextarea($form->get('message')) ?>
+            </div>
+
+            <p class="contact-warning"></p>
+
+            <?php if ($form->has('consent')): ?>
+            <?php if ($user): ?>
+                <?= $formHidden($form->get('consent')) ?>
+            <?php else: ?>
+            <label class="contact-accept-checkbox">
+                <?= $formCheckbox($form->get('consent')) ?>
+                <?= $formLabel($form->get('consent')) ?>
+            </label>
+            <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if ($form->has('newsletter')): ?>
+            <label class="contact-accept-checkbox">
+                <?= $formCheckbox($form->get('newsletter')) ?>
+                <?= $formLabel($form->get('newsletter')) ?>
+            </label>
+            <?php endif; ?>
+
+            <ul class="form-buttons">
+                <li><?= $formRow($form->get('submit')) ?></li>
+            </ul>
+
+            <?= $formRow($form->get('csrf')) ?>
+        <?= $this->form()->closeTag() ?>
+
+    <?php else: ?>
+
+        <div class="contact-form">
+            <?= $translate('Contactez l’adminstrateur du site.') ?>
+        </div>
+
+    <?php endif; ?>
+
+    </div>
+</div>
