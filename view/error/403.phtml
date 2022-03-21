@@ -1,0 +1,21 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Exception $exception
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+?>
+
+<div class="content">
+    <?= $this->pageTitle($translate('Forbidden')) ?>
+
+    <?php if (ini_get('display_errors')): ?>
+        <?php if (isset($exception)): ?>
+        <pre><?= $escape($exception) ?></pre>
+        <?php endif; ?>
+    <?php endif; ?>
+
+</div>

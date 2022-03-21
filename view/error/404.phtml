@@ -1,0 +1,36 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Exception $exception
+ * @var \Omeka\Stdlib\Message $message
+ * @var string $reason
+ * @var bool $display_exceptions
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+?>
+
+<div class="content">
+    <?= $this->pageTitle($translate('Page not found')) ?>
+
+    <p>
+        <?= $translate('The page you are trying to view does not exist. Use the back button to return to the last page.') ?>
+    </p>
+
+    <?php if (ini_get('display_errors')): ?>
+        <?php if (isset($message)): ?>
+        <p><?= $message ?></p>
+        <?php endif; ?>
+
+        <?php if (isset($reason)): ?>
+        <p><?= sprintf($translate('Reason: %s'), '<tt>' . $escape($reason) . '</tt>') ?></p>
+        <?php endif; ?>
+
+        <?php if ((!isset($display_exceptions) || $display_exceptions) && isset($exception)): ?>
+        <pre><?= $escape($exception) ?></pre>
+        <?php endif; ?>
+    <?php endif; ?>
+
+</div>

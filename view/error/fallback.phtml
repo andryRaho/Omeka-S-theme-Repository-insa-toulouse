@@ -1,0 +1,44 @@
+<?php
+/**
+ * @var \Exception $e
+ */
+
+$escape = function ($text) {
+    return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
+};
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Omeka S a rencontré une erreur</title>
+</head>
+<body class="body-inner">
+    <main class="content-with-margin user-account">
+        <div class="content">
+            <h1>Omeka S a rencontré une erreur</h1>
+
+            <?php if (ini_get('display_errors')): ?>
+
+            <p>
+                <strong><?= $escape(get_class($e)) ?></strong><br/>
+                <?= $escape($e->getMessage()) ?>
+            </p>
+            <p>Details :</p>
+            <pre>
+                <?= $escape($e); ?>
+            </pre>
+
+            <?php else: ?>
+
+            <p>
+                To learn how to see more detailed information about this error, see the Omeka S User Manual page on
+                <a href="https://omeka.org/s/docs/user-manual/errorLogging/">retrieving error messages</a>.
+            </p>
+
+            <?php endif; ?>
+        </div>
+    </main>
+</body>
+</html>

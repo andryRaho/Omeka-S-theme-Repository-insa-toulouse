@@ -1,0 +1,37 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Exception $exception
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+?>
+
+<div class="content">
+
+    <h1><?= $translate('Omeka S encountered an error') ?></h1>
+
+    <?php if (ini_get('display_errors')): ?>
+
+    <p>
+        <strong><?= $escape(get_class($exception)) ?></strong><br/>
+        <?= $escape($exception->getMessage()) ?>
+    </p>
+    <p><?= $translate('Details:') ?></p>
+    <pre>
+        <?= $escape($exception); ?>
+    </pre>
+
+    <?php else: ?>
+
+    <p>
+        <?= sprintf($translate('To learn how to see more detailed information about this error, see the Omeka S User Manual page on %s.'),
+            '<a href="https://omeka.org/s/docs/user-manual/errorLogging/">' . $translate('retrieving error messages') . '</a>'
+        ) ?>
+    </p>
+
+    <?php endif; ?>
+
+</div>
