@@ -11,8 +11,10 @@
  */
 
 $plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
 $api = $plugins->get('api');
 $partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $translatePlural = $plugins->get('translatePlural');
 $themeFunctions = $plugins->get('ThemeFunctions');
@@ -37,6 +39,16 @@ if ($documentCount):
 endif;
 
 $themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
+
+$isBrowse = $query->isBrowse();
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $site->slug()]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><span>' . $translate($isBrowse ? 'Consulter un document' : 'Résultats de recherche') . '</span></li>
+    </ul>
+</nav>';
+$themeFunctions->appendVarToView('ariane', $ariane);
 ?>
 
 <?php /* // Le formulaire de recherche principal est dans l'entête.
@@ -51,16 +63,15 @@ $themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
 </aside>
 
 <div class="search-results-wrapper content">
-    <a class="resources-list-toggle-filters" href="">Filtres</a>
-    <?= $this->pageTitle($itemSet ? $itemSet->displayTitle() : $translate('Documents'), 1) ?>
-    <div class="search-results resources-list">
-        <div class="noresults"><?= $translate('An error occured and your query returned no results.') ?></div>
-    </div>
+    <a class="resources-list-toggle-filters" href=""><?= $translate('Filtres') ?></a>
+    <?= $this->pageTitle($itemSet ? $itemSet->displayTitle() : $translate($isBrowse ? 'Documents' : 'Résultats de recherche'), 1) ?>
+    <p class="search-results-details noresults"><?= $translate('An error occured and your query returned no results.') ?></p>
 </div>
 
 <?php else: ?>
 
 <?= $partial('search/facets', [
+    'site' => $site,
     'searchPage' => $searchPage,
     'query' => $query,
     'response' => $response,
@@ -69,7 +80,7 @@ $themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
 
 <div class="search-results-wrapper content">
 
-    <a class="resources-list-toggle-filters" href="">Filtres</a>
+    <a class="resources-list-toggle-filters" href=""><?= $translate('Filtres') ?></a>
 
     <?php if ($itemSet): ?>
 
@@ -89,7 +100,9 @@ $themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
     <?php else: ?>
 
         <?php $this->htmlElement('body')->appendAttribute('class', 'search-page resource browse'); ?>
-    <?= $this->pageTitle($translate('Documents')) ?>
+    <?= $this->pageTitle($translate($isBrowse
+        ? 'Documents'
+        : 'Résultats de recherche')) ?>
 
     <?php endif; ?>
 
@@ -97,6 +110,7 @@ $themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
 
         <?php if ($displayPartsHeader): ?>
         <?= $partial('search/results-header-footer', [
+            'site' => $site,
             'searchPage' => $searchPage,
             'query' => $query,
             'response' => $response,
@@ -130,6 +144,7 @@ $themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
 
         <?php if ($displayPartsFooter): ?>
             <?= $partial('search/results-header-footer', [
+                'site' => $site,
                 'searchPage' => $searchPage,
                 'query' => $query,
                 'response' => $response,

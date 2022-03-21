@@ -2551,7 +2551,7 @@ p:empty {
 
     /* */
 
-    .resources-pagination-bottom .resources-pagination {
+    .resources-pagination-footer .resources-pagination {
         display: flex;
         justify-content: flex-end;
         align-items: center;

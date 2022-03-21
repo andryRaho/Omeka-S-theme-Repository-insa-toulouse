@@ -21,6 +21,9 @@ $(function () {
     const advancedSearchTemplate = $('.advanced-search-form > .search-filters > li:first-child');
     const advancedSearchTemplateTarget = $('.advanced-search-form > .more-filters > .search-filters');
 
+    const exportSelect = $('.export-select select[name=format]');
+    const exportButton = $('.export-button');
+
     const addDocumentToDepotBtn = $('.add-document-to-depot-btn');
     const depotContent = $('.depot-content');
     const depotContentEtape1 = $('.depot-content ul.navigation.etapes-depot li:nth-child(1) a');
@@ -285,6 +288,20 @@ $(function () {
         }
     });
 
+    exportSelect.on('change', function(e) {
+        const select = $(this);
+        const button = select.closest('.search-results-part').find('.export-button');
+        button.prop('href', select.find('option:selected').data('url'));
+    });
+
+    exportButton.on('click', function(e) {
+        const select = $(this).closest('.search-results-part').find('.export-select select');
+        const format = select.val();
+        if (!format.length) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    });
 
     /* Limited access popup */
 

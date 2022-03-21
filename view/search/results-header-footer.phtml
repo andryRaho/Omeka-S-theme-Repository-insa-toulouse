@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchPage
  * @var \AdvancedSearch\Query $query
  * @var \AdvancedSearch\Response $response
@@ -11,6 +12,10 @@
 
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
+$translatePlural = $plugins->get('translatePlural');
+
+$feedResources = $plugins->has('feedResources') ? $plugins->get('feedResources'): null;
+$exporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : [];
 
 // Default values of the module.
 $displayParts = [
@@ -23,18 +28,70 @@ $displayParts = [
 ];
 $displayParts = $searchPage ? $searchPage->setting('display', $displayParts) : $displayParts;
 $displayParts = array_filter($displayParts, function ($v) use ($resultPart) { return in_array($v, [$resultPart, 'both']); });
+$isHeader = $resultPart === 'header';
 
 $paginationPerPages = isset($displayParts['per_pages']) ? $searchPage->subSetting('pagination', 'per_pages') : [];
 $sortFields = isset($displayParts['sort']) ? $searchPage->subSetting('sort', 'fields') : [];
 $gridListMode = $searchPage->subSetting('display', 'grid_list_mode', 'auto');
 $multiMode = isset($displayParts['grid_list']) && !in_array($gridListMode, ['list_only', 'grid_only']);
+
+$isBrowse = $query->isBrowse();
 ?>
 
-<ul class="search-results-part search-results-header resources-list-tools">
+<?php if ($isHeader && !$isBrowse): ?>
 
-    <?php if (isset($displayParts['search_filters'])): ?>
-    <?= $this->searchingFilters($searchPage, $query, ['template' => 'common/search-filters-links']) ?>
+<p class="search-results-details"><?= sprintf($translatePlural('Vous avez %s résultat.', 'Vous avez %s résultats.', $documentCount), $documentCount) ?></p>
+
+<?php if (isset($displayParts['search_filters'])): ?>
+<?= $this->searchingFilters($searchPage, $query, ['template' => 'common/search-filters-links']) ?>
+<?php endif; ?>
+
+<ul class="search-results-part <?= $isHeader ? 'search-results-header' : 'search-results-footer' ?> search-results-tools">
+    <?php if ($exporters):
+        $ids = $response->getResourceIds();
+        if ($ids):
+            $siteSlug = $site->slug();
+            $urlHelper = $plugins->get('url');
+            $idsString = implode(',', $ids);
+        ?>
+    <li>
+        <div class="select-parent export-select">
+            <select name="format">
+                <option value="" data-url=""><?= 'Exporter' ?></option>
+                <?php foreach ($exporters as $format => $label):
+                    $urlFormat = $urlHelper('site/resource/output', ['site-slug' => $siteSlug, 'controller' => 'resource', 'format' => $format], ['query' => ['id' => $idsString]], true);
+                    // $labelFormat = sprintf($translate('Télécharger au format %s'), in_array($format, ['ods', 'xlsx', 'xls']) ? 'tableur (' . $label . ')' : (in_array($format, ['bib.txt', 'bib.odt']) ? 'texte' : $label));
+                    ?>
+                <option value="<?= $format ?>" data-url="<?= $urlFormat ?>"><?= $label ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <ul class="form-buttons">
+            <li><a href="" class="form-button export-button"><?= 'Exporter' ?></a></li>
+        </ul>
+    </li>
+    <li class="search-results-tools-separator"></li>
     <?php endif; ?>
+    <?php endif; ?>
+    <?php if ($feedResources): ?>
+    <li>
+        <div class="select-parent syndication-select">
+            <select>
+                <option>RSS</option>
+                <option>ATOM</option>
+            </select>
+        </div>
+    </li>
+    <li class="search-results-tools-separator"></li>
+    <?php endif; ?>
+    <li>
+        <a href="" class="advanced-search-link"><?= $translate('Modifier la recherche') ?></a>
+    </li>
+</ul>
+
+<?php endif; ?>
+
+<ul class="search-results-part <?= $isHeader ? 'resources-pagination-header' : 'resources-pagination-footer' ?> resources-list-tools">
 
     <?php if (count($sortFields) || count($paginationPerPages)): ?>
     <li>
@@ -54,7 +111,7 @@ $multiMode = isset($displayParts['grid_list']) && !in_array($gridListMode, ['lis
 
     <?php if (isset($displayParts['paginator'])): ?>
     <li>
-        <div class="search-results-count <?= $resultPart === 'header' ? 'resources-pagination-top' : 'resources-pagination-bottom' ?>">
+        <div class="search-results-count <?= $isHeader ? 'resources-pagination-header' : 'resources-pagination-footer' ?>">
             <?= $this->pagination('common/pagination') ?>
         </div>
     </li>
