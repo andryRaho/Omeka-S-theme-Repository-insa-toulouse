@@ -1,0 +1,106 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var array $widgets
+ */
+
+// Dans le site, il n'est pas possible d'avoir un compte spécifique et tous les utilisateurs sont authentifiés par Shibboleth.
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$api = $plugins->get('api');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$pageTitle = $plugins->get('pageTitle');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$siteSlug = $site->slug();
+
+// $guestWidget = $plugins->get('guestWidget');
+$hasContribute = $plugins->has('linkContribute');
+$hasSelection = $plugins->has('showSelectionLink');
+
+$this->htmlElement('body')->appendAttribute('class', 'guest account');
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $siteSlug]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><span>' . $escape($translate('Mon compte')) . '</span></li>
+    </ul>
+</nav>';
+
+$themeFunctions->appendVarsToView([
+    'ariane' => $ariane,
+    'mainClass' => 'user-account user-infos',
+]);
+
+// "User" n'a pas le droit de chercher un utilisateur.
+// L'api ne permet pas de rechercher sur le nom de la classe directement.
+$resourceClass = $api->searchOne('resource_classes', ['term' => 'foaf:Person'])->getContent();
+$author = $this->api()->search('items', [
+    'resource_class_id' => $resourceClass->id(),
+    // FIXME Utiliser l'email, pas le nom.
+    'property' => [['property' => 'foaf:mbox', 'type' => 'eq', 'text' => $user->getEmail()]]
+])->getContent();
+if (!$author) {
+    $author = $this->api()->search('items', [
+        'resource_class_id' => $resourceClass->id(),
+        // FIXME Utiliser l'email, pas le nom.
+        'property' => [['property' => 'foaf:name', 'type' => 'eq', 'text' => $user->getName()]]
+    ])->getContent();
+}
+
+$name = $author ? $author->value('foaf:familyName', ['default' => $user->getName()]) : $user->getName();
+?>
+
+<div class="content">
+    <?= $pageTitle($name, 1) ?>
+
+    <?= $this->messages() ?>
+
+    <ul class="user-tabs">
+        <li class="active">
+            <a href="<?= $url('site/guest', [], true) ?>"><?= $translate('Profil') ?></a>
+        </li>
+        <?php if ($hasContribute): ?>
+        <li>
+            <a href="<?= $url('site/guest/contribution', [], true) ?>"><?= $translate('Documents déposés') ?></a>
+        </li>
+        <?php endif; ?>
+        <?php if ($hasSelection): ?>
+        <li>
+            <a href="<?= $url('site/guest/selection', [], true) ?>"><?= $translate('Documents sauvegardés') ?></a>
+        </li>
+        <?php endif; ?>
+    </ul>
+
+    <div class="user-content">
+        <ul class="user-infos">
+            <?php if ($author): ?>
+            <li>
+                <label><?= $translate('Prénom') ?></label>
+                <span><?= $escape($author->value('foaf:givenName')) ?></span>
+            </li>
+            <li>
+                <label><?= $translate('Nom') ?></label>
+                <span><?= $escape($name) ?></span>
+            </li>
+            <li>
+                <label><?= $translate('Adresse du courriel') ?></label>
+                <span><?= $escape($author->value('foaf:mbox') ?: $user->getEmail()) ?></span>
+            </li>
+            <?php else: ?>
+            <li>
+                <label><?= $translate('Nom') ?></label>
+                <span><?= $escape($user->getName()) ?></span>
+            </li>
+            <li>
+                <label><?= $translate('Adresse du courriel') ?></label>
+                <span><?= $escape($user->getEmail()) ?></span>
+            </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</div>
