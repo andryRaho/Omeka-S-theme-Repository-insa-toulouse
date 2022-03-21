@@ -1,0 +1,57 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \ContactUs\Form\ContactUsForm $form
+ * @var string $heading
+ * @var string $html
+ * @var string $message
+ * @var string $status "success" or "error"
+ * @var string $contact "us" or "author"
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$formLabel = $plugins->get('formLabel');
+$formHidden = $plugins->get('formHidden');
+$formElement = $plugins->get('formElement');
+
+$element = null;
+?>
+
+<?php if ($message): ?>
+<p class="explanation <?= $status ?>"><?= $message ?></p>
+<?php endif; ?>
+
+<?php if (!$form) return; ?>
+
+<?= $this->form()->openTag($form->setAttribute('class', 'limited-access-form')) ?>
+    <?php if ($element = $form->get('name') && !$element instanceof \Laminas\Form\Element\Hidden): ?>
+    <div>
+        <?= $formLabel($element->setLabel('Nom Prénom')); ?>
+        <?= $formElement($element); ?>
+    </div>
+    <?php endif; ?>
+    <?php if ($element = $form->get('name') && !$element instanceof \Laminas\Form\Element\Hidden): ?>
+    <div>
+        <?= $formLabel($element->setLabel('Courriel')); ?>
+        <?= $formElement($element); ?>
+    </div>
+    <?php endif; ?>
+    <?php $element = $form->get('message'); ?>
+    <div>
+        <?= $formLabel($element->setLabel('Posez votre question')); ?>
+        <?= $formElement($element); ?>
+    </div>
+    <ul class="form-buttons">
+        <li><button type="submit" class="form-button submit-button"><?= $escape($translate('Envoyer')) ?></a></li>
+    </ul>
+    <?php
+    foreach ($form->getElements() as $element):
+        if ($element instanceof \Laminas\Form\Element\Csrf || $element instanceof \Laminas\Form\Element\Hidden):
+            echo $formHidden($element);
+        endif;
+    endforeach;
+    ?>
+<?= $this->form()->closeTag() ?>

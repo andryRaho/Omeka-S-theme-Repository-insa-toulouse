@@ -1,0 +1,214 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ *
+ * Le fil d'Ariane n'est pas dans <main>, mais dans ce gabarit (sauf page d'accueil).
+ * Comme il est créé par "$content", il doit être inclus via la variable "ariane"
+ * (breadcrumbs est parfois déjà utilisé).
+ * @var string $ariane
+ *
+ * Le popup de contact auteur se trouve dans ce gabarit et la resource est donc disponible.
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ */
+
+$plugins = $this->getHelperPluginManager();
+$partial = $plugins->get('partial');
+$setting = $plugins->get('setting');
+$escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$themeSetting = $plugins->get('themeSetting');
+$themeFunctions = $plugins->get('ThemeFunctions');
+$themeSettingAssetUrl = $plugins->get('themeSettingAssetUrl');
+
+// $languageSwitcher = $plugins->has('languageSwitcher') ? $plugins->get('languageSwitcher') : null;
+$searchingForm = $plugins->has('searchingForm') ? $plugins->get('searchingForm') : null;
+
+$siteTitle = $site->title();
+
+$simpleRoute = $themeFunctions->simpleRoute();
+$isResource = in_array($simpleRoute['controller'], ['item', 'item-set', 'media']);
+$isItemShow = $isResource && $simpleRoute['controller'] === 'item' && $simpleRoute['action'] === 'show';
+$hasMapping = $themeFunctions->hasMappingOrMarkers();
+$hasGuest = $plugins->has('guestWidget');
+$hasContactUs = $plugins->has('contactUs');
+// $isSitePage = $simpleRoute['controller'] === 'page' && $simpleRoute['action'] === 'show';
+// $isHomePage = $themeFunctions->isHomePage();
+
+$this->htmlElement('html')
+    ->setAttribute('lang', $this->lang());
+$this->htmlElement('body')
+    ->appendAttribute('class', 'body-inner');
+$this->headMeta()
+    ->setCharset('utf-8')
+    ->appendName('viewport', 'width=device-width, initial-scale=1');
+
+$this->headTitle($siteTitle)
+    ->setSeparator(' · ')
+    ->append($setting('installation_title', 'Omeka S'));
+
+$headLink = $this->headLink()
+    // ->appendStylesheet($assetUrl('css/fonts.css'))
+    // <link rel="preconnect" href="https://fonts.googleapis.com">
+    // <link rel="preconnect" href="="https://fonts.gstatic.com">
+    ->appendStylesheet('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Open+Sans:ital,wght@0,400;0,600;0,700;1,400;1,600;1,800&display=swap')
+    ->appendStylesheet($assetUrl('vendor/chosen-js/chosen.min.css', 'Omeka'))
+    ->appendStylesheet($assetUrl('css/iconfonts.css', 'Omeka'))
+    ->appendStylesheet($assetUrl('css/omeka.css'))
+;
+$headScript = $this->headScript()
+    ->prependFile($assetUrl('js/global.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
+    ->prependFile($assetUrl('vendor/jquery/jquery.min.js', 'Omeka'))
+    ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
+;
+if ($hasMapping) {
+    // Cf. Mapping view/mapping/site/index/browse, view/mapping/index/show et view/mapping/index/advanced search.
+    $headLink
+        ->appendStylesheet($assetUrl('vendor/leaflet/leaflet.css', 'Mapping'))
+        ->appendStylesheet($assetUrl('vendor/leaflet.markercluster/MarkerCluster.css', 'Mapping'))
+        ->appendStylesheet($assetUrl('vendor/leaflet.markercluster/MarkerCluster.Default.css', 'Mapping'));
+    $headScript
+        ->appendFile($assetUrl('vendor/leaflet/leaflet.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
+        ->appendFile($assetUrl('vendor/leaflet.markercluster/leaflet.markercluster-src.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
+        ->appendFile($assetUrl('vendor/leaflet.providers/leaflet-providers.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
+        ->appendFile($assetUrl('js/control.fit-bounds.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
+    ;
+    // FIXME Module Mapping uses the same ids for show and browse, so browse cannot be used twice in the item/show pages.
+    if ($isItemShow) {
+        $headScript
+            ->appendFile($assetUrl('js/mapping-show.js', 'Mapping'), 'text/javascript', ['defer' => 'defer']);
+    } else {
+        $headScript
+            ->appendFile($assetUrl('js/mapping-browse.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
+            ->appendFile($assetUrl('js/advanced-search.js', 'Omeka'), 'text/javascript', ['defer' => 'defer']);
+    }
+}
+
+if ($searchingForm):
+    // if ($searchPage->subSetting('autosuggest', 'enable')) {
+    $headScript
+        ->appendFile($assetUrl('vendor/jquery-autocomplete/jquery.autocomplete.min.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
+    // }
+
+    $headLink
+        // ->appendStylesheet($assetUrl('vendor/chosen-js/chosen.min.css', 'Omeka'))
+        // ->appendStylesheet($assetUrl('css/search.css', 'AdvancedSearch'))
+    ;
+    $headScript
+        // ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
+        ->appendFile($assetUrl('js/search.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
+endif;
+
+// $this->jsTranslate();
+
+$this->trigger('view.layout');
+
+// Garder les styles du thème en dernier.
+$headLink
+    ->appendStylesheet($assetUrl('css/styles.css'));
+
+$headScript
+    ->appendFile($assetUrl('js/top.js'), 'text/javascript', ['defer' => 'defer'])
+    ->appendFile($assetUrl('js/scripts.js'), 'text/javascript', ['defer' => 'defer']);
+
+$userBar = $this->userBar();
+
+$baseAssetUrl = $assetUrl('', null, false, false);
+$baseSiteUrl = $site->url('site', [], true);
+?>
+<?= $this->doctype() ?>
+<?= $this->htmlElement('html') ?>
+    <head>
+        <?= $this->headMeta() ?>
+        <?= $this->headTitle() ?>
+        <meta name="theme-color" content="#000"/>
+        <meta name="apple-mobile-web-app-status-bar-style" content="#000"/>
+        <link rel="icon shortcut" type="image/png" href="<?= $baseAssetUrl ?>img/logo/favicon.png"/>
+        <?php /*
+        <link rel="icon shortcut" type="image/svg+xml" href="<?= $baseAssetUrl ?>img/logo/favicon.svg"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="<?= $baseAssetUrl ?>img/logo/favicon-16x16.png"/>
+        <link rel="icon" type="image/png" sizes="32x32" href="<?= $baseAssetUrl ?>img/logo/favicon-32x32.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="60x60" href="<?= $baseAssetUrl ?>img/logo/favicon-60x60.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="76x76" href="<?= $baseAssetUrl ?>img/logo/favicon-76x76.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="120x120" href="<?= $baseAssetUrl ?>img/logo/favicon-120x120.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="152x152" href="<?= $baseAssetUrl ?>img/logo/favicon-152x152.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="180x180" href="<?= $baseAssetUrl ?>img/logo/favicon-180x180.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="192x192" href="<?= $baseAssetUrl ?>img/logo/favicon-192x192.png"/>
+        <link rel="icon apple-touch-icon" type="image/png" sizes="512x512" href="<?= $baseAssetUrl ?>img/logo/favicon-512x512.png"/>
+        <link rel="mask-icon" href="<?= $baseAssetUrl ?>img/logo/favicon-pinned-tab.svg" color="#fff"/>
+        <link rel="manifest" href="<?= $baseAssetUrl ?>img/logo/site.webmanifest" crossorigin="use-credentials"/>
+        */ ?>
+        <?= $headLink ?>
+        <?= $this->headStyle() ?>
+        <?= $headScript ?>
+    </head>
+    <?= $this->htmlElement('body') ?>
+        <?= $userBar ?>
+        <header>
+            <div class="header-top content-with-margin">
+                <div class="hamburger-parent">
+                    <div class="hamburger">
+                        <a href="#" class="c-hamburger c-hamburger--htx open-header-menu">
+                            <span><?= $translate('Toggle menu') ?></span>
+                        </a>
+                    </div>
+                </div>
+                <?php if ($value = $themeSettingAssetUrl('logo')): ?>
+                    <style>a.logo-header { background-url: url(<?= $value ?>); }</style>
+                <?php endif; ?>
+                <a href="<?= $value = $themeSetting('logo_url') ? $escapeAttr($value) : $site->url() ?>" class="site-title logo-header" title=<?= $escapeAttr($themeSetting('logo_title') ?: $siteTitle) ?>></a>
+                <div class="search-form-mask">
+                    <?= $searchingForm ? $searchingForm('search/search-form-headroom') : $partial('common/search-form-headroom') ?>
+                </div>
+                <div class="header-top-links">
+                    <a href="" class="search-menu-toggle"><span><?= $translate('Menu recherche') ?></span></a>
+                    <a href="<?= $baseSiteUrl ?>/page/contact" class="contact-link"><span><?= $translate('Contact') ?></span></a>
+                    <a href="<?= $baseSiteUrl ?>/page/aide" class="support-link"><span><?= $translate('Aide') ?></span></a>
+                    <a href="<?= $hasGuest ? $baseSiteUrl . '/guest/login' : '/login' ?>" class="login-link"><span><?= $translate('S’identifier') ?></span></a>
+                </div>
+            </div>
+            <div class="header-bottom">
+                <?= $site->publicNav()->menu()->renderMenu(null, [
+                    'maxDepth' => ($maxDepth = $themeSetting('nav_depth')) ? $maxDepth - 1 : null,
+                    'ulClass' => 'content-with-margin',
+                ]) ?>
+            </div>
+        </header>
+        <?php if (!empty($ariane)): ?>
+        <nav class="breadcrumbs content-with-margin">
+            <?= $ariane ?>
+        </nav>
+        <?php endif; ?>
+        <main id="content" role="main" class="content-with-margin">
+            <?= $this->content ?>
+        </main>
+        <footer id="footer" class="content-with-padding" aria-label="Footer navigation" role="navigation">
+            <?= $themeSetting('footer') ?: $partial('layout/footer') ?>
+            <a href="" class="cd-top footer-back-to-top"></a>
+        </footer>
+        <?php // Pop-ups en fonction des pages. ?>
+        <?= $searchingForm ? $searchingForm('search/search-form-popup') : $partial('common/search-form-popup') ?>
+        <?php if (!empty($resource)): ?>
+        <div class="limited-access-popup">
+            <div class="popup-scroll-content">
+                <div class="limited-access-popup-content">
+                    <div class="limited-access-close close-popup-btn">
+                        <a href="#"></a>
+                    </div>
+                    <div class="limited-access-form-parent">
+                        <h1><?= $translate('Ce document est en accès restreint')?></h1>
+                        <p><?= $translate('Contacter l’auteur pour pouvoir consulter le document') ?></p>
+                        <?php if ($hasContactUs): ?>
+                        <?= $this->contactUs(['resource' => $resource, 'contact' => 'author', 'template' => 'common/contact-us-author']) ?>
+                        <?php else: ?>
+                        <p><?= $escape($translate('Demander à l’adminstrateur du site pour plus d’information.')) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+    </body>
+</html>

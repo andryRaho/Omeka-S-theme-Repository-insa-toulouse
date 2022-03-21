@@ -1,0 +1,48 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Laminas\Form\Form $form
+ */
+
+// Recherche principale: affiche le premier champ (le principal) du formulaire et ses champs obligatoires ou cachés.
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$formSearch = $plugins->get('formSearch');
+$themeSetting = $plugins->get('themeSetting');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$form
+    ->setAttribute('class', $form->getAttribute('class') . ' search-form');
+
+/*
+$hasMapping = $themeFunctions->hasMappingOrMarkers()
+    // FIXME Module Mapping uses the same ids for show and browse, so mapping cannot be used  in the item/show pages.
+    && $themeFunctions->simpleRoute() !== ['controller' => 'item', 'action' => 'show'];
+$isAdvancedSearchForm = $themeFunctions->isAdvancedSearchForm($form);
+*/
+$mainElement = $themeFunctions->mainElementOfSearchForm($form);
+
+// TODO Vérifier si le module Advanced Search est présent.
+
+$advancedSearchUrl = $themeSetting('search_advanced_page') ?: $this->searchingUrl();
+?>
+
+<div class="search-form-parent">
+    <?= $this->form()->openTag($form) ?>
+        <div class="form-input-and-buttons">
+            <?= $formSearch($mainElement->setAttribute('class', 'search-text')->setAttribute('placeholder', $translate('Search'))->setAttribute('aria-label', $translate('Search'))) ?>
+            <div class="form-buttons">
+                <button type="submit" class="icon-search-btn" aria-label="<?= $translate('Lancer la recherche dans le corpus') ?>">
+                    <span class="icon-loupe"></span>
+                </button>
+                <?php /*
+               <button class="icon-close-btn" aria-label="<?= $translate('Effacer les termes de recherche') ?>"></button>
+               */ ?>
+            </div>
+        </div>
+    <?= $this->form()->closeTag() ?>
+    <a href="<?= $advancedSearchUrl ?>" class="advanced-search-link">
+        <?= $translate('Advanced search') ?>
+    </a>
+</div>

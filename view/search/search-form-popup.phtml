@@ -1,0 +1,164 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \AdvancedSearch\Form\MainSearchForm $form
+ */
+
+// Le formulaire est ajouté si le formulaire principal est un formulaire avancé.
+
+// TODO Ajouter le même formulaire pour la recherche standard avancée (cf. common/advanced-search-form).
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+// $themeFunctions = $plugins->get('ThemeFunctions');
+
+// $formRow = $plugins->get('formRow');
+$formLabel = $plugins->get('formLabel');
+$formSelect = $plugins->get('formSelect');
+$formButton = $plugins->get('formButton');
+$formHidden = $plugins->get('formHidden');
+$formSearch = $plugins->get('formSearch');
+// $formElement = $plugins->get('formElement');
+$formCollection = $plugins->get('formCollection');
+
+// $site = $themeFunctions->currentSite();
+
+$params = $this->params()->fromQuery() ?: [];
+$form
+    ->setData($params)
+    ->prepare();
+
+// N'utilise pas l'itérateur, seuls les éléments principaux sont modifiés.
+foreach ($form as $name => $element) switch ($name):
+    case 'q':
+        $element
+            ->setAttribute('class', trim($element->getAttribute('class') . ' advanced-search-text-input'));
+        break;
+    case 'submit':
+        $element
+            ->setLabel('Valider')
+            ->setAttribute('class', 'form-button submit-button')
+            ->setValue('Rechercher');
+        break;
+    case 'item_set':
+        $element->get('id')
+            ->setLabel('Rechercher par collection')
+            ->setOption('empty_option', '')
+            ->setOption('prepend_value_options', ['' => 'Toutes les collections'])
+            ->setAttribute('data-placeholder', $translate('Choisir les collections'));
+        break;
+    case 'class':
+        // value_options de resourceClass ne sont pas modifiables.
+        // Les valeurs ajoutées vides ne servent pas avec chosen-select.
+        // Le formulaire ne doit pas avoir été préparé (headroom?).
+        $element->get('id')
+            ->setLabel('Rechercher par type de document')
+            ->setOption('empty_option', '')
+            ->setOption('prepend_value_options', ['' => 'Tous les types de document'])
+            ->setAttribute('data-placeholder', $translate('Choisir les types de document'));
+        break;
+    case 'template':
+        $element->get('id')
+            ->setLabel('Rechercher par type de ressource')
+            ->setOption('empty_option', '')
+            ->setOption('prepend_value_options', ['' => 'Tous les types de ressource'])
+            ->setAttribute('data-placeholder', $translate('Choisir les types de ressource'));
+        break;
+    default:
+        break;
+endswitch;
+
+// Prépare les labels et attributs spécifiques au thème.
+$form
+    ->setAttribute('class', trim($form->getAttribute('class') . ' advanced-search-form'))
+    ->prepare();
+
+// Implémentation rapide des filtres.
+$filtersReplace = [
+    '<fieldset class="filter">' => '',
+    '</fieldset>' => '',
+    '<select ' => '<div class="select-parent"><select ',
+    '</select>' => '</select></div>',
+];
+?>
+
+<div class="advanced-search-popup">
+    <div class="popup-scroll-content">
+        <div class="advanced-search-popup-content">
+            <div class="advanced-search-close close-popup-btn">
+                <a href="#"></a>
+            </div>
+            <div class="advanced-search-form-parent">
+                <h1><?= $translate('Recherche avancée') ?></h1>
+                <ul class="form-buttons">
+                    <li><a href="" class="form-button clear-button"><?= $translate('Effacer la recherche') ?></a></li>
+                </ul>
+                <?= $this->form()->openTag($form) ?>
+
+                    <div class="field search-by-keyword">
+                        <?php $element = $form->get('q'); ?>
+                        <?= $formLabel($element) ?>
+                        <?= $formSearch($element) ?>
+                    </div>
+
+                    <?php if ($form->has('filter')): ?>
+                    <ul class="search-filters">
+                        <?php foreach ($form->get('filter') as $elements): ?>
+                            <li class="search-filter">
+                                <?= str_replace(array_keys($filtersReplace), array_values($filtersReplace), $formCollection($elements)) ?>
+                                <a href="#" class="advanced-search-remove-filter"></a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <div class="more-filters">
+                        <ul class="search-filters">
+                        </ul>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if ($form->has('item_set')):
+                    $element = $form->get('item_set')->get('id'); ?>
+                    <div class="field select-multi">
+                        <?= $formLabel($element) ?>
+                        <div class="select-parent">
+                            <?= $formSelect($element) ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if ($form->has('class')):
+                    $element = $form->get('class')->get('id'); ?>
+                    <div class="field select-multi">
+                        <?= $formLabel($element) ?>
+                        <div class="select-parent">
+                            <?= $formSelect($element) ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <?php if ($form->has('template')):
+                        $element = $form->get('template')->get('id'); ?>
+                    <div class="field select-multi">
+                        <?= $formLabel($element) ?>
+                        <div class="select-parent">
+                            <?= $formSelect($element) ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <ul class="form-buttons">
+                        <li><?= $formButton($form->get('submit')) ?></li>
+                    </ul>
+
+                <?php
+                foreach ($form->getElements() as $element):
+                    if ($element instanceof \Laminas\Form\Element\Csrf || $element instanceof \Laminas\Form\Element\Hidden):
+                        echo $formHidden($element);
+                    endif;
+                endforeach;
+                ?>
+                <?= $this->form()->closeTag() ?>
+            </div>
+        </div>
+    </div>
+</div>

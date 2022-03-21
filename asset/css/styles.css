@@ -80,6 +80,11 @@ a:hover > span {
     text-decoration: none;
 }
 
+/* Fix ckeditor */
+
+p:empty {
+    display: none;
+}
 
 /* DESKTOP GENERAL */
 
@@ -146,7 +151,11 @@ a:hover > span {
         height: auto
     }
 
-    input, textarea, button, .button, .resource-list.preview + a {
+    input,
+    textarea,
+    button,
+    .button,
+    .resource-list.preview + a {
         font-size: 20px;
         line-height: 30px;
         margin: 0;
@@ -217,7 +226,10 @@ a:hover > span {
         font-size: 15px
     }
 
-    button, a.button, .resource-list.preview + a, [type="submit"] {
+    button,
+    a.button,
+    .resource-list.preview + a,
+    [type="submit"] {
         background-color: #dedede;
         border-radius: 2px;
         padding: 7.5px;
@@ -409,8 +421,7 @@ a:hover > span {
     }
 
     #user-bar {
-        display: none;
-        position: relative;
+        /* display: none; */
         z-index: 1250;
     }
 
@@ -3692,7 +3703,7 @@ a:hover > span {
         height: 50px;
         padding: 0;
         margin-left: 40px;
-        background: url(../img/logo/logo_DANTE-S.png) left top 7px / 109px auto no-repeat;
+        background: url(../img/logo/logo.png) left top 7px / 109px auto no-repeat;
     }
 
     .header-top-links,

@@ -1,0 +1,49 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$themeSetting = $plugins->get('themeSetting');
+
+$params = $this->params()->fromQuery() ?: [];
+
+$value = $params['fulltext_search'] ?? '';
+$searchValue = $escape($value);
+
+$searchType = $siteSetting('search_type', 'sitewide');
+$searchAction = $searchType === 'cross-site'
+    ? $url('site/cross-site-search', ['action' => 'results'], true)
+    : $url('site/resource', ['controller' => 'index', 'action' => 'search'], true);
+
+$advancedSearchUrl = ($advancedSearchUrl = $themeSetting('search_advanced_page'))
+    ? $url('site', [], true) . '/' . trim($advancedSearchUrl, '/')
+    : $url('site/resource', ['controller' => 'item', 'action' => 'search'], true);
+?>
+
+<div class="search-form-parent">
+    <form action="<?= $escapeAttr($searchAction) ?>" id="search-form" class="search-form">
+        <div class="form-input-and-buttons">
+            <input type="search" name="fulltext_search" value="<?= $escapeAttr($searchValue) ?>"<?php // value="" ?> placeholder="<?= $escapeAttr($translate('Search')) ?>" aria-label="<?= $escapeAttr($translate('Search')) ?>"/>
+            <?php if (!empty($isItemSetShow)): ?>
+            <input type="hidden" name="item_set_id" value="<?= $itemSet->id() ?>"/>
+            <?php endif; ?>
+            <div class="form-buttons">
+                <button type="submit" class="icon-search-btn" aria-label="<?= $escapeAttr('Lancer la recherche dans le corpus') ?>">
+                    <span class="icon-loupe"></span>
+                </button>
+                <?php /*
+                <button class="icon-close-btn" aria-label="<?= $escapeAttr($translate('Effacer les termes de recherche')) ?>"></button>
+                */ ?>
+            </div>
+        </div>
+    </form>
+    <?php /*
+    <a href="<?= $advancedSearchUrl ?>" class="advanced-search-link"><?= $translate('Recherche avancée') ?></a>
+    */ ?>
+</div>
