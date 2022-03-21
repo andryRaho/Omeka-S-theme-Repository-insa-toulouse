@@ -1,0 +1,41 @@
+{
+  "name": "omeka-s-theme-dante",
+  "version": "3.3.0.1",
+  "description": "Thème pour l’entrepôt institutionnel Dante (Dépôt et Archivage Numérique des Travaux Étudiants) de l’université Toulouse – Jean Jaurès [https://dante.univ-tlse2.fr]",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/Daniel-KM/Omeka-S-theme-Dante.git"
+  },
+  "keywords": [
+    "omeka-s",
+    "theme"
+  ],
+  "author": "Flore Leclerc, Véronica Holguin, Denis Chiron et Daniel Berthereau pour https://sempiternelia.net",
+  "license": "CeCILL-2.1",
+  "bugs": {
+    "url": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Dante/~/issues"
+  },
+  "homepage": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Dante#readme",
+  "dependencies": {
+    "slick-carousel": "^1.8.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^9.6.1",
+    "del": "^5.0.0",
+    "gulp": "^4.0.2",
+    "gulp-if": "^2.0.2",
+    "gulp-postcss": "^8.0.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-sass": "^4.0.2",
+    "gulp-uglify": "^3.0.2",
+    "susy": "^3.0.5"
+  },
+  "browserslist": [
+    "> 1%",
+    "> 1% in US"
+  ]
+}

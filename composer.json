@@ -1,0 +1,7 @@
+{
+    "name": "daniel-km/omeka-s-theme-dante",
+    "type": "omeka-s-theme",
+    "require": {
+        "omeka/omeka-s": "^3.1.0"
+    }
+}
