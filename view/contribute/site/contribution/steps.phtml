@@ -1,0 +1,74 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $resource
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $contribution
+ * @var \Contribute\Form\ContributeForm $form
+ * @var array $fields
+ * @var array $fieldsByMedia
+ * @var array $fieldsMediaBase
+ * @var string $action "add" or "edit"
+ * @var string $submitLabel
+ * @var bool $isMainForm
+ * When called recursively for sub-fields (media):
+ * @var ?int $indexMedia
+ * @var array $fieldsMedia
+ *
+ * @var string $stepPart "top" ou "bottom"
+ *
+ * Pour l'étape 1 quand le modèle n'est pas choisi.
+ * @var ?int $etape
+ * @var \Laminas\Form\Element\Submit $submit
+ */
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$steps = $themeFunctions->contributionSteps($contribution ?? null, $etape ?? null, $fields ?? null);
+$step = $steps['current'];
+$stepPart = $stepPart ?? 'top';
+?>
+
+<?php if ($stepPart === 'top'): ?>
+<?= $this->pageTitle($translate('Nouveau dépôt'), 1) ?>
+<ul class="navigation etapes-depot">
+    <li class="<? $step === 1 ? 'active' : 'inactive' ?>">
+        <a href="<?= $steps[1]['url'] ?>"><span>Type de document</span></a>
+    </li>
+    <li class="<? $step === 2 ? 'active' : 'inactive' ?>">
+        <a href="<?= $steps[2]['url'] ?>">Détails</a>
+    </li>
+    <li class="<? $step === 3 ? 'active' : 'inactive' ?>">
+        <a href="<?= $steps[3]['url'] ?>">Téléchargement</a>
+    </li>
+    <li class="<? $step === 4 ? 'active' : 'inactive' ?>">
+        <a href="<?= $steps[4]['url'] ?>">Dépôt</a>
+    </li>
+</ul>
+<?php endif; ?>
+
+<?php if ($step === 1): ?>
+<ul class="navigation suivant navigation-<?= $stepPart?>">
+    <?php if ($contribution): ?>
+    <li><a href="<?= $steps[2]['url'] ?>">Étape suivante</a></li>
+    <?php else: ?>
+    <li><?= $this->formElement($submit) ?></li>
+    <?php endif; ?>
+</ul>
+<?php elseif ($step === 2): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart?>">
+    <li><a href="<?= $steps[1]['url'] ?>">Étape précédente</a></li>
+    <li><a href="<?= $steps[3]['url'] ?>">Étape suivante</a></li>
+</ul>
+<?php elseif ($step === 3): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart?>">
+    <li><a href="<?= $steps[2]['url'] ?>">Étape précédente</a></li>
+    <li><a href="<?= $steps[4]['url'] ?>">Étape suivante</a></li>
+</ul>
+<?php elseif ($step === 4): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart?>">
+    <li><a href="<?= $steps[3]['url'] ?>">Étape précédente</a></li>
+</ul>
+<?php endif; ?>

@@ -163,4 +163,51 @@ trait ThemeFunctionsSpecific
         $author = $this->danteUserAuteur($user);
         return $author ? $author->value('foaf:familyName', ['default' => $user->getName()]) : $user->getName();
     }
+
+    public function contributionSteps($contribution = null, $etape = null, $fields = null): array
+    {
+        static $steps;
+
+        if (isset($steps)) {
+            return $steps;
+        }
+
+        $plugins = $this->view->getHelperPluginManager();
+        $translate = $plugins->get('translate');
+        $escapeAttr = $plugins->get('escapeHtmlAttr');
+
+        $etape = (int) ($etape ?? $this->view->params()->fromQuery('etape'));
+        if ($etape) {
+            $step = $etape;
+        } elseif (empty($contribution)) {
+            $step = empty($fields) ? 1 : 2;
+        } elseif (isset($fields)) {
+            $step = empty($fields) ? 1 : 2;
+        } else {
+            $step = 4;
+        }
+
+        // Il y a forcément une contribution, sauf dans la première étape.
+        return $steps = [
+            'current' => $step,
+            1 => [
+                'title' => $translate('Type de document'),
+                // Attention : étape 1 est un simple affichage s'il y a une contribution.
+                // Sinon, il s'agit d'un bouton submit.
+                'url' => $contribution ? $escapeAttr($contribution->url('edit') . '?etape=1') : '#',
+            ],
+            2 => [
+                'title' => 'Détails',
+                'url' => $contribution ? $escapeAttr($contribution->url('edit') . '?etape=2') : '#',
+            ],
+            3 => [
+                'title' => 'Téléchargement',
+                'url' => $contribution ? $escapeAttr($contribution->url('edit') . '?etape=3') : '#',
+            ],
+            4 => [
+                'title' => 'Dépôt',
+                'url' => $contribution ? $escapeAttr($contribution->url('view') . '?etape=4') : '#',
+            ],
+        ];
+   }
 }

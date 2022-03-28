@@ -1,0 +1,116 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var \Contribute\Form\ContributeForm $form
+ * @var array $fields
+ * @var array $fieldsByMedia
+ * @var array $fieldsMediaBase
+ *
+ * @var null $contribution
+ * @var ?int $etape
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$siteSlug = $site->slug();
+
+$this->htmlElement('body')->appendAttribute('class', 'edit contribution ' . $this->params()->fromRoute('resource') . ' resource');
+
+$steps = $themeFunctions->contributionSteps($contribution ?? null, $etape ?? null, $fields ?? null);
+$step = $steps['current'];
+$this->vars()->offsetSet('steps', $steps);
+$this->vars()->offsetSet('step', $step);
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $siteSlug]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><a href="' . $url('site/contribution', ['resource' => 'contribution'], true) . '">' . $escape($translate('Nouveau dépôt')) . '</a></li>
+<!--
+        <li><span>' . $escape('Nouveau dépôt') . '</span></li>
+-->
+        <li><span>' . ($step === 1 ? $escape($translate('Type de document')) : $escape($translate('Détails'))) . '</span></li>
+    </ul>
+</nav>';
+
+$themeFunctions->appendVarsToView([
+    'ariane' => $ariane,
+    'mainClass' => 'depot-content depot-form-' . $step,
+]);
+?>
+
+<?= $this->partial('contribute/site/contribution/aside')?>
+
+<div class="container content etape-courante-<?= $step ?>">
+    <div class="messages">
+        <p><?= $this->messages() ?></p>
+    </div>
+    <?php if (count($fields)):
+        // The two lists of fields are merged in one form by default.
+        $this->trigger('view.edit.before');
+        echo $partial('contribute/site/contribution/form', [
+            'site' => $site,
+            'resource' => null,
+            'contribution' => null,
+            'form' => $form,
+            'fields' => $fields,
+            'fieldsByMedia' => $fieldsByMedia,
+            'fieldsMediaBase' => $fieldsMediaBase,
+            'action' => 'add',
+            'submitLabel' => $translate('Submit'),
+            'isMainForm' => true,
+            'skipContributeCss' => true,
+        ]);
+        $this->trigger('view.edit.after');
+    elseif ($form): // First step form to select a resource template.
+        $escapeAttr = $plugins->get('escapeHtmlAttr');
+        $formElement = $plugins->get('formElement');
+        /**
+         * @var \Laminas\Form\Element\Radio $template
+         * @var \Laminas\Form\Element\Submit $submit
+         */
+        $form->prepare()->init();
+        $template = $form->get('template')
+            ->setAttribute('required', 'required')
+            ->setLabel(' ');
+        $submit = $form->get('submit')
+            ->setAttribute('form', $form->getAttribute('id'))
+            ->setValue('Étape suivante'); // @translate
+        $this->vars()->offsetSet('etape', 1);
+        $this->vars()->offsetSet('submit', $submit);
+        $this->vars()->offsetSet('stepPart', 'top');
+        ?>
+        <?= $partial('contribute/site/contribution/steps') ?>
+    <?= $this->form()->openTag($form) ?>
+        <h2 for="template"><?= $escape($translate('1. Type de document')) ?></h2>
+        <div class="form-content">
+            <ul class="form-radio-buttons">
+                <?php foreach ($template->getValueOptions() as $valueOption): ?>
+                <li>
+                    <label>
+                        <input id="template" type="radio" name="template" value="<?= $escapeAttr($valueOption) ?>" required="required"/>
+                        <span><?= $escape($valueOption) ?></span>
+                    </label>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <?= $formElement($form->get('step')) ?>
+        <?= $formElement($form->get('next')) ?>
+        <?= $formElement($form->get('csrf')) ?>
+        <?= $this->form()->closeTag() ?>
+        <?php $this->vars()->offsetSet('stepPart', 'bottom'); ?>
+        <?= $partial('contribute/site/contribution/steps') ?>
+        <?php
+    else: ?>
+    <div class="messages">
+        <p><?= $translate('A template with fields is required to add a resource. Ask the administrator for more information.') ?></p>
+    </div>
+    <?php endif; ?>
+</div>
