@@ -18,6 +18,7 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 
 $siteSlug = $site->slug();
 
+$this->vars()->offsetSet('skipContributeCss', true);
 $partial('contribute/site/contribution/asset-include');
 
 $this->htmlElement('body')->appendAttribute('class', 'contribution resource browse');
@@ -112,7 +113,7 @@ $name = $themeFunctions->danteUserName($user);
                             <?php if ($originalUrl): ?>
                             <ul class="form-buttons">
                                 <li><a href="" class="form-button preview-button">Visualiser</a></li>
-                                <li><a href="" class="form-button download-button">Télécharger</a></li>
+                                <li><a href="" class="form-button download-button">Téléverser</a></li>
                             </ul>
                             <?php endif; ?>
                         </li>

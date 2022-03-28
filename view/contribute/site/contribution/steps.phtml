@@ -8,67 +8,158 @@
  * @var array $fields
  * @var array $fieldsByMedia
  * @var array $fieldsMediaBase
- * @var string $action "add" or "edit"
+ * @var string $action "add" or "edit" or "show"
+ * @var string $mode "read" or "write"
  * @var string $submitLabel
  * @var bool $isMainForm
  * When called recursively for sub-fields (media):
  * @var ?int $indexMedia
  * @var array $fieldsMedia
  *
+ * @var array $steps
  * @var string $stepPart "top" ou "bottom"
- *
- * Pour l'étape 1 quand le modèle n'est pas choisi.
- * @var ?int $etape
- * @var \Laminas\Form\Element\Submit $submit
  */
 
-$plugins = $this->getHelperPluginManager();
-$translate = $plugins->get('translate');
-$themeFunctions = $plugins->get('ThemeFunctions');
+// Attention : étape "template" est un simple formulaire désactivé s'il y a une contribution.
+// Sinon, il s'agit d'un bouton submit.
 
-$steps = $themeFunctions->contributionSteps($contribution ?? null, $etape ?? null, $fields ?? null);
-$step = $steps['current'];
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+// Action, étape et mode en cours.
+$currentActionStep = $steps['currentActionStep'];
+$action = $steps['action'];
+$step = $steps['step'];
+$mode = $steps['mode'];
+
+$urls = [
+    'add-template' => $contribution ? $escapeAttr($contribution->url('add')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
+    'edit-template' => $contribution ? $escapeAttr($contribution->url('add')) : '#',
+    'add-notice' => $contribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
+    'edit-notice' => $contribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
+    'edit-fichiers' => $contribution ? $escapeAttr($contribution->url('edit') . '?next=fichiers') : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true) . '?step=fichiers'),
+    'show-depot' => $contribution ? $escapeAttr($contribution->url('view')) : '#',
+];
+
+// Affichage en haut (avec les étapes) ou en bas (précédent/suivant seuls).
 $stepPart = $stepPart ?? 'top';
+
+// Les urls dépendent de l'étape en cours.
+
+$formId = isset($form) ? $form->getAttribute('id') : null;
+
+// TODO Ajouter un input hidden "not save", comme étape prev/next/any ?
 ?>
+
+<?php // Il est plus facile de gérer des boutons que des urls (à transformer le cas échéant en post via js). ?>
+<?php if ($mode === 'write'): ?>
 
 <?php if ($stepPart === 'top'): ?>
 <?= $this->pageTitle($translate('Nouveau dépôt'), 1) ?>
 <ul class="navigation etapes-depot">
-    <li class="<? $step === 1 ? 'active' : 'inactive' ?>">
-        <a href="<?= $steps[1]['url'] ?>"><span>Type de document</span></a>
+    <li class="<?= ($isActive = in_array($currentActionStep, ['add-template', 'edit-template'])) ? 'active' : 'inactive' ?>">
+        <?php // Il y a une exception : quand on est en add-notice et que l'on revient en arrière, on ne sauve rien, c'est donc une simple url. Sinon le gérer via js en bloquant le champ. ?>
+        <?php if ($currentActionStep === 'add-notice'): ?>
+        <a href="<?= $isActive ? '#' : $urls['add-template'] ?>"><span><?= $escape($translate('Type de document')) ?></span></a>
+        <?php else: ?>
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="add-template" form="' . $formId ?>"><span><?= $escape($translate('Type de document')) ?></span></button>
+        <?php endif; ?>
     </li>
-    <li class="<? $step === 2 ? 'active' : 'inactive' ?>">
-        <a href="<?= $steps[2]['url'] ?>">Détails</a>
+    <li class="<?= ($isActive = ($currentActionStep === 'add-notice' || $currentActionStep === 'edit-notice')) ? 'active' : 'inactive' ?>">
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-notice" form="' . $formId ?>"><span><?= $escape($translate('Détails')) ?></span></button>
     </li>
-    <li class="<? $step === 3 ? 'active' : 'inactive' ?>">
-        <a href="<?= $steps[3]['url'] ?>">Téléchargement</a>
+    <li class="<?= ($isActive = ($currentActionStep === 'add-fichiers' || $currentActionStep === 'edit-fichiers')) ? 'active' : 'inactive' ?>">
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-fichiers" form="' . $formId ?>"><span><?= $escape($translate('Téléversement')) ?></span></button>
     </li>
-    <li class="<? $step === 4 ? 'active' : 'inactive' ?>">
-        <a href="<?= $steps[4]['url'] ?>">Dépôt</a>
+    <li class="<?= ($isActive = ($currentActionStep === 'show-depot')) ? 'active' : 'inactive' ?>">
+        <button type="<?= $isActive || $step === 'template' ? 'button' : 'submit" name="next" value="show-depot" form="' . $formId ?>"><span><?= $escape($translate('Dépôt')) ?></span></button>
     </li>
 </ul>
 <?php endif; ?>
 
-<?php if ($step === 1): ?>
-<ul class="navigation suivant navigation-<?= $stepPart?>">
-    <?php if ($contribution): ?>
-    <li><a href="<?= $steps[2]['url'] ?>">Étape suivante</a></li>
-    <?php else: ?>
-    <li><?= $this->formElement($submit) ?></li>
-    <?php endif; ?>
+<?php if ($currentActionStep === 'add-template'): ?>
+<ul class="navigation suivant navigation-<?= $stepPart ?>">
+    <li><button type="submit" name="next" value="add-notice" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
-<?php elseif ($step === 2): ?>
-<ul class="navigation precedent-suivant navigation-<?= $stepPart?>">
-    <li><a href="<?= $steps[1]['url'] ?>">Étape précédente</a></li>
-    <li><a href="<?= $steps[3]['url'] ?>">Étape suivante</a></li>
+<?php elseif ($currentActionStep === 'edit-template'): ?>
+<ul class="navigation suivant navigation-<?= $stepPart ?>">
+    <li><button type="submit" name="next" value="edit-notice" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
-<?php elseif ($step === 3): ?>
-<ul class="navigation precedent-suivant navigation-<?= $stepPart?>">
-    <li><a href="<?= $steps[2]['url'] ?>">Étape précédente</a></li>
-    <li><a href="<?= $steps[4]['url'] ?>">Étape suivante</a></li>
+<?php elseif ($currentActionStep === 'add-notice'): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
+    <?php // Il y a une exception : quand on est en add-notice et que l'on revient en arrière, on ne sauve rien, c'est donc une simple url. Sinon le gérer via js en bloquant le champ. ?>
+    <li><a href="<?= $urls['add-template'] ?>"><span>Étape précédente</span></a></li>
+    <?php /*
+    <li><button type="submit" name="next" value="add-template" form="<?= $formId ?>">Étape précédente</button></li>
+    */ ?>
+    <li><button type="submit" name="next" value="edit-fichiers" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
-<?php elseif ($step === 4): ?>
-<ul class="navigation precedent-suivant navigation-<?= $stepPart?>">
-    <li><a href="<?= $steps[3]['url'] ?>">Étape précédente</a></li>
+<?php elseif ($currentActionStep === 'edit-notice'): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
+    <li><button type="submit" name="next" value="add-template" form="<?= $formId ?>">Étape précédente</button></li>
+    <li><button type="submit" name="next" value="edit-fichiers" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
+<?php elseif ($currentActionStep === 'edit-fichiers'): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
+    <li><button type="submit" name="next" value="edit-notice" form="<?= $formId ?>">Étape précédente</button></li>
+    <li><button type="submit" name="next" value="show-depot" form="<?= $formId ?>">Étape suivante</button></li>
+</ul>
+<?php elseif ($currentActionStep === 'show-depot'): ?>
+<ul class="navigation precedent navigation-<?= $stepPart ?>">
+    <li><button type="submit" name="next" value="edit-fichiers" form="<?= $formId ?>">Étape précédente</button></li>
+</ul>
+<?php endif; ?>
+
+<?php else: // Mode lecture. ?>
+
+<?php if ($stepPart === 'top'): ?>
+<?= $this->pageTitle($translate('Nouveau dépôt'), 1) ?>
+<ul class="navigation etapes-depot">
+    <li class="<?= ($isActive = ($step === 'template')) ? 'active' : 'inactive' ?>">
+        <a href="<?= $isActive ? '#' : $urls['add-template'] ?>"><span><?= $escape($translate('Type de document')) ?></span></a>
+    </li>
+    <li class="<?= ($isActive = ($step === 'notice')) ? 'active' : 'inactive' ?>">
+        <a href="<?= $isActive ? '#' : $urls['edit-notice'] . '?mode=read' ?>"><span><?= $escape($translate('Détails')) ?></span></a>
+    </li>
+    <li class="<?= ($isActive = ($step === 'fichiers')) ? 'active' : 'inactive' ?>">
+        <a href="<?= $isActive ? '#' : $urls['edit-fichiers'] . '&mode=read' ?>"><span><?= $escape($translate('Téléversement')) ?></span></a>
+    </li>
+    <li class="<?= ($isActive = ($action === 'show')) ? 'active' : 'inactive' ?>">
+        <a href="<?= $isActive ? '#' : $urls['show-depot'] ?>"><span><?= $escape($translate('Dépôt')) ?></span></a>
+    </li>
+</ul>
+<?php endif; ?>
+
+<?php if ($currentActionStep === 'add-template'): ?>
+<ul class="navigation suivant navigation-<?= $stepPart ?>">
+    <li><a href="<?= $urls['edit-notice'] ?>?mode=read">Étape suivante</a></li>
+</ul>
+<?php elseif ($currentActionStep === 'edit-template'): ?>
+<ul class="navigation suivant navigation-<?= $stepPart ?>">
+    <li><a href="<?= $urls['edit-notice'] ?>?mode=read">Étape suivante</a></li>
+</ul>
+<?php elseif ($currentActionStep === 'add-notice'): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
+    <li><a href="<?= $urls['add-template'] ?>">Étape précédente</a></li>
+    <li><a href="<?= $urls['edit-fichiers'] ?>&mode=read">Étape suivante</a></li>
+</ul>
+<?php elseif ($currentActionStep === 'edit-notice'): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
+    <li><a href="<?= $urls['add-template'] ?>">Étape précédente</a></li>
+    <li><a href="<?= $urls['edit-fichiers'] ?>&mode=read">Étape suivante</a></li>
+</ul>
+<?php elseif ($currentActionStep === 'edit-fichiers'): ?>
+<ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
+    <li><a href="<?= $urls['edit-notice'] ?>?mode=read">Étape précédente</a></li>
+    <li><a href="<?= $urls['show-depot'] ?>">Étape suivante</a></li>
+</ul>
+<?php elseif (!in_array($action, ['add', 'edit'])): ?>
+<ul class="navigation precedent navigation-<?= $stepPart ?>">
+    <li><a href="<?= $urls['edit-fichiers'] ?>&mode=read">Étape précédente</a></li>
+</ul>
+<?php endif; ?>
+
 <?php endif; ?>

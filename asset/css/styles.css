@@ -1540,17 +1540,17 @@ p:empty {
         margin-bottom: 20px;
     }
 
-    main.depot-content .content > form > .etape1,
-    main.depot-content .content > form > .etape2,
-    main.depot-content .content > form > .etape3,
-    main.depot-content .content > form > .etape4 {
+    main.depot-content .content > form > .etape-1,
+    main.depot-content .content > form > .etape-2,
+    main.depot-content .content > form > .etape-3,
+    main.depot-content .content > form > .etape-4 {
         display: none;
     }
 
-    main.depot-content.depot-form-1 .content > form > .etape1,
-    main.depot-content.depot-form-2 .content > form > .etape2,
-    main.depot-content.depot-form-3 .content > form > .etape3,
-    main.depot-content.depot-form-4 .content > form > .etape4 {
+    main.depot-content.depot-form-1 .content > form > .etape-1,
+    main.depot-content.depot-form-2 .content > form > .etape-2,
+    main.depot-content.depot-form-3 .content > form > .etape-3,
+    main.depot-content.depot-form-4 .content > form > .etape-4 {
         display: block;
     }
 

@@ -1,0 +1,67 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $resource
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $contribution
+ * @var \Contribute\Form\ContributeForm $form
+ * @var \Omeka\Entity\User $user
+ * @var array $fields
+ * @var array $fieldsByMedia
+ * @var array $fieldsMediaBase
+ * @var string $action "add" or "edit" or "show"
+ * @var string $mode "read" or "write"
+ * @var string $submitLabel
+ * @var bool $isMainForm
+ * When called recursively for sub-fields (media):
+ * @var ?int $indexMedia
+ * @var array $fieldsMedia
+ *
+ * @var \Laminas\View\Helper\Url $url
+ * @var \Laminas\View\Helper\Partial $partial
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ * @var \Omeka\Api\Manager $apiManager
+ * @var ?array $customVocabBaseTypes
+ * @var array $valueResourceTypes
+ * @var array $valueResourceQueries
+ * @var callable $shortResourceTitle
+ * @var string $baseUrlFiles
+ * @var string $mode
+ *
+ * @var array $field
+ * @var string $term
+ * @var int $indexFieldInput
+ * @var ?\Omeka\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty
+ * @var ?\Omeka\Api\Representation\PropertyRepresentation $property
+ * @var ?\Omeka\Api\Representation\ValueRepresentation $value
+ * @var ?array $fieldContribution
+ * @var ?int $indexContribution
+ * @var bool $readonly
+ */
+
+$original = $fieldContribution['original'];
+$proposed = $fieldContribution['proposed'];
+$isPrivate = $value ? !$value->isPublic() : (isset($templateProperty) ? $templateProperty->isPrivate() : false);
+$isRequired = !empty($field['required']) && (($indexContribution ?? null) === 0);
+
+$name = $isMainForm
+    ? sprintf('%s[%s][@value]', $term, $indexFieldInput)
+    : sprintf('media[%s][%s][%s][@value]', $indexMedia, $term, $indexFieldInput);
+
+$val = $proposed['@media'] ?? $original['@media'] ?? '';
+
+$class = ['value'];
+$class[] = 'uri';
+if ($isPrivate):
+    $class[] = 'private';
+endif;
+?>
+
+<li class="<?= implode(' ', $class) ?>">
+    <input type="file" class="form-control input-value" data-value-key="@value" name="<?= $name ?> " value="<?= $escapeAttr($val) ?>"<?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?>/>
+    <ul class="actions">
+        <li><button type="button" class="o-icon-delete remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>
+    </ul>
+</li>

@@ -1,0 +1,96 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $resource
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $contribution
+ * @var \Contribute\Form\ContributeForm $form
+ * @var \Omeka\Entity\User $user
+ * @var array $fields
+ * @var array $fieldsByMedia
+ * @var array $fieldsMediaBase
+ * @var string $action "add" or "edit" or "show"
+ * @var string $mode "read" or "write"
+ * @var string $submitLabel
+ * @var bool $isMainForm
+ * When called recursively for sub-fields (media):
+ * @var ?int $indexMedia
+ * @var array $fieldsMedia
+ *
+ * @var \Laminas\View\Helper\Url $url
+ * @var \Laminas\View\Helper\Partial $partial
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ * @var \Omeka\Api\Manager $apiManager
+ * @var ?array $customVocabBaseTypes
+ * @var array $valueResourceTypes
+ * @var array $valueResourceQueries
+ * @var callable $shortResourceTitle
+ * @var string $baseUrlFiles
+ * @var string $mode
+ *
+ * @var array $field
+ * @var string $term
+ * @var int $indexFieldInput
+ * @var ?\Omeka\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty
+ * @var ?\Omeka\Api\Representation\PropertyRepresentation $property
+ * @var ?\Omeka\Api\Representation\ValueRepresentation $value
+ * @var ?array $fieldContribution
+ * @var ?int $indexContribution
+ * @var bool $readonly
+ * @var ?string $baseType
+ *
+ * @uses \CustomVocab\DataType\CustomVocab
+ */
+
+$original = $fieldContribution['original'];
+$proposed = $fieldContribution['proposed'];
+$isPrivate = $value ? !$value->isPublic() : (isset($templateProperty) ? $templateProperty->isPrivate() : false);
+$isRequired = !empty($field['required']) && (($indexContribution ?? null) === 0);
+
+$class = ['value', 'custom_vocab'];
+if ($isPrivate):
+    $class[] = 'private';
+endif;
+$language = isset($proposed['@value']) ? null : (isset($original['value']) ? $original['value']->lang() : null);
+
+// Prepare select, that can be a list of keywords, a list of items from an item set or a list or uri/labels.
+// Because the form element cannot be get directly, a quick replacement is done.
+$customVocabId = (int) substr($fieldContribution['type'], 12);
+$customVocabType = $baseType ?? $customVocabBaseTypes[$customVocabId] ?? 'literal';
+$typeName = $customVocabType === 'literal' ? 'value' : $customVocabType;
+$customVocab = $apiManager->read('custom_vocabs', ['id' => $customVocabId])->getContent();
+$selectHtml = (new \CustomVocab\DataType\CustomVocab($customVocab))->form($this);
+$name = $isMainForm
+    ? sprintf('%s[%s][@%s]', $term, $indexFieldInput, $typeName)
+    : sprintf('media[%s][%s][%s][@%s]', $indexMedia, $term, $indexFieldInput, $typeName);
+
+$replace = [
+    'name="customvocab"' => 'name="' . $name . '"',
+    'class="terms&#x20;to-require' => 'class="form-control customvocab-input'
+        . '" aria-labelledby="property-' . ($property ? $property->id() : '__PROPERTYID__') . '-label"'
+        . ($isRequired ? ' required="required"' : '')
+        . (empty($readonly) ? '' : ' readonly="readonly"'),
+    '"value_resource_id"' => '"@resource"',
+    '"@id"' => '"@uri"',
+];
+
+$val = $proposed['@' . $typeName] ?? $original['@' . $typeName] ?? '';
+
+if (strlen((string) $val)) {
+    $escapedVal = $escapeAttr($val);
+    $replace['<option value="' . $escapedVal . '"'] = '<option value="' . $escapedVal . '" selected="selected"';
+}
+?>
+
+<li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>" data-basetype="<?= $customVocabType ?>">
+    <?php if (!empty($fieldContribution['@language'])): // Dans ce thème, le libellé multilang est affiché avec le champ. ?>
+    <label><?= $escape($escapeAttr($fieldContribution['langLabel'])) ?></label>
+    <input type="hidden" name="<?= str_replace(['@value', '@resource', '@uri'], ['@language', '@language', '@language'], $name) ?>" value="<?= $escapeAttr($fieldContribution['@language']) ?>"/>
+    <?php endif; ?>
+    <?= str_replace(array_keys($replace), array_values($replace), $selectHtml) ?>
+    <ul class="actions">
+        <li><button type="button" class="o-icon-delete remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>
+    </ul>
+</li>

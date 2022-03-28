@@ -1,0 +1,79 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var ?\Contribute\Api\Representation\ContributionRepresentation $resource
+ * @var ?\Contribute\Api\Representation\ContributionRepresentation $contribution
+ * @var \Omeka\Entity\User $user
+ * @var \Contribute\Form\ContributeForm $form
+ * @var array $fields
+ * @var array $fieldsByMedia
+ * @var array $fieldsMediaBase
+ * @var string $mode "read" (for template) or "write"
+ *
+ * @var null $contribution
+ * @var ?int $etape
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$siteSlug = $site->slug();
+
+$this->htmlElement('body')->appendAttribute('class', 'edit contribution ' . $this->params()->fromRoute('resource') . ' resource');
+
+$steps = $themeFunctions->currentProcess('edit', $contribution ?? null, $fields ?? null, $mode ?? 'write');
+$this->vars()->offsetSet('steps', $steps);
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $siteSlug]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><a href="' . $url('site/contribution', ['resource' => 'contribution'], true) . '">' . $escape($translate('Nouveau dépôt')) . '</a></li>
+<!--
+        <li><span>' . $escape('Nouveau dépôt') . '</span></li>
+-->
+        <li><span>' . ($steps['stepNumber'] === 3 ? $escape($translate('Téléversement')) : $escape($translate('Détails'))) . '</span></li>
+    </ul>
+</nav>';
+
+$themeFunctions->appendVarsToView([
+    'ariane' => $ariane,
+    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber'],
+]);
+?>
+
+<?= $this->partial('contribute/site/contribution/aside')?>
+
+<div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
+    <div class="messages">
+        <p><?= $this->messages() ?></p>
+    </div>
+    <?php if (count($fields) && $form):
+        // The two lists of fields are merged in one form by default.
+        $this->trigger('view.edit.before');
+        echo $partial('contribute/site/contribution/form', [
+            'site' => $site,
+            'resource' => $resource,
+            'contribution' => $contribution,
+            'form' => $form,
+            'fields' => $fields,
+            'fieldsByMedia' => $fieldsByMedia,
+            'fieldsMediaBase' => $fieldsMediaBase,
+            'action' => 'edit',
+            'mode' => $mode,
+            'submitLabel' => $translate('Submit'),
+            'isMainForm' => true,
+            'skipContributeCss' => true,
+            'steps' => $steps,
+        ]);
+        $this->trigger('view.edit.after');
+    else: ?>
+    <div class="messages">
+        <p><?= $translate('A template with fields is required to edit this resource. Ask the administrator for more information.') ?></p>
+    </div>
+    <?php endif; ?>
+</div>

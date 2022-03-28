@@ -7,6 +7,7 @@
  * @var array $fields
  * @var array $fieldsByMedia
  * @var array $fieldsMediaBase
+ * @var string $mode "read" (for template) or "write"
  *
  * @var null $contribution
  * @var ?int $etape
@@ -23,10 +24,8 @@ $siteSlug = $site->slug();
 
 $this->htmlElement('body')->appendAttribute('class', 'edit contribution ' . $this->params()->fromRoute('resource') . ' resource');
 
-$steps = $themeFunctions->contributionSteps($contribution ?? null, $etape ?? null, $fields ?? null);
-$step = $steps['current'];
+$steps = $themeFunctions->currentProcess('add', $contribution ?? null, $fields ?? null, $mode ?? 'write');
 $this->vars()->offsetSet('steps', $steps);
-$this->vars()->offsetSet('step', $step);
 
 $ariane = '<nav class="breadcrumbs content-with-margin">
     <ul>
@@ -35,24 +34,24 @@ $ariane = '<nav class="breadcrumbs content-with-margin">
 <!--
         <li><span>' . $escape('Nouveau dépôt') . '</span></li>
 -->
-        <li><span>' . ($step === 1 ? $escape($translate('Type de document')) : $escape($translate('Détails'))) . '</span></li>
+        <li><span>' . ($steps['stepNumber'] === 1 ? $escape($translate('Type de document')) : $escape($translate('Détails'))) . '</span></li>
     </ul>
 </nav>';
 
 $themeFunctions->appendVarsToView([
     'ariane' => $ariane,
-    'mainClass' => 'depot-content depot-form-' . $step,
+    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber'],
 ]);
 ?>
 
 <?= $this->partial('contribute/site/contribution/aside')?>
 
-<div class="container content etape-courante-<?= $step ?>">
+<div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
         <p><?= $this->messages() ?></p>
     </div>
     <?php if (count($fields)):
-        // The two lists of fields are merged in one form by default.
+    // The two lists of fields are merged in one form by default.
         $this->trigger('view.edit.before');
         echo $partial('contribute/site/contribution/form', [
             'site' => $site,
@@ -63,9 +62,11 @@ $themeFunctions->appendVarsToView([
             'fieldsByMedia' => $fieldsByMedia,
             'fieldsMediaBase' => $fieldsMediaBase,
             'action' => 'add',
+            'mode' => $mode,
             'submitLabel' => $translate('Submit'),
             'isMainForm' => true,
             'skipContributeCss' => true,
+            'steps' => $steps,
         ]);
         $this->trigger('view.edit.after');
     elseif ($form): // First step form to select a resource template.
@@ -73,36 +74,32 @@ $themeFunctions->appendVarsToView([
         $formElement = $plugins->get('formElement');
         /**
          * @var \Laminas\Form\Element\Radio $template
-         * @var \Laminas\Form\Element\Submit $submit
          */
-        $form->prepare()->init();
+        $form->prepare();
         $template = $form->get('template')
             ->setAttribute('required', 'required')
             ->setLabel(' ');
-        $submit = $form->get('submit')
-            ->setAttribute('form', $form->getAttribute('id'))
-            ->setValue('Étape suivante'); // @translate
-        $this->vars()->offsetSet('etape', 1);
-        $this->vars()->offsetSet('submit', $submit);
+        $templateId = $template->getValue();
         $this->vars()->offsetSet('stepPart', 'top');
         ?>
         <?= $partial('contribute/site/contribution/steps') ?>
     <?= $this->form()->openTag($form) ?>
         <h2 for="template"><?= $escape($translate('1. Type de document')) ?></h2>
-        <div class="form-content">
+        <fieldset class="form-content"<?= $mode === 'read' ? ' disabled="disabled"' : '' ?>>
             <ul class="form-radio-buttons">
-                <?php foreach ($template->getValueOptions() as $valueOption): ?>
+                <?php foreach ($form->getTemplates() as $selectTemplateId => $selectTemplateLabel): ?>
                 <li>
                     <label>
-                        <input id="template" type="radio" name="template" value="<?= $escapeAttr($valueOption) ?>" required="required"/>
-                        <span><?= $escape($valueOption) ?></span>
+                        <input id="template" type="radio" name="template" value="<?= $escapeAttr($selectTemplateId) ?>" <?= $templateId ? 'readonly="readonly"' : 'required="required"' ?> <?= $selectTemplateId === $templateId ? 'checked="checked"' : '' ?>/>
+                        <span><?= $escape($selectTemplateLabel) ?></span>
                     </label>
                 </li>
                 <?php endforeach; ?>
             </ul>
-        </div>
+        </fieldset>
         <?= $formElement($form->get('step')) ?>
         <?= $formElement($form->get('next')) ?>
+        <?= $formElement($form->get('mode')->setValue($mode)) ?>
         <?= $formElement($form->get('csrf')) ?>
         <?= $this->form()->closeTag() ?>
         <?php $this->vars()->offsetSet('stepPart', 'bottom'); ?>
@@ -110,7 +107,7 @@ $themeFunctions->appendVarsToView([
         <?php
     else: ?>
     <div class="messages">
-        <p><?= $translate('A template with fields is required to add a resource. Ask the administrator for more information.') ?></p>
+        <p><?= $escape($translate('A template with fields is required to add a resource. Ask the administrator for more information.')) ?></p>
     </div>
     <?php endif; ?>
 </div>

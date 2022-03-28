@@ -1,0 +1,132 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $resource
+ * @var \Contribute\Api\Representation\ContributionRepresentation|null $contribution
+ * @var \Contribute\Form\ContributeForm $form
+ * @var \Omeka\Entity\User $user
+ * @var array $fields
+ * @var array $fieldsByMedia
+ * @var array $fieldsMediaBase
+ * @var string $action "add" or "edit" or "show"
+ * @var string $mode "read" or "write"
+ * @var string $submitLabel
+ * @var bool $isMainForm
+ * When called recursively for sub-fields (media):
+ * @var ?int $indexMedia
+ * @var array $fieldsMedia
+ *
+ * @var \Laminas\View\Helper\Url $url
+ * @var \Laminas\View\Helper\Partial $partial
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ * @var \Omeka\Api\Manager $apiManager
+ * @var ?array $customVocabBaseTypes
+ * @var array $valueResourceTypes
+ * @var array $valueResourceQueries
+ * @var callable $shortResourceTitle
+ * @var string $baseUrlFiles
+ * @var string $mode
+ *
+ * @var array $field
+ * @var string $term
+ * @var int $indexFieldInput
+ * @var ?\Omeka\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty
+ * @var \Omeka\Api\Representation\PropertyRepresentation $property
+ * @var \Omeka\Api\Representation\ValueRepresentation $value
+ */
+
+$addForMedia = $isMainForm ? '' : ' add-value-media';
+?>
+
+<div class="inputs">
+    <div class="add-values default-selector duplicate-fields-buttons" data-next-index="<?= $indexFieldInput ?>" data-next-term="<?= $term ?>">
+        <?php foreach ($field['datatypes'] as $datatype) switch($datatype):
+
+            case 'literal':
+            ?>
+        <button type="button" class="add-value add-value-new<?= $addForMedia ?> button duplicate-fields-button"><?= $escape($translate('Add value')) ?></button>
+                <?php
+                break;
+
+            case 'numeric:integer':
+                ?>
+        <button type="button" class="add-value add-value-numeric-integer<?= $addForMedia ?> button duplicate-fields-button"><?= $escape($translate('Add number')) ?></button>
+                <?php
+                break;
+
+            case 'numeric:timestamp':
+                ?>
+        <button type="button" class="add-value add-value-numeric-timestamp<?= $addForMedia ?> button duplicate-fields-button"><?= $escape($translate('Add date')) ?></button>
+                <?php
+                break;
+
+            case 'resource':
+            case 'resource:item':
+            case 'resource:itemset':
+            case 'resource:media':
+                if (isset($valueResourceQueries[$term])):
+                    // Get the list of options from the core select element.
+                    $resourceName = $valueResourceTypes[$datatype];
+                    $element = new \Omeka\Form\Element\ResourceSelect();
+                    $element
+                        ->setApiManager($apiManager);
+                    $element
+                        ->setResourceValueOptions($resourceName, $shortResourceTitle, $valueResourceQueries[$term]);
+                    // The order should be kept, but there is no order in a js array.
+                    $valueOptions = [];
+                    foreach ($element->getValueOptions() as $k => $v) {
+                        $valueOptions[] = ['v' => $k, 't' => $v];
+                    }
+                ?>
+        <button type="button" class="add-value add-value-resource<?= $addForMedia ?> button duplicate-fields-button" data-data-type="<?= $datatype ?>" data-placeholder="<?= $translate('Select a resource…')?>" data-value-options="<?= $escapeAttr(json_encode($valueOptions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?>"><?= $escape($translate('Add linked resource')) ?></button>
+                <?php endif;
+                break;
+
+            case 'uri':
+                ?>
+        <button type="button" class="add-value add-value-uri<?= $addForMedia ?> button duplicate-fields-button" data-data-type="uri"><?= $escape($translate('Add URI')) ?></button>
+                <?php break;
+
+            case substr($datatype, 0, 12) === 'customvocab:':
+                // @see \CustomVocab\DataType\CustomVocab
+                $baseType = $customVocabBaseTypes[substr($datatype, 12)] ?? 'literal';
+                $customVocab = $apiManager->read('custom_vocabs', ['id' => substr($datatype, 12)])->getContent();
+                $valueOptions = [];
+                if ($baseType === 'resource') {
+                    $result = $apiManager->search('items', ['item_set_id' => $customVocab->itemSet()->id(), 'sort_by' => 'title'], ['initialize' => false, 'returnScalar' => 'title'])->getContent();
+                    foreach ($result as $id => $title) {
+                        $valueOptions[] = ['v' => $id, 't' => $title];
+                    }
+                } elseif ($baseType === 'uri') {
+                    $matches = [];
+                    $uris = array_map('trim', preg_split("/\r\n|\n|\r/", $customVocab->uris()));
+                    foreach ($uris as $uri) {
+                        if (preg_match('/^(\S+) (.+)$/', $uri, $matches)) {
+                            $valueOptions[] = ['v' => $matches[1], 't' => sprintf('%s <%s>', $matches[2], $matches[1])];
+                        } elseif (preg_match('/^(.+)/', $uri, $matches)) {
+                            $valueOptions[] = ['v' => $matches[1], 't' => $matches[1]];
+                        }
+                    }
+                } else {
+                    $terms = array_map('trim', preg_split("/\r\n|\n|\r/", $customVocab->terms()));
+                    foreach ($terms as $term) {
+                        $valueOptions[] = ['v' => $term, 't' => $term];
+                    }
+                }
+                ?>
+        <button type="button" class="add-value add-value-custom-vocab<?= $addForMedia ?> button duplicate-fields-button" data-data-type="<?= $datatype ?>" data-basetype="<?= $baseType ?>" data-value-options="<?= $escapeAttr(json_encode($valueOptions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?>"><?= $escape($translate('Add value')) ?></button>
+                <?php break;
+
+            case substr($datatype, 0, 12) === 'valuesuggest': // Or valuesuggestall.
+                ?>
+        <button type="button" class="add-value add-value-value-suggest<?= $addForMedia ?> button duplicate-fields-button" data-data-type="<?= $datatype ?>"><?= $escape($translate('Add linked data')) ?></button>
+                <?php break;
+
+            default:
+                // TODO Other types are not managed.
+        endswitch; ?>
+    </div>
+</div>

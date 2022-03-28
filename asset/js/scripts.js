@@ -121,6 +121,7 @@ $(function () {
         $(this).closest('ul').toggleClass('opened');
     });
 
+/*
     $('a.duplicate-fields-button').on('click', function(e) {
         e.preventDefault();
 
@@ -142,9 +143,9 @@ $(function () {
 
         divParent.before(cloned)
     });
-
+*/
     /* Document-part : duplique les champs du fichier uploadé */
-
+/*
     addDocumentToDepotBtn.on('click', function(e) {
         e.preventDefault();
 
@@ -167,7 +168,7 @@ $(function () {
 
         divParent.append(cloned)
     });
-
+*/
     /* */
 
     openSciencePageToggle.on('click', function(e) {

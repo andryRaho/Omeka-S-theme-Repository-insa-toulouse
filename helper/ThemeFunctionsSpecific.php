@@ -2,6 +2,7 @@
 
 namespace OmekaTheme\Helper;
 
+use Contribute\Api\Representation\ContributionRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Entity\User;
@@ -164,50 +165,87 @@ trait ThemeFunctionsSpecific
         return $author ? $author->value('foaf:familyName', ['default' => $user->getName()]) : $user->getName();
     }
 
-    public function contributionSteps($contribution = null, $etape = null, $fields = null): array
-    {
+    public function currentProcess(
+        ?string $action = null,
+        ?ContributionRepresentation $contribution = null,
+        ?array $fields = null,
+        ?string $mode = null
+    ): array {
         static $steps;
 
         if (isset($steps)) {
             return $steps;
         }
 
-        $plugins = $this->view->getHelperPluginManager();
-        $translate = $plugins->get('translate');
-        $escapeAttr = $plugins->get('escapeHtmlAttr');
+        $params = $this->view->params();
 
-        $etape = (int) ($etape ?? $this->view->params()->fromQuery('etape'));
-        if ($etape) {
-            $step = $etape;
-        } elseif (empty($contribution)) {
-            $step = empty($fields) ? 1 : 2;
-        } elseif (isset($fields)) {
-            $step = empty($fields) ? 1 : 2;
+        if ($action === 'add') {
+            $step = $fields ? 'notice' : 'template';
+            $mode = $contribution || ($step === 'template' && !empty($mode) && $mode === 'read') ? 'read' : 'write';
+        } elseif ($action === 'edit') {
+            $action = 'edit';
+            $step = 'notice';
+            $next = $params->fromQuery('next') ?? $params->fromPost('next') ?? '';
+
+            [$nextAction, $nextQuery] = strpos($next, '-') === false ? [$next, null] : explode('-', $next, 2);
+            if (!$nextAction || $nextAction === 'show' || $nextAction === 'view') {
+                $action = 'show';
+            }
+            if ($nextQuery) {
+                if (strpos($nextQuery, '=') === false) {
+                    $step = $nextQuery;
+                } else {
+                    [$nextQueryKey, $step] = explode('=', $nextQuery, 2);
+                }
+            } else if ($nextAction === 'notice' || $nextAction === 'fichiers') {
+                $step = $nextAction;
+            }
+            $mode = $step === 'template' || (!empty($mode) && $mode === 'read') ? 'read' : 'write';
         } else {
-            $step = 4;
+            $action = 'show';
+            $step = 'depot';
+            $mode = 'read';
         }
 
-        // Il y a forcément une contribution, sauf dans la première étape.
-        return $steps = [
-            'current' => $step,
-            1 => [
-                'title' => $translate('Type de document'),
-                // Attention : étape 1 est un simple affichage s'il y a une contribution.
-                // Sinon, il s'agit d'un bouton submit.
-                'url' => $contribution ? $escapeAttr($contribution->url('edit') . '?etape=1') : '#',
-            ],
-            2 => [
-                'title' => 'Détails',
-                'url' => $contribution ? $escapeAttr($contribution->url('edit') . '?etape=2') : '#',
-            ],
-            3 => [
-                'title' => 'Téléchargement',
-                'url' => $contribution ? $escapeAttr($contribution->url('edit') . '?etape=3') : '#',
-            ],
-            4 => [
-                'title' => 'Dépôt',
-                'url' => $contribution ? $escapeAttr($contribution->url('view') . '?etape=4') : '#',
-            ],
+        $current = "$action-$step";
+
+        $stepNumbers = [
+            'template' => 1,
+            'notice' => 2,
+            'fichiers' => 3,
+            'depot' => 4,
         ];
+        $stepNumber = $stepNumbers[$step] ?? 1;
+
+        return $steps = [
+            'currentActionStep' => $current,
+            'action' => $action,
+            'step' => $step,
+            'mode' => $mode,
+            'stepNumber' => $stepNumber,
+        ];
+   }
+
+   public function templatePropertyThemeOption(
+       ?\AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty,
+       ?string $metadata = null
+    ) {
+        if (!$templateProperty) {
+            return null;
+        }
+        $val = $templateProperty->mainDataValueMetadata('settings', $metadata, '');
+        if ($metadata === 'multilang') {
+            $ls = [];
+            foreach (array_map('trim', explode('|', trim((string) $val))) as $keyValue) {
+                list($key, $value) = strpos($keyValue, '=') === false
+                    ? [$keyValue, null]
+                    : array_map('trim', explode('=', $keyValue, 2));
+                if ($key !== '') {
+                    $ls[$key] = $value;
+                }
+            }
+            return $ls;
+        }
+        return $val;
    }
 }
