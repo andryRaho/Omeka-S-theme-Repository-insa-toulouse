@@ -228,8 +228,7 @@ p:empty {
 
     button,
     a.button,
-    .resources-list.preview + a,
-    [type="submit"] {
+    .resources-list.preview + a {
         background-color: #dedede;
         border-radius: 2px;
         padding: 7.5px;
@@ -239,6 +238,11 @@ p:empty {
         -moz-appearance: none;
         border: 0;
         cursor: pointer
+    }
+
+    .navigation button {
+        background: none;
+        border: none;
     }
 
     select {
@@ -1111,6 +1115,11 @@ p:empty {
         height: 20px;
     }
 
+    button.add-value {
+        font-size: 0;
+    }
+
+    button.add-value,
     a.duplicate-fields-button {
         display: inline-block;
         width: 20px;
@@ -1120,6 +1129,7 @@ p:empty {
         transform-origin: 50% 50%;
     }
 
+    button.add-value:hover,
     a.duplicate-fields-button:hover {
         transform: scale(1.15);
     }
@@ -1826,6 +1836,7 @@ p:empty {
         transform: translateX(-42px);
     }
 
+    ul.navigation.etapes-depot li button,
     ul.navigation.etapes-depot li a {
         display: inline-block;
         position: relative;
@@ -1847,35 +1858,37 @@ p:empty {
         opacity: 0.5;
     }
 
+    ul.navigation.etapes-depot li button,
     ul.navigation.etapes-depot li a {
         pointer-events: none;
     }
 
-    .depot-content ul.navigation.etapes-depot li:nth-child(1) a,
-    .depot-content.depot-form-2 ul.navigation.etapes-depot li:nth-child(2) a,
-    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(2) a,
-    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(2) a,
-    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(3) a,
-    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(3) a,
-    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(4) a,
+    .depot-content ul.navigation.etapes-depot li:nth-child(1) > *,
+    .depot-content.depot-form-2 ul.navigation.etapes-depot li:nth-child(2) > *,
+    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(2) > *,
+    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(2) > *,
+    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(3) > *,
+    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(3) > *,
+    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(4) > *,
     ul.navigation.etapes-depot li.active a {
         background-color: #eaefed;
         opacity: 1;
         pointer-events: auto;
     }
 
-    .depot-content ul.navigation.etapes-depot li:nth-child(1) a:hover,
-    .depot-content.depot-form-2 ul.navigation.etapes-depot li:nth-child(2) a:hover,
-    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(2) a:hover,
-    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(2) a:hover,
-    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(3) a:hover,
-    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(3) a:hover,
-    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(4) a:hover,
+    .depot-content ul.navigation.etapes-depot li:nth-child(1) > *:hover,
+    .depot-content.depot-form-2 ul.navigation.etapes-depot li:nth-child(2) > *:hover,
+    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(2) > *:hover,
+    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(2) > *:hover,
+    .depot-content.depot-form-3 ul.navigation.etapes-depot li:nth-child(3) > *:hover,
+    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(3) > *:hover,
+    .depot-content.depot-form-4 ul.navigation.etapes-depot li:nth-child(4) > *:hover,
+    ul.navigation.etapes-depot li button:hover,
     ul.navigation.etapes-depot li a:hover {
         background-color: #CDDAD5;
     }
 
-    ul.navigation.etapes-depot li a::before {
+    ul.navigation.etapes-depot li > *::before {
         content: '';
         display: block;
         position: absolute;
@@ -1889,20 +1902,20 @@ p:empty {
         height: 40px;
     }
 
-    ul.navigation.etapes-depot li a:hover::before {
+    ul.navigation.etapes-depot li > *:hover::before {
         background-image: url(../img/nav_g_on.svg);
     }
 
-    ul.navigation.etapes-depot li:first-child a {
+    ul.navigation.etapes-depot li:first-child > * {
         padding: 0 15px 0 20px;
         margin-left: 0;
     }
 
-    ul.navigation.etapes-depot li:first-child a::before {
+    ul.navigation.etapes-depot li:first-child > *::before {
         display: none;
     }
 
-    ul.navigation.etapes-depot li a::after {
+    ul.navigation.etapes-depot li > *::after {
         content: '';
         display: block;
         position: absolute;
@@ -1916,10 +1929,10 @@ p:empty {
         height: 40px;
     }
 
-    ul.navigation.etapes-depot li a:hover::after {
+    ul.navigation.etapes-depot li > *:hover::after {
         background-image: url(../img/nav_d_on.svg);
     }
-    ul.navigation li.active a {
+    ul.navigation li.active > * {
         text-decoration: none;
     }
 
@@ -1937,6 +1950,8 @@ p:empty {
         justify-content: flex-end;
     }
 
+    ul.navigation.suivant button,
+    ul.navigation.precedent-suivant button,
     ul.navigation.suivant a,
     ul.navigation.precedent-suivant a {
         color: #BA0000;
@@ -1948,17 +1963,22 @@ p:empty {
         text-transform: uppercase;
     }
 
+    ul.navigation.suivant button:hover,
+    ul.navigation.precedent-suivant button:hover,
     ul.navigation.suivant a:hover,
     ul.navigation.precedent-suivant a:hover {
         color: #000;
     }
 
+    ul.navigation.precedent-suivant li:last-child button,
     ul.navigation.precedent-suivant li:last-child a,
+    ul.navigation.suivant button,
     ul.navigation.suivant a {
         padding-right: 18px;
         background: url(../img/fleche-suivant.svg) center right / auto 10px no-repeat;
     }
 
+    ul.navigation.precedent-suivant li:first-child button,
     ul.navigation.precedent-suivant li:first-child a {
         padding-left: 19px;
         background: url(../img/fleche-precedent.svg) center left / auto 12px no-repeat;
@@ -2504,12 +2524,17 @@ p:empty {
         padding-left: 10px;
     }
 
+    .search-results-wrapper h3,
     .search-results-details {
         color: #000000;
         font-family: "Open Sans", sans-serif;
         font-size: 15px;
         line-height: 20px;
         padding: 8px 0 6px;
+    }
+
+    .search-results-wrapper h3 {
+        font-weight: 700;
     }
 
     .search-results-tools,
@@ -2520,6 +2545,10 @@ p:empty {
 
     .search-results-tools + .resources-list-tools {
         margin-top: 0;
+    }
+
+    .resources-list + .resources-list-tools {
+        justify-content: flex-end;
     }
 
     .search-results-tools > li {
@@ -4042,6 +4071,7 @@ p:empty {
         margin-bottom: 8px;
     }
 
+    ul.navigation.etapes-depot li button,
     ul.navigation.etapes-depot li a {
         height: 28px;
         margin: 0 16px;
@@ -4050,10 +4080,13 @@ p:empty {
         line-height: 28px;
     }
 
+    ul.navigation.etapes-depot li button::before,
     ul.navigation.etapes-depot li a::before {
         left: -14px;
     }
 
+    ul.navigation.etapes-depot li button::before,
+    ul.navigation.etapes-depot li button::after,
     ul.navigation.etapes-depot li a::before,
     ul.navigation.etapes-depot li a::after {
         height: 28px;
