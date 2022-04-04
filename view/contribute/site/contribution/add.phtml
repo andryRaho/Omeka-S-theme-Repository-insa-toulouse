@@ -44,7 +44,7 @@ $themeFunctions->appendVarsToView([
 ]);
 ?>
 
-<?= $this->partial('contribute/site/contribution/aside')?>
+<?= $this->themeSetting('contribution_help_aside') ?: $this->partial('contribute/site/contribution/aside') ?>
 
 <div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
