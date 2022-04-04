@@ -1,0 +1,96 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation $contribution
+ * @var array $templateProperties
+ *
+ * For loop:
+ * @var \Omeka\View\Helper\Api $api
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ * @var string $baseUrlFiles
+ * @var string $mode
+ * @var bool $isSiteRequest
+ * @var string $labelInfo
+ * @var bool $showLocale
+ *
+ * @var array $values
+ * @var bool $isSub
+ * @var ?int $indexValuesMedia
+ */
+
+// Les originaux ne sont pas pris en compte dans ce gabarit : c'est un outil de dépôt, pas de correction.
+
+?>
+
+<?php if (!$isSub): ?>
+<ul class="bilan-depot">
+<?php // Rien <li class="contribution"> ?>
+<?php else: ?>
+<div class="contribution-media">
+    <h4 class="contribution-media-label"><?= sprintf($isSiteRequest ? $translate('File #%s') : $translate('Media #%s'), $this->partialLoop()->getPartialCounter()) ?></h4>
+<?php endif; ?>
+
+<?php foreach ($values as $term => $propertyData): ?>
+    <?php if (empty($propertyData['contributions'])) continue; ?>
+    <li class="property">
+        <label>
+            <?= $escape($propertyData['alternate_label'] ?: $translate($propertyData['property']->label())) ?>
+            <?php if (!isset($propertyData['property'])):?>
+            <?php // Nothing to do (file). ?>
+            <?php elseif ('term' === $labelInfo): ?>
+            <span class="field-term">(<?= $escape($propertyData['property']->term()) ?>)</span>
+            <?php elseif ('vocab' === $labelInfo): ?>
+            <span class="field-term">(<?= $escape($propertyData['property']->vocabulary()->label()) ?>)</span>
+            <?php endif; ?>
+        </label>
+            <?php foreach ($propertyData['contributions'] as $contribution):
+                if ($contribution['empty']) continue;
+                $valueType = $contribution['type'];
+                $valueBaseType = $contribution['basetype'];
+                $valueLang = $contribution['lang'] ?? '';
+                $class = ['value'];
+                if ($valueBaseType === 'resource') {
+                    $class[] = 'resource';
+                    // Only item is supported for now.
+                    $class[] = substr($valueType, 0, 9) === 'resource:' ? substr($valueType, 9) : 'item';
+                } elseif ($valueBaseType === 'uri') {
+                    $class[] = 'uri';
+                }
+                ?>
+            <span class="<?= implode(' ', $class) ?>" lang="<?= $escape($valueLang) ?>">
+                <?php if ($showLocale && $valueLang): ?>
+                <span class="language"><?= $valueLang ?></span>
+                <?php endif; ?>
+                <?php // Uniquement les nouvelles métadonnées (nouveau document). ?>
+                <span class="value-content"><?php
+                        if ($valueBaseType === 'uri'):
+                            echo $escape($contribution['proposed']['@uri'] . ' / ' . $contribution['proposed']['@label']);
+                        elseif ($valueBaseType === 'resource'):
+                            try {
+                                $res = $api->read('resources', ['id' => $contribution['proposed']['@resource']])->getContent();
+                                echo $res->link($res->displayTitle());
+                            } catch (\Exception $e) {
+                                echo sprintf($translate('%s [unavailable]'), $contribution['proposed']['@resource']);
+                            }
+                        elseif ($term === 'file'): // File is always a new value.
+                            echo isset($contribution['proposed']['store'])
+                                ? '<a href="' . $escapeAttr($baseUrlFiles . '/contribution/' . $contribution['proposed']['store']) . '" download="download">' . $escape($contribution['proposed']['@value']) . '</a>'
+                                : sprintf('%s [missing file]', $escape($contribution['proposed']['@value']));
+                        else:
+                            echo $escape($contribution['proposed']['@value']);
+                        endif;
+                ?></span>
+            </span>
+            <?php endforeach; ?>
+    </li>
+<?php endforeach; ?>
+
+<?php if ($isSub): ?>
+</div>
+<?php else: ?>
+<?php // Rien <div> ?>
+</ul>
+<?php endif; ?>

@@ -186,11 +186,7 @@ trait ThemeFunctionsSpecific
             $action = 'edit';
             $step = 'notice';
             $next = $params->fromQuery('next') ?? $params->fromPost('next') ?? '';
-
             [$nextAction, $nextQuery] = strpos($next, '-') === false ? [$next, null] : explode('-', $next, 2);
-            if (!$nextAction || $nextAction === 'show' || $nextAction === 'view') {
-                $action = 'show';
-            }
             if ($nextQuery) {
                 if (strpos($nextQuery, '=') === false) {
                     $step = $nextQuery;

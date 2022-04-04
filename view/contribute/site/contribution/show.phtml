@@ -1,0 +1,120 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation $resource
+ * @var \Contribute\Api\Representation\ContributionRepresentation $contribution
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$i18n = $plugins->get('i18n');
+$partial = $plugins->get('partial');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$siteSetting = $plugins->get('siteSetting');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$formElement = $plugins->get('formElement');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$medias = $contribution->valuesMedias();
+$embedMedia = $siteSetting('item_media_embed', false);
+
+$filterLocale = (bool) $siteSetting('filter_locale_values');
+$siteLang = $plugins->get('lang')();
+$lang = $filterLocale ? $siteLang : null;
+
+$this->vars()->offsetSet('skipContributeCss', true);
+$partial('contribute/site/contribution/asset-include');
+
+$this->htmlElement('body')->appendAttribute('class', 'contribution resource show');
+
+$siteSlug = $site->slug();
+
+$steps = $themeFunctions->currentProcess('show', $contribution);
+$this->vars()->offsetSet('steps', $steps);
+
+$ariane = '<nav class="breadcrumbs content-with-margin">
+    <ul>
+        <li><a href="' . $url('site', ['site-slug' => $siteSlug]) . '">' . $escape($translate('Accueil')) . '</a></li>
+        <li><a href="' . $url('site/contribution', ['resource' => 'contribution'], true) . '">' . $escape($translate('Nouveau dépôt')) . '</a></li>
+<!--
+        <li><span>' . $escape('Nouveau dépôt') . '</span></li>
+-->
+        <li><span>' . $escape($translate('Prévisualisation')) . '</span></li>
+    </ul>
+</nav>';
+
+$themeFunctions->appendVarsToView([
+    'ariane' => $ariane,
+    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber'],
+]);
+
+$partial('contribute/site/contribution/form-include');
+/**
+ * @var \Laminas\View\Helper\Url $url
+ * @var \Laminas\View\Helper\Partial $partial
+ * @var \Laminas\View\Helper\EscapeHtml $escape
+ * @var \Laminas\I18n\View\Helper\Translate $translate
+ * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
+ * @var \Omeka\Api\Manager $apiManager
+ * @var ?array $customVocabBaseTypes
+ * @var array $valueResourceTypes
+ * @var array $valueResourceQueries
+ * @var callable $shortResourceTitle
+ * @var string $baseUrlFiles
+ * @var string $mode
+ */
+$contributeVars = $plugins
+    ->get(\Laminas\View\Helper\ViewModel::class)
+    ->getRoot()
+    ->getVariable('contributeVars') ?? [];
+extract($contributeVars);
+$this->setVars(new \Laminas\View\Variables($contributeVars));
+unset($contributeVars);
+?>
+
+<?= $this->partial('contribute/site/contribution/aside')?>
+
+<div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
+    <div class="messages">
+        <p><?= $this->messages() ?></p>
+    </div>
+    <?php $this->vars()->offsetSet('stepPart', 'top'); ?>
+    <?= $partial('contribute/site/contribution/steps') ?>
+
+<?php // TODO Supprimer le form (css). ?>
+<form>
+
+    <?= $this->pageTitle($translate('4. Prévisualisation et confirmation du dépôt'), 2) ?>
+    <?php if (!$contribution->isSubmitted()): ?>
+    <ul id="page-actions" class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
+        <?php if ($contribution->userIsAllowed('update')): ?>
+        <li><a class="button submit-button submit-contribution form-button" href="<?= $escapeAttr($contribution->url('submit')) ?>"><?= $escape($translate('Confirmer le dépôt')) ?></a></li>
+        <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>"><?= $escape($translate('Éditer')) ?></a></li>
+        <?php endif; ?>
+        <?php if ($contribution->userIsAllowed('delete')): ?>
+        <li><a class="button delete-button remove-contribution form-button" data-contribution-id="<?= $contribution->id() ?>" href="#<?php //= $escapeAttr($contribution->url('delete')) ?>"><?= $escape($translate('Supprimer')) ?></a></li>
+        <?php endif; ?>
+    </ul>
+    <?php endif; ?>
+    <div class="form-content">
+        <aside class="depot-admin-message">
+            <?php if ($contribution->isSubmitted()): ?>
+            Le document a été déposé.
+            <?php else: ?>
+            Une fois le dépot confirmé, l’équipe administrative prendera le temps de vérifier le document. Vous receverez une notification par mail qui vous indiquera sa validation ou non.
+            <?php endif; ?>
+        </aside>
+    </div>
+
+    <?php $this->trigger('view.show.before'); ?>
+
+    <?= $contribution->displayValues(['part' => 'item']) ?>
+    <?= $contribution->displayValues(['part' => 'medias']) ?>
+
+    <?php $this->trigger('view.show.after'); ?>
+
+</form>
+
+</div>

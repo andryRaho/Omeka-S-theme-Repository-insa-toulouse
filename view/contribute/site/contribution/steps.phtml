@@ -50,6 +50,7 @@ $stepPart = $stepPart ?? 'top';
 // Les urls dépendent de l'étape en cours.
 
 $formId = isset($form) ? $form->getAttribute('id') : null;
+$action = $action ?? 'show';
 
 // TODO Ajouter un input hidden "not save", comme étape prev/next/any ?
 ?>

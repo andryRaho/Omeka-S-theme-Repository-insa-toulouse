@@ -117,7 +117,11 @@ $headScript
     ->appendFile($assetUrl('js/scripts.js'), 'text/javascript', ['defer' => 'defer']);
 
 $user = $this->identity();
-$userBar = $this->userBar();
+if ($user && $user->getRole() !== 'guest') {
+    $userBar = $this->userBar();
+} else {
+    $userBar = '';
+}
 
 $baseAssetUrl = $assetUrl('', null, false, false);
 $baseSiteUrl = $site->url('site', [], true);

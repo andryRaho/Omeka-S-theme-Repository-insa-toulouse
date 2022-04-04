@@ -1,0 +1,87 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Contribute\Api\Representation\ContributionRepresentation $contribution
+ * @var array $templateProperties
+ * @var array $values
+ * @var array $valuesMedias
+ *
+ * Pour le thème:
+ * @var string $part "item" ou "medias"
+ */
+
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$api = $plugins->get('api');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$isSiteRequest = $this->status()->isSiteRequest();
+if ($isSiteRequest) {
+    $siteSetting = $plugins->get('siteSetting');
+    $labelInfo = $siteSetting('property_label_information');
+    $showLocale = (bool) $siteSetting('show_locale_label', true);
+} else {
+    $setting = $plugins->get('setting');
+    $labelInfo = $setting('property_label_information');
+    $showLocale = true;
+}
+
+$baseUrlFiles = $contribution->getServiceLocator()->get('Config')['file_store']['local']['base_uri'] ?: rtrim($url('top'), '/') . '/files';
+
+$varsBase = [
+    'site' => $site,
+    'contribution' => $contribution,
+    'templateProperties' => $templateProperties,
+    'api' => $api,
+    'escape' => $escape,
+    'translate' => $translate,
+    'escapeAttr' => $escapeAttr,
+    'baseUrlFiles' => $baseUrlFiles,
+    'isSiteRequest' => $isSiteRequest,
+    'labelInfo' => $labelInfo,
+    'showLocale' => $showLocale,
+    'values' => $values,
+    'isSub' => false,
+    'indexValuesMedia' => null,
+];
+
+if ($part === 'item'):
+
+echo $this->partial('common/contribution-values-part', $varsBase);
+
+endif;
+
+if ($part === 'medias'):
+
+if (count($valuesMedias)): ?>
+        <?php
+        $varsBase['isSub'] = true;
+        $varsForLoop = [];
+        foreach ($valuesMedias ?? [] as $indexValuesMedia => $valuesMedia) {
+            $varsBase['values'] = $valuesMedia;
+            $varsBase['indexValuesMedia'] = $indexValuesMedia;
+            $varsForLoop[] = $varsBase;
+        }
+        // echo $this->partialLoop('common/contribution-values-part', $varsForLoop);
+        foreach ($varsForLoop as $vars):
+            extract($vars);
+            $fieldsMedia = $values;
+            $file = $fieldsMedia['file']['contributions'][0]['proposed']['store'] ?? null;
+            $access = $fieldsMedia['curation:access']['contributions'][0]['proposed']['@value'] ?? 'Non consultable';
+            ?>
+            <a class="document-preview" href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download">
+                <label>Prévisualiser</label>
+                <div class="document-preview-filename"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?></div>
+                <div class="document-type-and-access">
+                    <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $escape($access) ?></div>
+                </div>
+            </a>
+            <?php
+        endforeach;
+endif;
+
+endif;
