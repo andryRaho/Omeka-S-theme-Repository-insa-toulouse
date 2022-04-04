@@ -20,6 +20,7 @@ $blockMetadata = $plugins->has('blockMetadata') ? $plugins->get('blockMetadata')
 $main = '';
 $asides = '';
 $countAsides = 0;
+$hasMainClass = false;
 
 $layouts = [];
 foreach ($page->blocks() as $block) {
@@ -39,6 +40,10 @@ foreach ($page->blocks() as $block) {
     } else {
         $main .= $blockLayout->render($block);
     }
+}
+
+if (!$hasMainClass) {
+    $themeFunctions->appendVarToView('mainClass', $asides ? 'aside-page' : 'simple-page');
 }
 
 if ($countAsides > 1): ?>

@@ -1,0 +1,31 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var string $html
+ * @var string $divclass
+ * @var string $heading
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+/** @var \BlockPlus\View\Helper\PageMetadata $pageMetadata */
+$pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : null;
+?>
+
+<aside class="aside-sommaire-page <?= $divclass ? $escapeAttr($divclass) : '' ?>">
+    <div class="open-science-menu-header">
+        <a class="items-list-close-page-menu" href=""></a>
+        <a class="items-list-toggle-page-menu" href="">Menu</a>
+    </div>
+    <nav>
+        <div class="back-to-list">
+            <a href="<?= $pageMetadata ? $pageMetadata('subroot')->siteUrl() : $this->url('site', [], true) ?>">Retour au sommaire</a>
+        </div>
+        <?php if ($heading): ?>
+        <h4><?= $escape($heading) ?></h4>
+        <?php endif; ?>
+        <?= $html ?>
+    </nav>
+</aside>

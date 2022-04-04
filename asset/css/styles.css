@@ -3134,15 +3134,19 @@ p:empty {
     /* Science ouverte : accueil  */
 
     main.open-science-content .content,
-    main.open-science-home-content .content {
+    main.open-science-home-content .content,
+    main.aside-page .content,
+    main.simple-page .content {
         margin-top: 10px;
     }
 
-    main.open-science-home-content .content {
+    main.open-science-home-content .content,
+    main.simple-page .content {
         padding: 0 80px;
     }
 
-    .open-science-content-header h1 {
+    .open-science-content-header h1,
+    .aside-page-header h1 {
         color: #EA3535;
         font-family: 'Lato', sans-serif;
         font-size: 31px;
@@ -3151,7 +3155,8 @@ p:empty {
         text-align: center;
     }
 
-    .open-science-content-intro {
+    .open-science-content-intro,
+    .aside-page-intro {
         border-bottom: 4px solid #EAEFED;
         padding-bottom: 30px;
         margin-top: 16px;
@@ -3211,33 +3216,40 @@ p:empty {
 
     /* Page Science ouverte : navigation */
 
-    main.open-science-content .content {
+    main.open-science-content .content,
+    main.aside-page .content {
         padding-bottom: 40px;
     }
 
-    main.open-science-content aside::before {
+    main.open-science-content aside::before,
+    main.aside-page aside::before {
         display: none;
     }
 
-    main.open-science-content > aside {
+    main.open-science-content > aside,
+    main.aside-page > aside {
         flex: 300px 0 0;
         padding-top: 20px;
     }
 
-    main.open-science-content > aside + .content {
+    main.open-science-content > aside + .content,
+    main.aside-page > aside + .content {
         flex: calc(100% - 300px) 0 0;
     }
 
-    main.open-science-content > aside .open-science-menu-header {
+    main.open-science-content > aside .open-science-menu-header,
+    main.aside-page > aside .open-science-menu-header {
         display: none;
     }
 
-    main.open-science-content > aside > nav {
+    main.open-science-content > aside > nav,
+    main.aside-page > aside > nav {
         background-color: #EAEFED;
         padding: 10px 15px;
     }
 
-    main.open-science-content > aside > nav > .back-to-list {
+    main.open-science-content > aside > nav > .back-to-list,
+    main.aside-page > aside > nav > .back-to-list {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -3246,7 +3258,8 @@ p:empty {
         margin-bottom: 8px;
     }
 
-    main.open-science-content > aside > nav > .back-to-list::before {
+    main.open-science-content > aside > nav > .back-to-list::before,
+    main.aside-page > aside > nav > .back-to-list::before {
         content: '';
         display: inline-block;
         background: url(../img/mosaique.svg) left center / 20px auto no-repeat;
@@ -3254,11 +3267,13 @@ p:empty {
         height: 20px;
     }
 
-    main.open-science-content > aside > nav > .back-to-list:hover::before {
+    main.open-science-content > aside > nav > .back-to-list:hover::before,
+    main.aside-page > aside > nav > .back-to-list:hover::before {
         background-image: url(../img/mosaique-on.svg);
     }
 
-    main.open-science-content > aside > nav > .back-to-list > a {
+    main.open-science-content > aside > nav > .back-to-list > a,
+    main.aside-page > aside > nav > .back-to-list > a {
         font-family: 'Lato', sans-serif;
         font-size: 13px;
         font-weight: 900;
@@ -3268,20 +3283,24 @@ p:empty {
         text-decoration: none;
     }
 
-    main.open-science-content > aside > nav > .back-to-list:hover > a {
+    main.open-science-content > aside > nav > .back-to-list:hover > a,
+    main.aside-page > aside > nav > .back-to-list:hover > a {
         color: #000000;
     }
 
-    main.open-science-content > aside > nav > ul {
+    main.open-science-content > aside > nav > ul,
+    main.aside-page > aside > nav > ul {
         margin-top: 20px;
     }
 
-    main.open-science-content > aside > nav > ul > li {
+    main.open-science-content > aside > nav > ul > li,
+    main.aside-page > aside > nav > ul > li {
         line-height: 19px;
         margin-top: 20px;
     }
 
-    main.open-science-content > aside > nav > ul > li > a {
+    main.open-science-content > aside > nav > ul > li > a,
+    main.aside-page > aside > nav > ul > li > a {
         font-family: 'Lato', sans-serif;
         font-size: 13px;
         font-weight: 900;
@@ -3290,18 +3309,21 @@ p:empty {
         text-decoration: none;
     }
 
-    main.open-science-content > aside > nav > ul > li > ul {
+    main.open-science-content > aside > nav > ul > li > ul,
+    main.aside-page > aside > nav > ul > li > ul {
         list-style-position: inside;
         list-style-type: square;
         margin: 5px 0 15px;
     }
 
-    main.open-science-content > aside > nav > ul > li > ul > li {
+    main.open-science-content > aside > nav > ul > li > ul > li,
+    main.aside-page > aside > nav > ul > li > ul > li {
         line-height: 16px;
         margin-bottom: 5px;
     }
 
-    main.open-science-content > aside > nav > ul > li > ul > li > a {
+    main.open-science-content > aside > nav > ul > li > ul > li > a,
+    main.aside-page > aside > nav > ul > li > ul > li > a {
         color: #313232;
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
@@ -3310,7 +3332,9 @@ p:empty {
     }
 
     main.open-science-content > aside > nav > ul > li > a:hover,
-    main.open-science-content > aside > nav > ul > li > ul > li > a:hover {
+    main.open-science-content > aside > nav > ul > li > ul > li > a:hover,
+    main.aside-page > aside > nav > ul > li > a:hover,
+    main.aside-page > aside > nav > ul > li > ul > li > a:hover {
         color: #BA0000;
     }
 
@@ -3540,12 +3564,14 @@ p:empty {
     /* 1300 --> 300px - padding 45px */
     /* 1024 --> 236px - padding 12px */
     main.open-science-content aside,
-    main.resources-list-and-filters aside {
+    main.resources-list-and-filters aside,
+    main.aside-page aside {
         flex: calc(23vw - 2px) 0 0;
     }
 
     main.open-science-content > aside + .content,
-    main.resources-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content,
+    main.aside-page > aside + .content {
         flex: calc(100% - 23vw + 2px) 0 0;
         padding-left: calc(12vw - 110px);
     }
@@ -3565,7 +3591,8 @@ p:empty {
         border-bottom: none;
     }
 
-    main.open-science-content .content {
+    main.open-science-content .content,
+    main.aside-page .content {
         padding: 0 calc(20vw - 180px);
     }
 
@@ -3612,12 +3639,14 @@ p:empty {
     /* Consulter - recherche + science ouverte */
     /* 1024 --> 236px - padding 12px */
     main.open-science-content aside,
-    main.resources-list-and-filters aside {
+    main.resources-list-and-filters aside,
+    main.aside-page aside {
         flex: 236px 0 0;
     }
 
     main.open-science-content > aside + .content,
-    main.resources-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content,
+    main.aside-page > aside + .content {
         flex: calc( 100% - 236px ) 0 0;
         padding-left: 12px;
     }
@@ -4303,13 +4332,15 @@ p:empty {
     /* Consulter */
 
     main.open-science-content,
-    main.resources-list-and-filters {
+    main.resources-list-and-filters,
+    main.aside-page {
         flex-direction: column;
         margin-top: 72px;
     }
 
     main.open-science-content aside,
-    main.resources-list-and-filters aside {
+    main.resources-list-and-filters aside,
+    main.aside-page aside {
         position: fixed;
         top: 0;
         left: 0;
@@ -4326,17 +4357,20 @@ p:empty {
     }
 
     main.open-science-content aside.opened,
-    main.resources-list-and-filters aside.opened {
+    main.resources-list-and-filters aside.opened,
+    main.aside-page aside.opened {
         transform: translateX(0%);
     }
 
     main.open-science-content aside ul,
-    main.resources-list-and-filters aside ul {
+    main.resources-list-and-filters aside ul,
+    main.aside-page aside ul {
         display: block;
     }
 
     main.open-science-content > aside + .content,
-    main.resources-list-and-filters > aside + .content {
+    main.resources-list-and-filters > aside + .content,
+    main.aside-page > aside + .content {
         padding-left: 0;
     }
 
@@ -4511,9 +4545,11 @@ p:empty {
 
     /* Science ouverte */
 
-    main.contact-content,
     main.open-science-home-content,
-    main.open-science-content {
+    main.open-science-content,
+    main.contact-content,
+    main.aside-page,
+    main.simple-page {
         margin-top: 60px !important; /* header's height */
     }
 
@@ -4521,30 +4557,36 @@ p:empty {
         margin-bottom: 52px;
     }
 
-    main.open-science-home-content .content {
+    main.open-science-home-content .content,
+    main.simple-page .content {
         padding: 0;
     }
 
-    main.open-science-content .content h1 {
+    main.open-science-content .content h1,
+    main.aside-page .content h1 {
         font-size: 23px;
         line-height: 27px;
     }
 
-    .open-science-content-intro {
+    .open-science-content-intro,
+    .aside-page-intro {
         margin-top: 12px;
     }
 
     /* Page Science ouverte */
 
-    main.open-science-content > aside .open-science-menu-header {
+    main.open-science-content > aside .open-science-menu-header,
+    main.aside-page > aside .open-science-menu-header {
         display: block;
     }
 
-    main.open-science-content .content {
-        margin-top: 0;
+    main.open-science-content .content,
+    main.aside-page .content {
+       margin-top: 0;
     }
 
-    main.open-science-content .content h1 {
+    main.open-science-content .content h1,
+    main.aside-page .content h1 {
         font-size: 18px;
         line-height: 26px;
     }
