@@ -249,9 +249,8 @@ $form->get('submit')
         </ul>
 
         <?php // Add a button to add a new value for fillable properties. ?>
-        <?php if ($field['more_values']): ?>
+        <?php // The button is always added to manage value removing. ?>
         <?= $partial('contribute/site/contribution/form-value-more') ?>
-        <?php endif; ?>
 
     </div>
     <?php endforeach; // Next field/property. ?>

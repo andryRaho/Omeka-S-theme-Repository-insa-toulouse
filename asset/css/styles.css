@@ -1113,7 +1113,7 @@ p:empty {
         margin-bottom: 22px;
     }
 
-    .duplicate-fields-buttons {
+    .add-values {
         text-align: center;
         height: 20px;
     }
@@ -1123,7 +1123,7 @@ p:empty {
     }
 
     button.add-value,
-    a.duplicate-fields-button {
+    a.add-value {
         display: inline-block;
         width: 20px;
         height: 20px;
@@ -1133,7 +1133,7 @@ p:empty {
     }
 
     button.add-value:hover,
-    a.duplicate-fields-button:hover {
+    a.add-value:hover {
         transform: scale(1.15);
     }
 
