@@ -73,7 +73,7 @@ $action = $action ?? 'show';
         <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-notice" form="' . $formId ?>"><span><?= $escape($translate('Détails')) ?></span></button>
     </li>
     <li class="<?= ($isActive = ($currentActionStep === 'add-fichiers' || $currentActionStep === 'edit-fichiers')) ? 'active' : 'inactive' ?>">
-        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-fichiers" form="' . $formId ?>"><span><?= $escape($translate('Téléversement')) ?></span></button>
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-fichiers" form="' . $formId ?>"><span><?= $escape($translate('Téléchargement')) ?></span></button>
     </li>
     <li class="<?= ($isActive = ($currentActionStep === 'show-depot')) ? 'active' : 'inactive' ?>">
         <button type="<?= $isActive || $step === 'template' ? 'button' : 'submit" name="next" value="show-depot" form="' . $formId ?>"><span><?= $escape($translate('Dépôt')) ?></span></button>
@@ -126,7 +126,7 @@ $action = $action ?? 'show';
         <a href="<?= $isActive ? '#' : $urls['edit-notice'] . '?mode=read' ?>"><span><?= $escape($translate('Détails')) ?></span></a>
     </li>
     <li class="<?= ($isActive = ($step === 'fichiers')) ? 'active' : 'inactive' ?>">
-        <a href="<?= $isActive ? '#' : $urls['edit-fichiers'] . '&mode=read' ?>"><span><?= $escape($translate('Téléversement')) ?></span></a>
+        <a href="<?= $isActive ? '#' : $urls['edit-fichiers'] . '&mode=read' ?>"><span><?= $escape($translate('Téléchargement')) ?></span></a>
     </li>
     <li class="<?= ($isActive = ($action === 'show')) ? 'active' : 'inactive' ?>">
         <a href="<?= $isActive ? '#' : $urls['show-depot'] ?>"><span><?= $escape($translate('Dépôt')) ?></span></a>
