@@ -94,9 +94,20 @@ $addForMedia = $isMainForm ? '' : ' add-value-media';
                 // @see \CustomVocab\DataType\CustomVocab
                 $baseType = $customVocabBaseTypes[substr($datatype, 12)] ?? 'literal';
                 $customVocab = $apiManager->read('custom_vocabs', ['id' => substr($datatype, 12)])->getContent();
-                $valueOptions = [];
+                $valueOptions = [
+                    // Managed via js.
+                    // ['v' => '', 't' => $translate('Select a value')],
+                ];
                 if ($baseType === 'resource') {
-                    $result = $apiManager->search('items', ['item_set_id' => $customVocab->itemSet()->id(), 'sort_by' => 'title'], ['initialize' => false, 'returnScalar' => 'title'])->getContent();
+                    // Manage hierarchical list (via module Thesaurus).
+                    $itemSet = $customVocab->itemSet();
+                    $itemSetClass = $itemSet ? $itemSet->resourceClass() : null;
+                    $plugins = $this->getHelperPluginManager();
+                    if ($itemSetClass && in_array($itemSetClass->term(), ['skos:Collection', 'skos:OrderedCollection']) && $plugins->has('thesaurus')) {
+                        $result = $plugins->get('thesaurus')($itemSet)->listTree(['indent' => '– ']);
+                    } else {
+                        $result = $apiManager->search('items', ['item_set_id' => $itemSet->id(), 'sort_by' => 'title'], ['initialize' => false, 'returnScalar' => 'title'])->getContent();
+                    }
                     foreach ($result as $id => $title) {
                         $valueOptions[] = ['v' => $id, 't' => $title];
                     }
