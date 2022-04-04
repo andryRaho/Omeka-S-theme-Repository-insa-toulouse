@@ -974,6 +974,9 @@ p:empty {
         font-size: 14px;
         line-height: 14px;
         text-align: center;
+
+        border: 1px solid #9CA19F;
+        border-radius: 28px;
     }
 
     .form-button.edit-button  {
@@ -1152,8 +1155,9 @@ p:empty {
         max-width: 115px;
     }
 
-    main.depot-content .content a.add-document-to-depot-btn {
+    main.depot-content .content .add-document-to-depot-btn {
         display: block;
+        width: 100%;
         background-color: #EAEFED;
         padding: 14px 0;
         margin-top: 30px;
@@ -1168,12 +1172,12 @@ p:empty {
         text-align: center;
     }
 
-    main.depot-content .content a.add-document-to-depot-btn span {
+    main.depot-content .content .add-document-to-depot-btn span {
         position: relative;
         padding-right: 28px;
     }
 
-    main.depot-content .content a.add-document-to-depot-btn span::after {
+    main.depot-content .content .add-document-to-depot-btn span::after {
         content: '';
         position: absolute;
         right:0;
@@ -1221,6 +1225,16 @@ p:empty {
 
     main.depot-content .content ul.bilan-depot label::after {
         content: ' : ';
+    }
+
+    .remove-value {
+        background-color: transparent;
+    }
+
+    form.readonly .inputs,
+    form.readonly .actions button,
+    form.readonly .actions input {
+        display: none;
     }
 
     /* */
@@ -1613,6 +1627,7 @@ p:empty {
         background: url(../img/document.svg) left 10px top no-repeat;
         padding-left: 70px;
         padding-top: 20px;
+        text-decoration: none;
     }
 
     main.depot-content .content > form a.document-preview label {
@@ -1802,21 +1817,27 @@ p:empty {
         visibility: hidden;
     }
 
+    ul.navigation.precedent,
     ul.navigation.precedent-suivant,
     ul.navigation.suivant {
         padding-top: 5px;
     }
 
+    form + ul.navigation.precedent,
     form + ul.navigation.precedent-suivant,
     form + ul.navigation.suivant {
         margin-top: 20px;
     }
 
+    ul.navigation.precedent:last-child,
+    ul.navigation.suivant:last-child,
     ul.navigation.precedent-suivant:last-child {
         margin-bottom: 40px;
     }
 
-    ul.navigation.precedent-suivant + .form-buttons {
+    ul.navigation.precedent + .form-buttons,
+    ul.navigation.precedent-suivant + .form-buttons,
+    ul.navigation.suivant + .form-buttons {
         margin: 25px 0 40px;
     }
 
@@ -1936,6 +1957,7 @@ p:empty {
         text-decoration: none;
     }
 
+    ul.navigation.precedent,
     ul.navigation.precedent-suivant,
     ul.navigation.suivant {
         display: flex;
@@ -1946,14 +1968,20 @@ p:empty {
         justify-content: space-between;
     }
 
+    ul.navigation.precedent {
+        justify-content: flex-start;
+    }
+
     ul.navigation.suivant {
         justify-content: flex-end;
     }
 
-    ul.navigation.suivant button,
+    ul.navigation.precedent button,
     ul.navigation.precedent-suivant button,
-    ul.navigation.suivant a,
-    ul.navigation.precedent-suivant a {
+    ul.navigation.suivant button,
+    ul.navigation.precedent a,
+    ul.navigation.precedent-suivant a,
+    ul.navigation.suivant a {
         color: #BA0000;
         font-family: 'Lato', sans-serif;
         font-size: 11px;
@@ -1963,11 +1991,21 @@ p:empty {
         text-transform: uppercase;
     }
 
-    ul.navigation.suivant button:hover,
+    ul.navigation.precedent button:hover,
     ul.navigation.precedent-suivant button:hover,
-    ul.navigation.suivant a:hover,
-    ul.navigation.precedent-suivant a:hover {
+    ul.navigation.suivant button:hover,
+    ul.navigation.precedent a:hover,
+    ul.navigation.precedent-suivant a:hover,
+    ul.navigation.suivant a:hover {
         color: #000;
+    }
+
+    ul.navigation.precedent li:first-child button,
+    ul.navigation.precedent li:first-child a,
+    ul.navigation.precedent-suivant li:first-child button,
+    ul.navigation.precedent-suivant li:first-child a {
+        padding-left: 19px;
+        background: url(../img/fleche-precedent.svg) center left / auto 12px no-repeat;
     }
 
     ul.navigation.precedent-suivant li:last-child button,
@@ -1976,12 +2014,6 @@ p:empty {
     ul.navigation.suivant a {
         padding-right: 18px;
         background: url(../img/fleche-suivant.svg) center right / auto 10px no-repeat;
-    }
-
-    ul.navigation.precedent-suivant li:first-child button,
-    ul.navigation.precedent-suivant li:first-child a {
-        padding-left: 19px;
-        background: url(../img/fleche-precedent.svg) center left / auto 12px no-repeat;
     }
 
     /* Formulaire Dépôt */
@@ -4094,7 +4126,7 @@ p:empty {
     }
 
     main.depot-content .content .fields-date,
-    main.depot-content .content a.add-document-to-depot-btn {
+    main.depot-content .content .add-document-to-depot-btn {
         margin-left: 12px;
         margin-right: 12px;
     }
@@ -4131,7 +4163,9 @@ p:empty {
         padding-bottom: 9px;
     }
 
-    ul.navigation.precedent-suivant + .form-buttons {
+    ul.navigation.precedent + .form-buttons,
+    ul.navigation.precedent-suivant + .form-buttons,
+    ul.navigation.suivant + .form-buttons {
         margin: 22px 0 0;
     }
 
@@ -4600,6 +4634,7 @@ p:empty {
         justify-content: center;
     }
 
+    .etapes-depot + ul.navigation.precedent,
     .etapes-depot + ul.navigation.precedent-suivant,
     .etapes-depot + ul.navigation.suivant,
     ul.navigation.etapes-depot {
