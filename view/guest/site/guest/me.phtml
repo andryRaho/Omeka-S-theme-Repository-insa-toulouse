@@ -13,6 +13,7 @@ $url = $plugins->get('url');
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $pageTitle = $plugins->get('pageTitle');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
 $siteSlug = $site->slug();
@@ -72,5 +73,8 @@ $name = $themeFunctions->danteUserName($user);
             </li>
             <?php endif; ?>
         </ul>
+    </div>
+    <div class="logout form-buttons">
+        <a class="form-button" href="<?= $escapeAttr($url('site/guest/guest', ['action' => 'logout'], true)) ?>"><?= $escape($translate('Se déconnecter')) ?></a>
     </div>
 </div>
