@@ -78,10 +78,11 @@ $name = $themeFunctions->danteUserName($user);
                 } else {
                     $medias = [];
                     $resourceType = '';
+                    $resourceUrl = $contribution->siteUrl($siteSlug);
                     $resourceTemplate = $contribution->resourceTemplate();
                     $documentType = $resourceTemplate ? $resourceTemplate->label() : 'Type indéfini';
                     $access = 'Non consultable';
-                    $citation = '';
+                    $citation = $contribution->displayTitle();
                     $medias = [];
                 }
                 ?>
@@ -93,11 +94,7 @@ $name = $themeFunctions->danteUserName($user);
                         <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
                     </div>
                     <div class="document-link">
-                        <?php if ($contributionResource): ?>
                         <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
-                        <?php else: ?>
-                        <span><?= $citation ?></span>
-                        <?php endif; ?>
                     </div>
                     <?php if (count($medias)): ?>
                     <ul class="media-list document-parts document-edition">
@@ -134,10 +131,10 @@ $name = $themeFunctions->danteUserName($user);
                         <?php else: ?>
                         <ul class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
                             <?php if ($contribution->userIsAllowed('update')): ?>
-                            <li><a class="form-button edit-button edit-contribution" href="<?= $escapeAttr($url('site/contribution-id', ['action' => 'edit', 'resource' => 'contribution', 'id' => $contribution->id()], true)) ?>"><?= $escape($translate('Éditer')) ?></a></li>
+                            <li><a class="button form-button edit-button edit-contribution" href="<?= $escapeAttr($url('site/contribution-id', ['action' => 'edit', 'resource' => 'contribution', 'id' => $contribution->id()], true)) ?>"><?= $escape($translate('Éditer')) ?></a></li>
                             <?php endif; ?>
                             <?php if ($contribution->userIsAllowed('delete')): ?>
-                            <li><a class="button delete-button remove-contribution" data-contribution-id="<?= $contribution->id() ?>" href="#"><?= $escape($translate('Supprimer')) ?></a></li>
+                            <li><a class="button form-button delete-button remove-contribution" data-contribution-id="<?= $contribution->id() ?>" href="#"><?= $escape($translate('Supprimer')) ?></a></li>
                             <?php endif; ?>
                         </ul>
                         <ul class="document-status-infos">

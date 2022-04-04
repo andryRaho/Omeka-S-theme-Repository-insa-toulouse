@@ -182,10 +182,12 @@ $baseSiteUrl = $site->url('site', [], true);
                 </div>
             </div>
             <div class="header-bottom">
-                <?= $site->publicNav()->menu()->renderMenu(null, [
+                <?php // On n'affiche pas l'accueil, mais on le garde pour le fil d'Ariane. ?>
+                <?php $r = $site->publicNav()->menu()->renderMenu(null, [
                     'maxDepth' => ($maxDepth = $themeSetting('nav_depth')) ? $maxDepth - 1 : null,
                     'ulClass' => 'content-with-margin',
-                ]) ?>
+                ]); ?>
+                <?= mb_substr($r, 0, mb_stripos($r, '<li')) . mb_substr($r, mb_stripos($r, '</li>') + 5) ?>
             </div>
         </header>
         <?php if (!empty($ariane)): ?>

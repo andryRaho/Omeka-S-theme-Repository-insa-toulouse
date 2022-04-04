@@ -105,7 +105,7 @@ $form->get('submit')
         $file = $fieldsMedia['file']['contributions'][0]['proposed']['store'] ?? null;
         ?>
         <?php if ($file): ?>
-    <div class="property form-content">
+    <div class="property form-content" data-term="file">
         <p><?= $escape($translate('Fichier déjà téléchargé')) ?></p>
         <div>
             <label><a href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?></a></label>
@@ -144,7 +144,7 @@ $form->get('submit')
         $vars->offsetSet('templateProperty', $templateProperty);
         ?>
 
-    <div class="property form-content<?= $multilang || !$maxValues || $maxValues > 1 ? ' multivalues' : '' ?>">
+    <div class="property form-content<?= $multilang || !$maxValues || $maxValues > 1 ? ' multivalues' : '' ?>" data-term="<?= $term ?>">
         <?php if (!$multilang): // Dans ce thème, le libellé multingue est affiché avec le champ. ?>
         <?php // Display property label. ?>
         <label<?= empty($field['required']) ? '' : ' class="required"' ?>>

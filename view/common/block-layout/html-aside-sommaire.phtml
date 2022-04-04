@@ -21,7 +21,7 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
     </div>
     <nav>
         <div class="back-to-list">
-            <a href="<?= $pageMetadata ? $pageMetadata('subroot')->siteUrl() : $this->url('site', [], true) ?>">Retour au sommaire</a>
+            <a href="<?= $pageMetadata && ($p = $pageMetadata('subroot')) ? $p->siteUrl() : $this->url('site', [], true) ?>">Retour au sommaire</a>
         </div>
         <?php if ($heading): ?>
         <h4><?= $escape($heading) ?></h4>
