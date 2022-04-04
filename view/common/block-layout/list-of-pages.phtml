@@ -1,0 +1,65 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $pageList
+ */
+
+$plugins = $this->getHelperPluginManager();
+$api = $plugins->get('api');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+$pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : null;
+$themeSettingAssetUrl = $plugins->get('themeSettingAssetUrl');
+
+// Ce sont n'importe quelle page, pas forcément des pages de site.
+// On doit retrouver l'image principale à partir du numéro de page.
+$fallback = $themeSettingAssetUrl('logo');
+$iterate = null;
+?>
+
+<ul class="open-science-item-cards">
+    <?php $iterate = function ($pages) use (&$iterate, $translate, $api, $escape, $escapeAttr, $pageMetadata, $fallback) {
+        foreach ($pages as $page) {
+            if (empty($page['data']['url'])): ?>
+    <li class="open-science-item-card"><?= $escape($translate('[Missing Page]')) ?></li>
+            <?php else:
+            if ($pageMetadata && !empty($page['data']['id']) && $page['type'] === 'page') {
+                $page = $api->searchOne('site_pages', ['id' => $page['data']['id']])->getContent();
+                if ($page) {
+                    $cover = $pageMetadata('main_image', $page);
+                    if ($cover) {
+                        $cover = $cover instanceof \Omeka\Api\Representation\AssetRepresentation
+                            ? $cover->getFileUrl()
+                            : $cover->thumbnailDisplayUrl('large');
+                    }
+                }
+            } elseif (!empty($page['data']['id']) && $page['type'] === 'resource') {
+                try {
+                    /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
+                    $resource = $api->read('resources', ['id' => $page['data']['id']])->getContent();
+                    $cover = $resource->thumbnailDisplayUrl('large');
+                } catch (Exception $e) {
+                }
+            }
+            ?>
+    <li class="open-science-item-card">
+        <a href="<?= $escapeAttr($page['data']['url']) ?>">
+            <div class="card-image-parent">
+                <div class="open-science-item-card-image" style="background-image:url('<?= $escapeAttr($cover ?: $fallback) ?>')"></div>
+            </div>
+            <div class="card-title">
+                <?= $escape($page['text']) ?>
+            </div>
+        </a>
+    </li>
+            <?php endif;
+            // if (isset($page['children'])) {
+            //     echo '<ul>';
+            //     $iterate($page['children']);
+            //     echo '</ul>';
+            // }
+        }
+    };
+    $iterate($pageList); ?>
+</ul>

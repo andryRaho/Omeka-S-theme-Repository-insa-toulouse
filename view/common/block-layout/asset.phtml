@@ -1,0 +1,54 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array $attachments Contains keys:
+ *   - asset (AssetRepresentation)
+ *   - page (PageRepresentation)
+ *   - caption (string): the html is purified according to settings
+ *   - alt_link_title (string)
+ *   Specific to the module version:
+ *   - class (string)
+ *   - title (string): deprecated alias of "alt_link_title"
+ *   - url (string): deprecated, will be removed. Use "page", "caption", alt title, or original asset alt value instead.
+ * @var array $assets Deprecated, alias of attachments.
+ * @var string $heading
+ * @var string $className
+ * @var string $alignment
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$thumbnail = $plugins->get('thumbnail');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+// Support assetElement when available, that may not be the case when the module is disabled.
+$thumbnail = $plugins->has('assetElement') ? $plugins->get('assetElement') : $plugins->get('thumbnail');
+?>
+
+<div class="block block-asset assets <?= $escape($className . ' ' . $alignment) ?>">
+    <?php if (!empty($heading)): ?>
+    <h2><?= $escape($heading) ?></h2>
+    <?php endif; ?>
+    <?php foreach ($attachments as $attachment):
+        $assetHtml = $attachment['asset'] ? $thumbnail($attachment['asset']) : '';
+    ?>
+    <div class="page-block page-block-image-with-caption <?= empty($attachment['class']) ? '' : ' ' . $escapeAttr($attachment['class']) ?>">
+        <?php if (isset($attachment['page'])): ?>
+        <a href="<?= $escape($attachment['page']->siteUrl()) ?>">
+             <?= $assetHtml ?>
+            <?php if ($attachment['caption'] !== ''): ?>
+            <div class="caption image-caption">
+                <?= $attachment['alt_link_title'] === '' ? $escape($attachment['page']->title()) : $escape($attachment['alt_link_title']) ?>
+            </div>
+            <?php endif; ?>
+            <?php if ($attachment['caption'] !== ''): ?>
+            <div class="caption image-caption">
+                <?= $attachment['caption'] ?>
+            </div>
+            <?php endif; ?>
+        </a>
+        <?php else: ?>
+             <?= $assetHtml ?>
+        <?php endif; ?>
+    </div>
+    <?php endforeach; ?>
+</div>
