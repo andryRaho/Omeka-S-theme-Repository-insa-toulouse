@@ -179,6 +179,24 @@ $form->get('submit')
 
         <ul class="values">
             <?php
+
+            // Gère l'option spécifique `multilang` (label différent selon la langue).
+            if ($multilang) {
+                $valueType = reset($field['datatypes']);
+                $mapIdxs = array_keys($field['contributions']);
+                $idx = 0;
+                foreach ($multilang as $lang => $langLabel) {
+                    $pointer = $mapIdxs[$idx] ?? $idx;
+                    if (!isset($mapIdxs[$idx])) {
+                        $field['contributions'][$pointer] = ['type' => $valueType, 'required' => $field['required'], 'original' => ['value' => null, '@value' => null], 'proposed' => ['@value' => null], 'template_property' => null];
+                    }
+                    $field['contributions'][$pointer]['@language'] = $lang;
+                    $field['contributions'][$pointer]['langLabel'] = $langLabel;
+                    ++$idx;
+                    if ($maxValues && $idx >= $maxValues) break;
+                }
+            }
+
             foreach ($field['contributions'] as $indexContribution => $fieldContribution):
                 /** @var \Omeka\Api\Representation\ValueRepresentation $value */
                 $value = $fieldContribution['original']['value'];

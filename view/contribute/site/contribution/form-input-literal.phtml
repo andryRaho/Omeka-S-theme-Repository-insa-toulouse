@@ -57,15 +57,20 @@ if ($isPrivate):
     $class[] = 'private';
 endif;
 $language = isset($proposed['@value']) ? null : (isset($original['value']) ? $original['value']->lang() : null);
+
+// Dans ce thème, le libellé multilang est affiché avec le champ.
+$hasLanguage = !empty($fieldContribution['@language']);
 ?>
 
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>">
-    <?php if (!empty($fieldContribution['@language'])): // Dans ce thème, le libellé multilang est affiché avec le champ. ?>
+    <?php if ($hasLanguage): ?>
     <label><?= $escape($fieldContribution['langLabel']) ?></label>
     <input type="hidden" name="<?= $baseName ?>[@language]" value="<?= $escapeAttr($fieldContribution['@language']) ?>"/>
     <?php endif; ?>
     <textarea class="form-control input-value" data-value-key="@value" name="<?= $baseName ?>[@value]" aria-labelledby="property-<?= $property ? $property->id() : '__PROPERTYID__' ?>-label"<?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?>><?= $escape($val) ?></textarea>
+    <?php if (!$hasLanguage): ?>
     <ul class="actions">
         <li><button type="button" class="o-icon-delete remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>
     </ul>
+    <?php endif; ?>
 </li>
