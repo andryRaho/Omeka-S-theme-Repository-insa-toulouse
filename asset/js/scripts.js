@@ -33,6 +33,23 @@ $(function () {
     const navigationDepotSuivant = $('.depot-precedent-suivant li:last-child a');
     const navigationDepotPrecedent = $('.depot-precedent-suivant li:first-child a');
 
+    const depotUploadParent = $('.contribute-medias');
+    depotUploadParent.on('change', function(e) {
+        const fileInput = $(e.target);
+        if (fileInput.length) {
+            const fileToUpload = fileInput[0].files;
+            if (fileToUpload.length) {
+                const firstFilename = fileToUpload[0].name;
+                let span = fileInput.closest('label').find('.file-to-upload');
+                if (! span.length) {
+                    fileInput.closest('label').append('<span class="file-to-upload"></span>');
+                    span = fileInput.closest('label').find('.file-to-upload');
+                }
+                span.text(firstFilename);
+            }
+        }
+    });
+
     depotContentEtape1.on('click', function(e) {
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-1');
     });

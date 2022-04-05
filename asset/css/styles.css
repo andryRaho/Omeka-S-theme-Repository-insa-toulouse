@@ -935,6 +935,34 @@ p:empty {
         margin-right: 0;
     }
 
+    .form-buttons .form-button.o-icon-delete {
+        display: flex;
+        gap:8px;
+        align-items: center;
+        width: auto;
+        height: 20px;
+        background: transparent !important;
+        border: none;
+        padding: 0;
+        font-weight: 700;
+        color: #BA0000;
+        text-transform: uppercase;
+    }
+
+    .form-buttons .form-button.o-icon-delete::before {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: url(../img/supprimer.svg) left center / contain no-repeat;
+        transition: transform ease-in-out 0.05s;
+        transform-origin: 50% 50%;
+    }
+
+    .form-buttons .form-button.o-icon-delete:hover::before {
+        transform: scale(1.15);
+    }
+
     .document-edition .form-buttons {
         justify-content: flex-start;
         align-items: center;
@@ -1100,6 +1128,11 @@ p:empty {
 
     .file-upload-button input[type="file"] {
         display: none;
+    }
+
+    .file-to-upload {
+        color: #000 !important;
+        margin: 0 8px;
     }
 
     /* */
@@ -1843,6 +1876,7 @@ p:empty {
 
     ul.navigation.etapes-depot li {
         display: inline-block;
+        vertical-align: top;
     }
 
     ul.navigation.etapes-depot li:nth-child(2) {
