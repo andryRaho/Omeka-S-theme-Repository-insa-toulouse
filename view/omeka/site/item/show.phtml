@@ -23,7 +23,7 @@ $hasContactUs = $plugins->has('contactUs');
 
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 $embedMedia = $siteSetting('item_media_embed', false);
-$medias = $item->media();
+$medias = $themeFunctions->danteMediaItem($item);
 
 $filterLocale = (bool) $siteSetting('filter_locale_values');
 $siteLang = $plugins->get('lang')();
@@ -117,16 +117,25 @@ $themeFunctions->appendVarsToView([
                 <?php else: ?>
                 <ul class="media-list">
                     <?php foreach ($medias as $media):
-                        $access = $themeFunctions->danteAccess($media);
-                        $accessCode = $themeFunctions->danteAccessClass($access);
-                        $originalUrl = $media->originalUrl();
+                        if (is_object($media)) {
+                            $access = $themeFunctions->danteAccess($media);
+                            $accessCode = $themeFunctions->danteAccessClass($access);
+                            $originalUrl = $media->originalUrl();
+                            $title = $media->displayTitle();
+                        } else {
+                            $title = $media['o:title'];
+                            $access = $translate('Non consultable');
+                            $accessCode = 'no-access';
+                        }
                     ?>
                     <li class="document-parts">
-                        <span class="document-part-name"><?= $media->displayTitle() ?></span>
+                        <span class="document-part-name"><?= $title ?></span>
                         <div class="document-access <?= $accessCode ?>"><?= $access ?></div>
                         <div class="document-edition">
 
-                            <?php if ($accessCode === 'free-access' || $themeFunctions->danteAccessMedia($media)): ?>
+                            <?php if ($accessCode === 'free-access'
+                                || (is_object($media) && $themeFunctions->danteAccessMedia($media))
+                            ): ?>
 
                             <ul class="form-buttons">
                                 <?php if ($originalUrl): ?>

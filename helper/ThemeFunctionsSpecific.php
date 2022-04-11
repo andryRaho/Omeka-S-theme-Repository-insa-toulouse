@@ -121,6 +121,39 @@ trait ThemeFunctionsSpecific
         return (bool) strpos($user->getEmail(), 'univ-tlse2.fr');
     }
 
+    /**
+     * Tous les médias doivent être listées, y compris les médias privés (quand
+     * l'item est accessible), afin de pouvoir afficher l'information "non consultable".
+     *
+     * Pour les documents entièrement privés, il faut juste le titre.
+     *
+     * Néanmoins, ces fichiers sont mis en privé/réservé justement pour éviter cela.
+     */
+    public function danteMediaItem(ItemRepresentation $item): array
+    {
+        $medias = [];
+        foreach ($item->media() as $media) {
+            $medias[$media->id()] = $media;
+        }
+
+        $sql = <<<'SQL'
+SELECT `resource`.`id`, `resource`.`title`
+FROM `resource`
+JOIN `media` ON `media`.`id` = `resource`.`id`
+WHERE `media`.`item_id` = :item_id
+    AND `resource`.`is_public` = 0
+SQL;
+        $privateMedias = $item->getServiceLocator()->get('Omeka\Connection')
+            ->executeQuery($sql, ['item_id' => $item->id()])->fetchAllKeyValue();
+        foreach ($privateMedias as $privateMediaId => $privateMediaLabel) {
+            $medias[$privateMediaId] = $medias[$privateMediaId]
+                ?? ['o:id' => $privateMediaId, 'o:title' => $privateMediaLabel];
+        }
+
+        return $medias;
+    }
+
+
     public function danteAuteur(ItemRepresentation $resource): string
     {
         if ($value = $resource->value('dcterms:creator')) {
