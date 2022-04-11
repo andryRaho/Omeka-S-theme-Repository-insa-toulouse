@@ -75,19 +75,44 @@ $day = trim((string) $day, '- ');
         <div class="input">
             <label class="value input-container">
                 <?= $translate('Year') ?>
-                <input type="tel" pattern="^\d{4}$" class="form-control input-value" data-input-part="year" name="<?= $baseName . '[year]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($year) ?>"/>
+                <input type="tel" pattern="^(?:19|20)\d\d$" class="form-control input-value" data-input-part="year" name="<?= $baseName . '[year]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($year) ?>"/>
             </label>
         </div>
         <div class="input">
             <label class="value input-container">
                 <?= $translate('Month') ?>
+                <?php /*
                 <input type="tel" pattern="^(?:0?[1-9]|1[0-2])$" class="form-control input-value" data-input-part="month" name="<?= $baseName . '[month]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($month) ?>"/>
+                */ ?>
+                <select class="form-control input-value chosen-select" data-input-part="month" name="<?= $baseName . '[month]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> data-placeholder="<?= $escapeAttr($translate('Choisir un mois')) ?>">
+                    <option value=""><?= $escape($translate('Choisir un mois')) ?></option>
+                    <option value="01"<?= (int) $month === 1 ? ' selected="selected"' : '' ?>><?= $escape($translate('Janvier')) ?></option>
+                    <option value="02"<?= (int) $month === 2 ? ' selected="selected"' : '' ?>><?= $escape($translate('Février')) ?></option>
+                    <option value="03"<?= (int) $month === 3 ? ' selected="selected"' : '' ?>><?= $escape($translate('Mars')) ?></option>
+                    <option value="04"<?= (int) $month === 4 ? ' selected="selected"' : '' ?>><?= $escape($translate('Avril')) ?></option>
+                    <option value="05"<?= (int) $month === 5 ? ' selected="selected"' : '' ?>><?= $escape($translate('Mai')) ?></option>
+                    <option value="06"<?= (int) $month === 6 ? ' selected="selected"' : '' ?>><?= $escape($translate('Juin')) ?></option>
+                    <option value="07"<?= (int) $month === 7 ? ' selected="selected"' : '' ?>><?= $escape($translate('Juillet')) ?></option>
+                    <option value="08"<?= (int) $month === 8 ? ' selected="selected"' : '' ?>><?= $escape($translate('Août')) ?></option>
+                    <option value="09"<?= (int) $month === 9 ? ' selected="selected"' : '' ?>><?= $escape($translate('Septembre')) ?></option>
+                    <option value="10"<?= (int) $month === 10 ? ' selected="selected"' : '' ?>><?= $escape($translate('Octobre')) ?></option>
+                    <option value="11"<?= (int) $month === 11 ? ' selected="selected"' : '' ?>><?= $escape($translate('Novembre')) ?></option>
+                    <option value="12"<?= (int) $month === 12 ? ' selected="selected"' : '' ?>><?= $escape($translate('Décembre')) ?></option>
+                </select>
             </label>
         </div>
         <div class="input">
             <label class="value input-container">
                 <?= $translate('Day') ?>
+                <?php /*
                 <input type="tel" pattern="^(?:0?[1-9]|[1-2]\d|3[0-1])$" class="form-control input-value" data-input-part="day" name="<?= $baseName . '[day]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($day) ?>"/>
+                */ ?>
+                <select class="form-control input-value chosen-select" data-input-part="day" name="<?= $baseName . '[day]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> data-placeholder="<?= $escapeAttr($translate('Choisir un jour')) ?>">
+                    <option value=""><?= $escape($translate('Choisir un jour')) ?></option>
+                    <?php foreach (range(1, 31) as $dayCurrent): ?>
+                    <option value="<?= sprintf('%02d',  $dayCurrent) ?>"<?= $dayCurrent === (int) $day ? ' selected="selected"' : '' ?>><?= $dayCurrent ?></option>
+                    <?php endforeach; ?>
+                </select>
             </label>
         </div>
     </div>
