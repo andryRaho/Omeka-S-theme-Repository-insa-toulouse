@@ -44,7 +44,12 @@
 $original = $fieldContribution['original'];
 $proposed = $fieldContribution['proposed'];
 $isPrivate = $value ? !$value->isPublic() : (isset($templateProperty) ? $templateProperty->isPrivate() : false);
-$isRequired = !empty($field['required']) && (($indexContribution ?? null) === 0);
+// Gère le cas spécifique du multilang.
+if (isset($fieldContribution['required'])) {
+    $isRequired = $fieldContribution['required'];
+} else {
+    $isRequired = !empty($field['required']) && (($indexContribution ?? null) === 0);
+}
 
 $baseName = $isMainForm
     ? sprintf('%s[%s]', $term, $indexFieldInput)
@@ -64,7 +69,7 @@ $hasLanguage = !empty($fieldContribution['@language']);
 
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>">
     <?php if ($hasLanguage): ?>
-    <label><?= $escape($fieldContribution['langLabel']) ?></label>
+    <label<?= $isRequired ? ' class="required"' : '' ?>><?= $escape($fieldContribution['langLabel']) ?></label>
     <input type="hidden" name="<?= $baseName ?>[@language]" value="<?= $escapeAttr($fieldContribution['@language']) ?>"/>
     <?php endif; ?>
     <textarea maxlength="2000" class="form-control input-value" data-value-key="@value" name="<?= $baseName ?>[@value]" aria-labelledby="property-<?= $property ? $property->id() : '__PROPERTYID__' ?>-label"<?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?>><?= $escape($val) ?></textarea>

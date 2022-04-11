@@ -140,6 +140,8 @@ $form->get('submit')
         $templateProperty = $field['template_property'];
         $property = $field['property'];
         $multilang = $themeFunctions->templatePropertyThemeOption($templateProperty, 'multilang');
+        // TODO Utiliser min_values pour gérer les valeurs requises.
+        // $minValues = $field['min_values'] ?? 0;
         $maxValues = $field['max_values'] ?? 0;
         $vars->offsetSet('field', $field);
         $vars->offsetSet('term', $term);
@@ -197,11 +199,21 @@ $form->get('submit')
                 $valueType = reset($field['datatypes']);
                 $mapIdxs = array_keys($field['contributions']);
                 $idx = 0;
+                $idxLang = 0;
                 foreach ($multilang as $lang => $langLabel) {
+                    ++$idxLang;
                     $pointer = $mapIdxs[$idx] ?? $idx;
                     if (!isset($mapIdxs[$idx])) {
-                        $field['contributions'][$pointer] = ['type' => $valueType, 'required' => $field['required'], 'original' => ['value' => null, '@value' => null], 'proposed' => ['@value' => null], 'template_property' => null];
+                        $field['contributions'][$pointer] = [
+                            'type' => $valueType,
+                            'original' => ['value' => null, '@value' => null],
+                            'proposed' => ['@value' => null],
+                        ];
                     }
+                    // Ne devrait pas être là, mais mis pour le cas particulier des multilangs.
+                    // La dernière valeur n'est pas obligatoire. Géré pour literal seulement.
+                    // TODO Utiliser min values.
+                    $field['contributions'][$pointer]['required'] = $idxLang < count($multilang);
                     $field['contributions'][$pointer]['@language'] = $lang;
                     $field['contributions'][$pointer]['langLabel'] = $langLabel;
                     ++$idx;
@@ -213,6 +225,8 @@ $form->get('submit')
                 /** @var \Omeka\Api\Representation\ValueRepresentation $value */
                 $value = $fieldContribution['original']['value'];
                 if (!$value && !$field['fillable']) continue;
+                // TODO Utiliser min_values pour gérer les valeurs requises.
+                // if ($field['required'] && $minValues && ($indexContribution + 1) < $minValues) $field['contributions'][$pointer]['required'];
                 $typeColon = strtok((string) $fieldContribution['type'], ':');
                 $vars->offsetSet('indexContribution', $indexContribution);
                 $vars->offsetSet('fieldContribution', $fieldContribution);
