@@ -54,6 +54,10 @@ $args['readonly'] = true;
     <?= $partial('contribute/site/contribution/form-input-literal', $args) ?>
 </div>
 
+<div id="edit_template_value_person" class="contribute_template value" style="display:none;">
+    <?= $partial('contribute/site/contribution/form-input-literal-person', $args) ?>
+</div>
+
 <div id="edit_template_resource" class="contribute_template resource" style="display:none;">
     <li class="value resource">
         <select class="form-control input-value" data-value-key="@resource" name="dcterms:title[__INDEX__][@resource]" aria-labelledby="property-__PROPERTYID__-label" readonly="readonly"><option value=""></option></select>

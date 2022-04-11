@@ -59,9 +59,9 @@ if ($isPrivate):
 endif;
 
 [$year, $month, $day] = explode('-', $val . '--', 3);
-$year = trim((string) $year, '- ');
-$month = trim((string) $month, '- ');
-$day = trim((string) $day, '- ');
+$year = trim((string) $year, "- \n\r\t");
+$month = trim((string) $month, "- \n\r\t");
+$day = trim((string) $day, "- \n\r\t");
 ?>
 
 <?php

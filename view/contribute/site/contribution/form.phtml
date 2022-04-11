@@ -176,6 +176,12 @@ $form->get('submit')
         <?php // Simple display of the value for properties that are not editable or without datatypes. ?>
 
         <?php if (!$field['editable'] && !$field['fillable'] || !count($field['datatypes'])): ?>
+        <?php
+        if ($disableIdref) {
+            // TODO Ajouter une option dans le modèle pour dire qu'un type de données est interdit au public.
+            $field['datatypes'] = array_diff($field['datatypes'], ['valuesuggest:idref:person']);
+        }
+        ?>
         <ul class="values">
             <?php
             foreach ($field['values'] as $value):
@@ -236,6 +242,11 @@ $form->get('submit')
                     echo $partial('contribute/site/contribution/form-value');
                 else:
                     switch ($fieldContribution['type']):
+                        // Gère le champ spécifique pour les personnes, qui sont des doubles champs noms prénoms.
+                        // TODO Ajouter un champ spécial dans omeka (champ double ou triple avec mail) ou gérer les ressources liées (création et maj).
+                        case in_array($term, ['dcterms:creator', 'dante:directeur', 'dante:codirecteur']):
+                            echo $partial('contribute/site/contribution/form-input-literal-person');
+                            break;
                         case 'literal':
                             echo $partial('contribute/site/contribution/form-input-literal');
                             break;
@@ -279,7 +290,17 @@ $form->get('submit')
 
         <?php // Add a button to add a new value for fillable properties. ?>
         <?php // The button is always added to manage value removing. ?>
+        <?php // Spécial pour les personnes avec le champ spécifique. ?>
+        <?php if (in_array($term, ['dcterms:creator', 'dante:directeur', 'dante:codirecteur'])): ?>
+        <?php $addForMedia = $isMainForm ? '' : ' add-value-media'; ?>
+        <div class="inputs">
+            <div class="add-values default-selector" data-next-index="<?= $indexFieldInput ?>" data-next-term="<?= $term ?>">
+                <button type="button" class="add-value add-value-new add-value-literal-person<?= $addForMedia ?> button o-icon-add" data-template="edit_template_value_person"><?= $escape($translate('Add value')) ?></button>
+            </div>
+        </div>
+        <?php else: ?>
         <?= $partial('contribute/site/contribution/form-value-more') ?>
+        <?php endif; ?>
 
     </div>
     <?php endforeach; // Next field/property. ?>
