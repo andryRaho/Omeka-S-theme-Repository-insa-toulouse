@@ -48,7 +48,7 @@ $themeFunctions->appendVarsToView([
 
 <div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
-        <p><?= $this->messages() ?></p>
+        <?= $this->messages() ?>
     </div>
     <?php if (count($fields)):
     // The two lists of fields are merged in one form by default.

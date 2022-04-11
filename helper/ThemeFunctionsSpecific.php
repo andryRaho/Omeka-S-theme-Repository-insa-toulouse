@@ -9,16 +9,35 @@ use Omeka\Entity\User;
 
 trait ThemeFunctionsSpecific
 {
+    protected $classesAccess = [
+        'Accès libre' => 'free-access',
+        'free' => 'free-access',
+        'free-access' => 'free-access',
+        'open' => 'free-access',
+        'public' => 'free-access', // Recommandé
+
+        'Accès restreint' => 'limited-access',
+        'limited' => 'limited-access',
+        'limited-access' => 'limited-access',
+        'reserved' => 'limited-access', // Recommandé
+        'restricted' => 'limited-access',
+
+        'Non consultable' => 'no-access',
+        'no-access' => 'no-access',
+        'none' => 'no-access',
+        'private' => 'no-access', // Défaut.
+    ];
+
     protected $accessLevels = [
         'free-access' => 0,
         'limited-access' => 1,
         'no-access' => 2,
     ];
 
-    protected $classesAccess = [
-        'Accès libre' => 'free-access',
-        'Accès restreint' => 'limited-access',
-        'Non consultable' => 'no-access', // Défaut.
+    protected $accessLabels = [
+        'public' => 'Accès libre',
+        'reserved' => 'Accès restreint',
+        'private' =>'Non consultable',
     ];
 
     /**

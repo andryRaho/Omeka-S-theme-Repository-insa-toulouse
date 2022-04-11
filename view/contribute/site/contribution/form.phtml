@@ -73,7 +73,7 @@ $form->get('submit')
     ->setValue('Enregistrer'); // @translate
 ?>
 
-<?= $this->form()->openTag($form) ?>
+<?= $this->form()->openTag($form->setAttribute('class', $form->getAttribute('class') . ' etape-' . $steps['stepNumber'])) ?>
 <fieldset class="etape-2"<?= $disabled ?>><?php // Afficher l'étape permet de la cacher via le css. ?>
     <h2><?= $escape($translate('2. Détails')) ?></h2>
     <?php // Le même en bas et dans la sous-forme pour les fichiers. ?>
@@ -104,11 +104,11 @@ $form->get('submit')
         // Only one file is allowed by media and it cannot be updated, like in Omeka.
         $file = $fieldsMedia['file']['contributions'][0]['proposed']['store'] ?? null;
         ?>
-        <?php if ($file): ?>
     <div class="property form-content" data-term="file">
-        <p><?= $escape($translate('Fichier déjà téléchargé')) ?></p>
+        <?php if ($file): ?>
+        <p><span class="file"<?= $escape($translate('Fichier déjà téléchargé')) ?></p>
         <div>
-            <label><a href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?></a></label>
+            <label class="file-upload-button"><a href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" class="file-to-upload" download="download"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?></a></label>
             <input type="hidden"  name="media[<?= $indexMedia ?>][file][0][store]" value="<?= $escapeAttr($file) ?>"/>
             <input type="hidden"  name="media[<?= $indexMedia ?>][file][0][@value]" value="<?= $escapeAttr($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?>"/>
         </div>
@@ -142,6 +142,14 @@ $form->get('submit')
         $vars->offsetSet('property', $property);
         $vars->offsetSet('indexFieldInput', $indexFieldInput);
         $vars->offsetSet('templateProperty', $templateProperty);
+        // Evite les champs cachés en required dans l'autre étape.
+        if (($isMainForm && $steps['stepNumber'] === 3)
+            || (!$isMainForm && $steps['stepNumber'] === 2)
+        ) {
+            $vars->offsetSet('readonly', 'readonly');
+        } elseif ($vars->offsetExists('readonly')) {
+            $vars->offsetUnset('readonly');
+        }
         ?>
 
     <div class="property form-content<?= $multilang || !$maxValues || $maxValues > 1 ? ' multivalues' : '' ?>" data-term="<?= $term ?>">
@@ -270,10 +278,10 @@ $form->get('submit')
         <?php endif; ?>
     </ul>
     <div class="sub-forms">
-            <?php
-            $vars->offsetSet('isMainForm', false);
-            $indexMedia = 0;
-            foreach ($fieldsByMedia as $fieldsMedia): ?>
+        <?php
+        $vars->offsetSet('isMainForm', false);
+        $indexMedia = 0;
+        foreach ($fieldsByMedia as $fieldsMedia): ?>
         <div class="contribute-media sub-form form-content document-parts-forms" name="media[<?= $indexMedia ?>]" data-index-media="<?= $indexMedia ?>">
             <div class="document-part-template document-part-fields">
                 <?php
@@ -283,20 +291,19 @@ $form->get('submit')
                 <?= $partial('contribute/site/contribution/form') ?>
                 <?php if ($mode !== 'read'): ?>
                 <ul class="actions form-buttons">
-                    <li><button type="button" class="remove-media button o-icon-delete form-button"><?= $escape($translate('Remove file')) ?></button></li>
+                    <li><button type="button" class="remove-media button o-icon-delete form-button"><?= $escape($translate('Supprimer le fichier')) ?></button></li>
                 </ul>
                 <?php endif; ?>
             </div>
         </div>
-            <?php ++$indexMedia; ?>
-            <?php endforeach; ?>
+        <?php ++$indexMedia; ?>
+        <?php endforeach; ?>
     </div>
     <div class="inputs inputs-media form-content">
         <button type="button" class="add-media-new button o-icon-add add-document-to-depot-btn">
             <span><?= $translate('Ajouter un fichier') ?></span>
         </button>
     </div>
-</fieldset>
     <?php
     $indexMedia = null;
     $fieldsMedia = [];
@@ -304,6 +311,7 @@ $form->get('submit')
     $vars->offsetSet('indexMedia', $indexMedia);
     $vars->offsetSet('fieldsMedia', $fieldsMedia);
     ?>
+</fieldset>
     <?php endif; ?>
 
     <?= $formElement($form->get('template')) ?>
@@ -358,7 +366,7 @@ $form->get('submit')
                 $vars->offsetSet('fieldsMedia', null);
                 ?>
                 <ul class="actions form-buttons">
-                    <li><button type="button" class="remove-media button o-icon-delete form-button"><?= $escape($translate('Remove file')) ?></button></li>
+                    <li><button type="button" class="remove-media button o-icon-delete form-button"><?= $escape($translate('Supprimer le fichier')) ?></button></li>
                 </ul>
             </div>
         </div>

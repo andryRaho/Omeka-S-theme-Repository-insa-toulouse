@@ -78,7 +78,7 @@ unset($contributeVars);
 
 <div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
-        <p><?= $this->messages() ?></p>
+        <?= $this->messages() ?>
     </div>
     <?php $this->vars()->offsetSet('stepPart', 'top'); ?>
     <?= $partial('contribute/site/contribution/steps') ?>
@@ -94,7 +94,7 @@ unset($contributeVars);
         <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>"><?= $escape($translate('Éditer')) ?></a></li>
         <?php endif; ?>
         <?php if ($contribution->userIsAllowed('delete')): ?>
-        <li><a class="button delete-button remove-contribution form-button" data-contribution-id="<?= $contribution->id() ?>" href="#<?php //= $escapeAttr($contribution->url('delete')) ?>"><?= $escape($translate('Supprimer')) ?></a></li>
+        <li><a class="button delete-button remove-contribution form-button" data-contribution-id="<?= $contribution->id() ?>" data-contribution-url="<?= $contribution->url('delete') ?>" href="#<?php //= $escapeAttr($contribution->url('delete')) ?>"><?= $escape($translate('Supprimer')) ?></a></li>
         <?php endif; ?>
     </ul>
     <?php endif; ?>

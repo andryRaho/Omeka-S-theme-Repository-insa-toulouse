@@ -1,4 +1,4 @@
-$(function () {
+$(document).ready(function () {
 
     const body = $('body');
 
@@ -33,21 +33,35 @@ $(function () {
     const navigationDepotSuivant = $('.depot-precedent-suivant li:last-child a');
     const navigationDepotPrecedent = $('.depot-precedent-suivant li:first-child a');
 
-    const depotUploadParent = $('.contribute-medias');
-    depotUploadParent.on('change', function(e) {
+    $('#edit-resource').on('change', '.contribute-media input[type=file]', function(e) {
         const fileInput = $(e.target);
         if (fileInput.length) {
             const fileToUpload = fileInput[0].files;
-            if (fileToUpload.length) {
+            if (fileToUpload && fileToUpload.length) {
                 const firstFilename = fileToUpload[0].name;
                 let span = fileInput.closest('label').find('.file-to-upload');
-                if (! span.length) {
+                if (!span.length) {
                     fileInput.closest('label').append('<span class="file-to-upload"></span>');
                     span = fileInput.closest('label').find('.file-to-upload');
                 }
                 span.text(firstFilename);
             }
         }
+    });
+
+    $('.etape-courante-3 #edit-resource').on('submit', function(e) {
+        $('#edit-resource').find('.contribute-media input[type=file]').each(function() {
+            const fileInput = $(this);
+            const fileToUpload = fileInput[0].files;
+            if (!fileToUpload || !fileToUpload.length) {
+                let span = $(this).closest('label').find('.file-to-upload');
+                if (!span.length) {
+                    fileInput.closest('label').append('<span class="file-to-upload"></span>');
+                    span = fileInput.closest('label').find('.file-to-upload');
+                }
+                span.text('Fichier non téléchargé. Veuillez en choisir un ou cliquer sur "supprimer le fichier".');
+            }
+        });
     });
 
     depotContentEtape1.on('click', function(e) {
