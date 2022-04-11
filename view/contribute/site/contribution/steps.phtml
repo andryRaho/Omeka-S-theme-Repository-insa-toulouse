@@ -52,6 +52,7 @@ $stepPart = $stepPart ?? 'top';
 $formId = isset($form) ? $form->getAttribute('id') : null;
 $action = $action ?? 'show';
 
+$classes = $mode === 'read' && $action !== 'show' ? 'class="mode-read"' : 'class="mode-edit"';
 // TODO Ajouter un input hidden "not save", comme étape prev/next/any ?
 ?>
 
@@ -66,28 +67,28 @@ $action = $action ?? 'show';
         <?php if ($currentActionStep === 'add-notice'): ?>
         <a href="<?= $isActive ? '#' : $urls['add-template'] ?>"><span><?= $escape($translate('Type de document')) ?></span></a>
         <?php else: ?>
-        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="add-template" form="' . $formId ?>"><span><?= $escape($translate('Type de document')) ?></span></button>
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="add-template" form="' . $formId ?>" <?= $classes ?>><span><?= $escape($translate('Type de document')) ?></span></button>
         <?php endif; ?>
     </li>
     <li class="<?= ($isActive = ($currentActionStep === 'add-notice' || $currentActionStep === 'edit-notice')) ? 'active' : 'inactive' ?>">
-        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-notice" form="' . $formId ?>"><span><?= $escape($translate('Détails')) ?></span></button>
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-notice" form="' . $formId ?>" <?= $classes ?>><span><?= $escape($translate('Détails')) ?></span></button>
     </li>
     <li class="<?= ($isActive = ($currentActionStep === 'add-fichiers' || $currentActionStep === 'edit-fichiers')) ? 'active' : 'inactive' ?>">
-        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-fichiers" form="' . $formId ?>"><span><?= $escape($translate('Téléchargement')) ?></span></button>
+        <button type="<?= $isActive ? 'button' : 'submit" name="next" value="' . $action . '-fichiers" form="' . $formId ?>" <?= $classes ?>><span><?= $escape($translate('Téléchargement')) ?></span></button>
     </li>
     <li class="<?= ($isActive = ($currentActionStep === 'show-depot')) ? 'active' : 'inactive' ?>">
-        <button type="<?= $isActive || $step === 'template' ? 'button' : 'submit" name="next" value="show-depot" form="' . $formId ?>"><span><?= $escape($translate('Dépôt')) ?></span></button>
+        <button type="<?= $isActive || $step === 'template' ? 'button' : 'submit" name="next" value="show-depot" form="' . $formId ?>" <?= $classes ?>><span><?= $escape($translate('Dépôt')) ?></span></button>
     </li>
 </ul>
 <?php endif; ?>
 
 <?php if ($currentActionStep === 'add-template'): ?>
 <ul class="navigation suivant navigation-<?= $stepPart ?>">
-    <li><button type="submit" name="next" value="add-notice" form="<?= $formId ?>">Étape suivante</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="add-notice" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
 <?php elseif ($currentActionStep === 'edit-template'): ?>
 <ul class="navigation suivant navigation-<?= $stepPart ?>">
-    <li><button type="submit" name="next" value="edit-notice" form="<?= $formId ?>">Étape suivante</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="edit-notice" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
 <?php elseif ($currentActionStep === 'add-notice'): ?>
 <ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
@@ -96,21 +97,21 @@ $action = $action ?? 'show';
     <?php /*
     <li><button type="submit" name="next" value="add-template" form="<?= $formId ?>">Étape précédente</button></li>
     */ ?>
-    <li><button type="submit" name="next" value="edit-fichiers" form="<?= $formId ?>">Étape suivante</button></li>
+    <li><button type="submit"<?= $classes ?> name="next" value="edit-fichiers" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
 <?php elseif ($currentActionStep === 'edit-notice'): ?>
 <ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
-    <li><button type="submit" name="next" value="add-template" form="<?= $formId ?>">Étape précédente</button></li>
-    <li><button type="submit" name="next" value="edit-fichiers" form="<?= $formId ?>">Étape suivante</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="add-template" form="<?= $formId ?>">Étape précédente</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="edit-fichiers" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
 <?php elseif ($currentActionStep === 'edit-fichiers'): ?>
 <ul class="navigation precedent-suivant navigation-<?= $stepPart ?>">
-    <li><button type="submit" name="next" value="edit-notice" form="<?= $formId ?>">Étape précédente</button></li>
-    <li><button type="submit" name="next" value="show-depot" form="<?= $formId ?>">Étape suivante</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="edit-notice" form="<?= $formId ?>">Étape précédente</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="show-depot" form="<?= $formId ?>">Étape suivante</button></li>
 </ul>
 <?php elseif ($currentActionStep === 'show-depot'): ?>
 <ul class="navigation precedent navigation-<?= $stepPart ?>">
-    <li><button type="submit" name="next" value="edit-fichiers" form="<?= $formId ?>">Étape précédente</button></li>
+    <li><button type="submit" <?= $classes ?> name="next" value="edit-fichiers" form="<?= $formId ?>">Étape précédente</button></li>
 </ul>
 <?php endif; ?>
 

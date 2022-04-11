@@ -146,6 +146,9 @@ $name = $themeFunctions->danteUserName($user);
                 </div>
             </li>
             <?php endforeach; ?>
+            <?php if (count($contributions) > 10): // En dur dans js. ?>
+            <li class="resources-list-more-link"><a href=""><?= $translate('Lire la suite') ?></a></li>
+            <?php endif; ?>
         </ul>
         <?php endif; ?>
 
