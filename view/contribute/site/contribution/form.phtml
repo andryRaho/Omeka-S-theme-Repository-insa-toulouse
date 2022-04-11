@@ -32,6 +32,8 @@ $labelInfo = $this->siteSetting('property_label_information') ?? $this->setting(
 
 // Prepare variables one time for the form and all sub-forms.
 if ($isMainForm) {
+    $disableIdref = (bool) $plugins->get('themeSetting')('contribution_valuesuggest_idref_disable');
+
     // No echo: only includes css, js and variables.
     $partial('contribute/site/contribution/form-include');
     /**
@@ -53,11 +55,13 @@ if ($isMainForm) {
         ->getRoot()
         ->getVariable('contributeVars') ?? [];
     extract($contributeVars);
+    $contributeVars['disableIdref'] = $disableIdref;
     $vars = $this->setVars(new \Laminas\View\Variables($contributeVars))->vars();
     unset($contributeVars);
 }
 
 $disabled = $mode === 'read' ? ' disabled="disabled"' : '';
+
 ?>
 
 <?php if ($isMainForm): ?>
@@ -240,6 +244,9 @@ $form->get('submit')
                             echo $partial('contribute/site/contribution/form-input-custom-vocab');
                             break;
                         case $typeColon === 'valuesuggest' || $typeColon === 'valuesuggestall':
+                            if ($disableIdref && $fieldContribution['type'] === 'valuesuggest:idref:person') {
+                                break;
+                            }
                             echo $partial('contribute/site/contribution/form-input-value-suggest');
                             break;
                         default:

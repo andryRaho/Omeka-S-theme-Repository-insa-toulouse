@@ -39,7 +39,11 @@
  * @var ?array $fieldContribution
  * @var ?int $indexContribution
  * @var bool $readonly
+ *
+ * @var bool $disableIdref
  */
+
+if ($disableIdref && $fieldContribution['type'] === 'valuesuggest:idref:person') return;
 
 $original = $fieldContribution['original'];
 $proposed = $fieldContribution['proposed'];
