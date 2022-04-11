@@ -47,7 +47,8 @@ trait ThemeFunctionsSpecific
      */
     public function danteDocumentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
     {
-        return $resource->displayResourceClassLabel($default);
+        $label = $resource->displayResourceClassLabel($default);
+        return $label === 'Document' ? 'Mémoire' : $label;
     }
 
     /**
