@@ -1,0 +1,45 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Entity\User $user
+ * @var \Guest\Form\AcceptTermsForm $form
+ * @var string $text
+ * @var string $page
+ */
+
+$translate = $this->plugin('translate');
+
+$this->htmlElement('body')->appendAttribute('class', 'guest accept-terms');
+$form->prepare();
+?>
+
+<div class="container content-with-margin">
+    <div class="content">
+
+        <div class="open-science-content-header">
+            <?= $this->pageTitle($translate('Accept terms and conditions')) ?>
+        </div>
+
+        <div class="messages">
+            <?= $this->messages() ?>
+        </div>
+
+        <?= $text ?>
+
+        <?= $this->form()->openTag($form) ?>
+        <?= $this->formCollection($form, false) ?>
+        <?php $this->trigger('view.add.form.after'); ?>
+        <div id="page-actions" class="form-buttons actions">
+            <button type="submit" class="button form-button"><?= $translate('Accept') ?></button>
+        </div>
+        <?= $this->form()->closeTag() ?>
+
+        <?php if ($page): ?>
+        <?= sprintf($translate('The terms and conditions can be read %shere%s.'),
+            '<a href="' . $this->url('site/page', ['page-slug' => $page], [], true) . '">', '</a>') ?>
+        <?php endif; ?>
+
+        <?php $this->trigger('view.add.after'); ?>
+    </div>
+</div>

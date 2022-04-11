@@ -1764,6 +1764,19 @@ p:empty {
         content:" : ";
     }
 
+    .guest.accept-terms input[type=checkbox] {
+        border: 1px;
+        clip: unset;
+        min-height: 15px;
+        min-width: 15px;
+        height: initial;
+        margin: auto;
+        overflow: hidden;
+        padding: initial;
+        position: initial;
+        width: initial;
+    }
+
     /* Footer */
 
     footer {
