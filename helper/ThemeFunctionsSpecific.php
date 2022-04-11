@@ -5,6 +5,7 @@ namespace OmekaTheme\Helper;
 use Contribute\Api\Representation\ContributionRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Entity\User;
 
 trait ThemeFunctionsSpecific
@@ -89,6 +90,35 @@ trait ThemeFunctionsSpecific
     public function danteAccessClass($value): string
     {
         return $this->classesAccess[(string) $value] ?? 'no-access';
+    }
+
+    public function danteAccessMedia(MediaRepresentation $media): bool
+    {
+        $access = $this->danteAccess($media);
+        $accessCode = $this->danteAccessClass($access);
+        if ($accessCode === 'free-access') {
+            return true;
+        }
+
+        if ($accessCode === 'no-access') {
+            return false;
+        }
+
+        $user = $this->view->identity();
+        if (!$user) {
+            return false;
+        }
+
+        $template = $media->resourceTemplate();
+        if (!$template) {
+            return false;
+        }
+
+        $templateLabel = $template->label();
+        if ($templateLabel === 'Fichier (thèse)') {
+            return true;
+        }
+        return (bool) strpos($user->getEmail(), 'univ-tlse2.fr');
     }
 
     public function danteAuteur(ItemRepresentation $resource): string

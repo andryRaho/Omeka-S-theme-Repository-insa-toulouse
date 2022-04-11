@@ -109,30 +109,44 @@ $themeFunctions->appendVarsToView([
         <aside class="aside-document-parts">
             <div class="aside-content">
                 <?php if (!count($medias)): ?>
-                <p><?= $translate('Pas de fichier disponible') ?></p>
+                <ul class="media-list">
+                    <li class="document-parts">
+                        <p><?= $translate('Pas de fichier disponible') ?></p>
+                    </li>
+                </ul>
                 <?php else: ?>
                 <ul class="media-list">
                     <?php foreach ($medias as $media):
                         $access = $themeFunctions->danteAccess($media);
                         $accessCode = $themeFunctions->danteAccessClass($access);
+                        $originalUrl = $media->originalUrl();
                     ?>
                     <li class="document-parts">
                         <span class="document-part-name"><?= $media->displayTitle() ?></span>
                         <div class="document-access <?= $accessCode ?>"><?= $access ?></div>
                         <div class="document-edition">
-                            <?php if ($accessCode === 'free-access' || $accessCode === 'limited-access'): ?>
+
+                            <?php if ($accessCode === 'free-access' || $themeFunctions->danteAccessMedia($media)): ?>
+
                             <ul class="form-buttons">
-                                <?php if ($accessCode === 'limited-access'): ?>
-                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
-                                <?php elseif ($accessCode === 'free-access'):
-                                    $originalUrl = $media->originalUrl(); ?>
-                                    <?php if ($originalUrl): ?>
+                                <?php if ($originalUrl): ?>
                                 <li><a href="<?= $originalUrl ?>" class="form-button preview-button"><?= $translate('Visualiser') ?></a></li>
                                 <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="download"><?= $translate('Télécharger') ?></a></li>
-                                    <?php endif; ?>
+                                <?php else: ?>
+                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Fichier manquant : demander une copie') ?></a></li>
                                 <?php endif; ?>
                             </ul>
+
+                            <?php elseif ($accessCode === 'limited-access'): ?>
+
+                            <ul class="form-buttons">
+                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
+                            </ul>
+
+                            <?php elseif ($accessCode === 'no-access'): ?>
+
                             <?php endif; ?>
+
                         </div>
                     </li>
                     <?php endforeach; ?>
