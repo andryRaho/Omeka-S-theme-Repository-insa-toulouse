@@ -13,6 +13,7 @@
  */
 
 $plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
@@ -39,7 +40,7 @@ $siteSlug = $site->slug();
             <div class="document-index"><?= $index ?>.</div>
             <div class="document-details">
                 <div class="document-type-and-access">
-                    <div class="document-type"><?= $documentType ?></div>
+                    <div class="document-type"><?= $escape($translate($documentType)) ?></div>
                     <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
                 </div>
                 <div class="document-link">

@@ -65,7 +65,7 @@ $themeFunctions->appendVarsToView([
         <?= $this->pageTitle($resourceTitle, 1) ?>
         <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->danteAuteur($resource), $themeFunctions->danteAnnee($resource)) ?></ul>
         <div class="document-type-and-access">
-            <div class="document-type"><?= $documentType ?></div>
+            <div class="document-type"><?= $escape($translate($documentType)) ?></div>
             <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
         </div>
     </div>

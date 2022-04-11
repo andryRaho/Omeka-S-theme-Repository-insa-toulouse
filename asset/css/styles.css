@@ -1345,7 +1345,7 @@ p:empty {
     }
 
     main aside::before {
-        content: '';
+        /* content: ''; */
         display: block;
         height: 75px;
         width: 100%;

@@ -68,7 +68,7 @@ $documentTypes = [
         <div class="document-index"><?= $index ?>.</div>
         <div class="document-details">
             <div class="document-type-and-access">
-                <div class="document-type"><?= $documentType ?></div>
+                <div class="document-type"><?= $escape($translate($documentType)) ?></div>
                 <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
             </div>
             <div class="document-link">
