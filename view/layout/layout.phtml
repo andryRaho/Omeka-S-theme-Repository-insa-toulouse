@@ -198,7 +198,7 @@ $baseSiteUrl = $site->url('site', [], true);
         <main id="content" role="main" class="content-with-margin<?= empty($mainClass) ? '' : ' ' . $mainClass ?>">
             <?= $this->content ?>
         </main>
-        <footer id="footer" class="content-with-padding" aria-label="Footer navigation" role="navigation">
+        <footer id="footer" class="content-with-padding" aria-label="<?= $translate('Footer navigation') ?>" role="navigation">
             <?= $themeSetting('footer') ?: $partial('layout/footer') ?>
             <a href="" class="cd-top footer-back-to-top"></a>
         </footer>

@@ -65,7 +65,7 @@ $notBrowseTerms = [
             <span class="field-term">(<?= $escape($propertyData['property']->vocabulary()->label()) ?>)</span>
             <?php endif; ?>
         </label>
-       <ul>
+        <ul>
         <?php foreach ($propertyData['values'] as $value): ?>
             <?php
             $valueType = $value->type();
