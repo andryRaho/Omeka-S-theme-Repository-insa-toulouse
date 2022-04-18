@@ -68,6 +68,7 @@ $hasLanguage = !empty($fieldContribution['@language']);
 ?>
 
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>">
+    <?php // Gère les exceptions : titre et résumé qui ont plusieurs langues. ?>
     <?php if ($hasLanguage): ?>
     <label<?= $isRequired ? ' class="required"' : '' ?>><?= $escape($fieldContribution['langLabel']) ?></label>
     <input type="hidden" name="<?= $baseName ?>[@language]" value="<?= $escapeAttr($fieldContribution['@language']) ?>"/>

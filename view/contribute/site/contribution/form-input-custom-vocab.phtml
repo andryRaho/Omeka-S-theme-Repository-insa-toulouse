@@ -106,6 +106,13 @@ if (strlen((string) $val)) {
     $escapedVal = $escapeAttr($val);
     $replace['<option value="' . $escapedVal . '"'] = '<option value="' . $escapedVal . '" selected="selected"';
 }
+
+$disableds = $this->themeSetting('contribution_disabled_values', []);
+if ($disableds) {
+    foreach (array_map($escapeAttr, $disableds) as $escapedVal) {
+        $replace['<option value="' . $escapedVal . '"'] = '<option value="' . $escapedVal . '" disabled="disabled"';
+    }
+}
 ?>
 
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>" data-basetype="<?= $customVocabType ?>">

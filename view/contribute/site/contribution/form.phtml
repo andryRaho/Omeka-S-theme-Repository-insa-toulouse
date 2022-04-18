@@ -298,6 +298,9 @@ $form->get('submit')
                 <button type="button" class="add-value add-value-new add-value-literal-person<?= $addForMedia ?> button o-icon-add" data-template="edit_template_value_person"><?= $escape($translate('Add value')) ?></button>
             </div>
         </div>
+        <?php // Pas de bouton pour sujets (de façon à ne pas limiter à un nombre spécifique de champs et en même temps permettre une multi-valeur. ?>
+        <?php elseif ($term === 'curation:tag'): ?>
+        <?php // Rien. ?>
         <?php else: ?>
         <?= $partial('contribute/site/contribution/form-value-more') ?>
         <?php endif; ?>
