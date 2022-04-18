@@ -42,13 +42,15 @@ trait ThemeFunctionsSpecific
     ];
 
     /**
-     * Le type du document.
+     * Le type du document (le nom du modèle utilisé).
      *
      * Le type n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
      */
     public function danteDocumentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
     {
-        $label = $resource->displayResourceClassLabel($default);
+        // $label = $resource->displayResourceClassLabel($default);
+        $template = $resource->resourceTemplate();
+        $label = $template ? $template->label() : $default;
         return $label === 'Document' ? 'Mémoire' : $label;
     }
 
