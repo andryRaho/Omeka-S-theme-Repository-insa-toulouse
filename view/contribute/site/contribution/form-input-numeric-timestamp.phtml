@@ -117,6 +117,6 @@ $day = trim((string) $day, "- \n\r\t");
         </div>
     </div>
     <ul class="actions">
-        <li><button type="button" class="o-icon-delete remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>
+        <li><button type="button" class="<?= $isRequired ? 'o-icon-clear' : 'o-icon-delete' ?> remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>
     </ul>
 </li>
