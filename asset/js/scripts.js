@@ -171,7 +171,35 @@ $(document).ready(function () {
         $(this).closest('ul').toggleClass('opened');
     });
 
-/*
+    const addClassToFormTextareas = function() {
+        $('.depot-content form li textarea').each(function(no, item) {
+            const li = $(item).closest('li');
+            if (! li.hasClass('textarea-value')) {
+                li.addClass('textarea-value');
+            }
+            if ($(this).attr('name').indexOf('foaf:mbox') === 0) {
+                if (! li.hasClass('email-value')) {
+                    li.addClass('email-value');
+                }
+            }
+        });
+    }
+    addClassToFormTextareas();
+
+    $('.add-value').on('click', function() {
+        setTimeout(addClassToFormTextareas, 20);
+    });
+
+    $('.group-input-part').each(function(no, item) {
+       const inputBody = $(this).find('.input-body');
+        inputBody.addClass('with-' + inputBody.children().length + '-children');
+    });
+
+    if ( $('body.edit .edit-button').length ) {
+        $('body.edit').addClass('without-delete-button');
+    }
+
+    /*
     $('a.duplicate-fields-button').on('click', function(e) {
         e.preventDefault();
 
