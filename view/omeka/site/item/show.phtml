@@ -154,6 +154,10 @@ $themeFunctions->appendVarsToView([
 
                             <?php elseif ($accessCode === 'no-access'): ?>
 
+                            <ul class="form-buttons">
+                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
+                            </ul>
+
                             <?php endif; ?>
 
                         </div>

@@ -55,9 +55,9 @@ $notBrowseTerms = [
     <li>
        <label>
             <?php if ($propertyData['alternate_label']): ?>
-            <?= $escape($propertyData['alternate_label']) ?>
+            <?= $escape(ucfirst($propertyData['alternate_label'])) ?>
             <?php else: ?>
-            <?= $escape($translate($propertyData['property']->label())) ?>
+            <?= $escape(ucfirst($translate($propertyData['property']->label()))) ?>
             <?php endif; ?>
             <?php if ('term' === $labelInfo): ?>
             <span class="field-term">(<?= $escape($propertyData['property']->term()) ?>)</span>
@@ -87,9 +87,13 @@ $notBrowseTerms = [
                     <span class="language"><?= $valueLang ?></span>
                     <?php endif; ?>
                     <?php $val = $value->asHtml($langHtml) ?>
+                    <?php // if ($term === 'dcterms:date' && preg_match('~\d\d\d\d~', $val)): ?>
+                    <?php // echo substr($val, 0, 4) ?>
+                    <?php // else: ?>
                     <?= in_array($term, $browseTerms) || (!in_array($term, $notBrowseTerms) && mb_strlen(strip_tags($val)) < 50)
                         ? $themeFunctions->browseValueForTerm($value, $term, $lang)['link']
                         : $val ?>
+                    <?php // endif ?>
                 </li>
             <?php endif; ?>
         <?php endforeach; ?>

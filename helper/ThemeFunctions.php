@@ -585,7 +585,8 @@ class ThemeFunctions extends AbstractHelper
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($uri)], $baseSearchQuery);
         } else {
             $val['class'] .= ' literal';
-            $val['value'] = $value->asHtml(null, $lang);
+            // $val['value'] = $value->asHtml(null, $lang);
+            $val['value'] = $value->value();
             $val['url'] = $baseSearchUrl . '?'
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($val['value'])], $baseSearchQuery);
         }
