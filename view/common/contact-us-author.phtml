@@ -19,14 +19,21 @@ $formRow = $plugins->get('formRow');
 $formEmail = $plugins->get('formEmail');
 /** @var \Laminas\Form\View\Helper\FormLabel $formLabel */
 $formLabel = $plugins->get('formLabel');
+$formHidden = $plugins->get('formHidden');
 $formTextarea = $plugins->get('formTextarea');
+$formCheckbox = $plugins->get('formCheckbox');
+
+$themeFunctions = $plugins->get('ThemeFunctions');
 
 $element = null;
+$themeFunctions->appendVarsToView(['status' => $status, 'message' => $message]);
 ?>
 
+<?php /*
 <?php if ($message): ?>
 <p class="explanation <?= $status ?>"><?= $message ?></p>
 <?php endif; ?>
+*/ ?>
 
 <?php if (!$form) return;
 
@@ -56,20 +63,45 @@ $element = null;
     </div>
     <?php else: ?>
     <div>
-        <?= $formLabel($form->get('name')) ?>
-        <?= $formText($form->get('name')) ?>
+        <?= $formLabel($element = $form->get('name')) ?>
+        <?= $formText($element) ?>
     </div>
     <div>
-        <?= $formLabel($form->get('from')) ?>
-        <?= $formEmail($form->get('from')) ?>
+        <?= $formLabel($element = $form->get('from')) ?>
+        <?= $formEmail($element) ?>
     </div>
     <?php endif ?>
+
+    <?php // Pas de sujet. ?>
+
+    <?php // Pas de fichier. ?>
 
     <?php $element = $form->get('message'); ?>
     <div>
         <?= $formLabel($element->setLabel('Posez votre question')); ?>
         <?= $formTextarea($element); ?>
     </div>
+
+    <?php if ($form->has('answer')): ?>
+    <div class="contact-accept-answer">
+        <?= $formLabel($element = $form->get('answer')) ?>
+        <?= $formText($element) ?>
+        <?= $formHidden($form->get('check')) ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($form->has('consent')): ?>
+        <?php $element = $form->get('consent'); ?>
+        <?php if ($user || $element instanceof \Laminas\Form\Element\Hidden): ?>
+    <?= $formHidden($element) ?>
+        <?php else: ?>
+    <div class="contact-accept-checkbox">
+        <?= $formCheckbox($element) ?>
+        <?= $formLabel($element) ?>
+    </div>
+        <?php endif; ?>
+    <?php endif; ?>
+
     <ul class="form-buttons">
         <li><button type="submit" class="form-button submit-button"><?= $escape($translate('Envoyer')) ?></a></li>
     </ul>

@@ -23,6 +23,11 @@ $formLabel = $plugins->get('formLabel');
 $formHidden = $plugins->get('formHidden');
 $formTextarea = $plugins->get('formTextarea');
 $formCheckbox = $plugins->get('formCheckbox');
+
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+$element = null;
+$themeFunctions->appendVarsToView(['status' => $status, 'message' => $message]);
 ?>
 
 <div class="contact-us-block">
@@ -60,11 +65,13 @@ $formCheckbox = $plugins->get('formCheckbox');
         </div>
         <?= $this->form()->openTag($form) ?>
 
+            <?php /*
             <?php if ($message): ?>
             <div>
                 <p class="explanation <?= $status ?>"><?= $message ?></p>
             </div>
             <?php endif; ?>
+            */ ?>
 
             <?php if ($user): ?>
             <div>
@@ -74,39 +81,59 @@ $formCheckbox = $plugins->get('formCheckbox');
             </div>
             <?php else: ?>
             <div>
-                <?= $formLabel($form->get('name')) ?>
-                <?= $formText($form->get('name')) ?>
+                <?= $formLabel($element = $form->get('name')) ?>
+                <?= $formText($element) ?>
             </div>
             <div>
-                <?= $formLabel($form->get('from')) ?>
-                <?= $formEmail($form->get('from')) ?>
+                <?= $formLabel($element = $form->get('from')) ?>
+                <?= $formEmail($element) ?>
             </div>
             <?php endif ?>
 
+            <?php // Pas de sujet. ?>
+            <?php /*
             <div class="contact-message-fields">
-                <?= $formLabel($form->get('message')) ?>
-                <?= $formTextarea($form->get('message')) ?>
+                <?= $formLabel($element = $form->get('subject')) ?>
+                <?= $formText($element) ?>
             </div>
+            */ ?>
+
+            <div class="contact-message-fields">
+                <?= $formLabel($element = $form->get('message')) ?>
+                <?= $formTextarea($element) ?>
+            </div>
+
+            <?php // Pas de fichier. ?>
 
             <p class="contact-warning"></p>
 
-            <?php if ($form->has('consent')): ?>
-            <?php $element = $form->get('consent'); ?>
-            <?php if ($user || $element instanceof \Laminas\Form\Element\Hidden): ?>
-                <?= $formHidden($form->get('consent')) ?>
-            <?php else: ?>
-            <label class="contact-accept-checkbox">
-                <?= $formCheckbox($form->get('consent')) ?>
-                <?= $formLabel($form->get('consent')) ?>
-            </label>
-            <?php endif; ?>
+            <?php // Antispam. ?>
+
+            <?php if ($form->has('answer')): ?>
+            <div class="contact-accept-answer">
+                <?= $formLabel($element = $form->get('answer')) ?>
+                <?= $formText($element) ?>
+                <?= $formHidden($form->get('check')) ?>
+            </div>
             <?php endif; ?>
 
             <?php if ($form->has('newsletter')): ?>
-            <label class="contact-accept-checkbox">
-                <?= $formCheckbox($form->get('newsletter')) ?>
-                <?= $formLabel($form->get('newsletter')) ?>
-            </label>
+            <div class="contact-accept-checkbox">
+                <?= $formCheckbox($element = $form->get('newsletter')) ?>
+                <?= $formLabel($element) ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($form->has('consent')): ?>
+                <?php $element = $form->get('consent'); ?>
+                <?php if ($user || $element instanceof \Laminas\Form\Element\Hidden): ?>
+            <?= $formHidden($element) ?>
+                <?php else: ?>
+            <div class="contact-accept-checkbox">
+                <?= $formCheckbox($element) ?>
+                <?= $formLabel($element) ?>
+            </div>
+                <?php endif; ?>
             <?php endif; ?>
 
             <ul class="form-buttons">

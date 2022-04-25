@@ -11,8 +11,10 @@
  * Peut être ajouté par une page sur l'élément "main".
  * @var string $mainClass
  *
- * Le popup de contact auteur se trouve dans ce gabarit et la resource est donc disponible.
+ * Le popup de contact auteur se trouve dans ce gabarit et la ressource doit donc être disponible.
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var string $status "success" or "error"
+ * @var string $message Information après envoi.
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -194,6 +196,11 @@ $baseSiteUrl = $site->url('site', [], true);
         <nav class="breadcrumbs content-with-margin">
             <?= $ariane ?>
         </nav>
+        <?php endif; ?>
+        <?php if (!empty($message)): ?>
+        <div class="message content-with-margin">
+            <p class="explanation <?= $status ?>"><?= $message ?></p>
+        </div>
         <?php endif; ?>
         <main id="content" role="main" class="content-with-margin<?= empty($mainClass) ? '' : ' ' . $mainClass ?>">
             <?= $this->content ?>
