@@ -49,6 +49,9 @@ $notBrowseTerms = [
     'curation:dateStart',
     'bibo:argued',
 ];
+
+// TODO Déplacer cela dans le module via les événements.
+$values = $themeFunctions->danteAdvancedTemplateValues($resource, $values);
 ?>
 
 <?php foreach ($values as $term => $propertyData): ?>

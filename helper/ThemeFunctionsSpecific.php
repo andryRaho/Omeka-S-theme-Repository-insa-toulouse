@@ -307,6 +307,9 @@ SQL;
         ];
    }
 
+   /**
+    * Pour gérer les options spécifiques directement.
+    */
    public function templatePropertyThemeOption(
        ?\AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty,
        ?string $metadata = null
@@ -329,4 +332,130 @@ SQL;
         }
         return $val;
    }
+
+    public function sommaire(?string $pageSlugs, $tags = ['h1', 'h2']): array
+    {
+        /** @var \Omeka\Api\Representation\SitePageRepresentation $page */
+        $page = $this->currentPage();
+        if (!$page && !$pageSlugs) {
+           return [];
+        }
+
+        if (!is_array($tags)) {
+            $tags = [$tags];
+        }
+
+        if (!$pageSlugs) {
+           return $this->extractTags($page, $tags);
+        }
+
+        $siteId = $this->currentSite()->id();
+
+        $headers = [];
+        $api = $this->view->api();
+        foreach (array_map('trim', explode("\n", $pageSlugs)) as $pageSlug) {
+           /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
+           $sitePage = $api->searchOne('site_pages', ['site_id' => $siteId, 'slug' => $pageSlug])->getContent();
+           if ($sitePage) {
+               $pageUrl = $sitePage->siteUrl();
+               // Page en cours.
+               $headers[] = [
+                   'level' => 0,
+                   'tag' => null,
+                   'page_id' => $sitePage->id(),
+                   'page_slug' => $pageSlug,
+                   'page_url' => $pageUrl,
+                   'id' => null,
+                   '#id' => null,
+                   'label' => $sitePage->title(),
+                   'page_url#id' => $pageUrl,
+               ];
+               $headers = array_merge($headers, $this->extractTags($sitePage, $tags));
+           }
+        }
+        return $headers;
+    }
+
+    /**
+     * Extract any tag content associated with an id.
+     *
+     * It allows to build a table of content dynamically.
+     *
+     * @return array Array data to create links.
+     */
+    protected function extractTags(\Omeka\Api\Representation\SitePageRepresentation $page, array $tags = []): array
+    {
+        if (!$tags) {
+            return [];
+        }
+
+        $idLabels = [];
+        /** @var \Omeka\View\Helper\BlockLayout $blockLayoutRender */
+        $blockLayoutRender = $this->view->blockLayout();
+        $pageId = $page->id();
+        $pageSlug = $page->slug();
+        $pageUrl = $page->siteUrl();
+        foreach ($page->blocks() as $block) {
+            $layout = $block->layout();
+            if (($layout === 'html' || $layout === 'block')
+                && strpos((string) $block->dataValue('template'), 'aside')
+            ) {
+                continue;
+            }
+            $html = $blockLayoutRender->render($block);
+            // preg_match_all('~<' . $tag . ' [^>]*>(.*)</' . $tag . '>~', $html, $matches);
+            $dom = new \DOMDocument('1.1', 'UTF-8');
+            $dom->preserveWhiteSpace = false;
+            $dom->formatOutput = true;
+            try {
+                $html = '<div>' . mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
+                @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
+                /** @var \DOMElement $element */
+                if (count($tags) === 1) {
+                    $tag = reset($tags);
+                    $level = (int) substr($tag, 1, 1);
+                    foreach ($dom->getElementsByTagName($tag) ?: [] as $element){
+                        $content = strip_tags((string) $element->textContent);
+                        $id = $this->slugify($content);
+                        $idLabels[] = [
+                            'level' => $level,
+                            'tag' => $tag,
+                            'page_id' => $pageId,
+                            'page_slug' => $pageSlug,
+                            'page_url' => $pageUrl,
+                            'id' => $id,
+                            '#id' => '#' . $id,
+                            'label' => $content,
+                            'page_url#id' => $pageUrl . '#' . $id,
+                        ];
+                    }
+                } else {
+                    $tags = array_map('strtolower', $tags);
+                    foreach ($dom->getElementsByTagName('*') ?: [] as $element){
+                        $tag = strtolower($element->tagName);
+                        if (!in_array($tag, $tags)) {
+                            continue;
+                        }
+                        $level = (int) substr($tag, 1, 1);
+                        $content = strip_tags((string) $element->textContent);
+                        $id = $this->slugify($content);
+                        $idLabels[] = [
+                            'level' => $level,
+                            'tag' => $tag,
+                            'page_id' => $pageId,
+                            'page_slug' => $pageSlug,
+                            'page_url' => $pageUrl,
+                            'id' => $id,
+                            '#id' => '#' . $id,
+                            'label' => $content,
+                            'page_url#id' => $pageUrl . '#' . $id,
+                        ];
+                    }
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
+        return $idLabels;
+    }
 }

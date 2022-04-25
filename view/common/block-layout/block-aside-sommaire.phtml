@@ -1,12 +1,14 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var string $html
- * @var string $divclass
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
  * @var string $heading
+ * @var string $params
  */
 
-// Comme block-aside-sommaire.
+// Comme html-aside-sommaire.
+$html = $params;
+$divclass = null;
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
@@ -35,7 +37,7 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
         // Si html est vide, c'est une liste simple pour la page en cours.
         $sommaire = $themeFunctions->sommaire($html);
         if ($sommaire) {
-            $currentPageSlug = $themeFunctions->currentPage()->slug();
+            $currentPageSlug = $block->page()->slug();
             $prevLevel = 0;
             // On ne met pas le titre des pages (déjà inclus dans le html), donc la profondeur commence à 1.
             $deep = 1;
@@ -44,6 +46,8 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
                 $next = $sommaire[$index + 1] ?? null;
                 // On ne met pas le titre des pages, car déjà inclus dans la page.
                 if (!$current['level']) continue;
+                // Pas les "footnotes" non plus.
+                if (strpos($current['#id'], '#footnotes') !== false) continue;
 
                 $href = $currentPageSlug === $current['page_slug'] ? $current['#id'] : $current['page_url#id'];
                 // Fermer les ul/li précédents quand on revient à un niveau supérieur.
@@ -52,7 +56,7 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
                     $html .= str_repeat("                    </ul>\n                </li>\n", $prevLevel - $current['level']);
                 }
                 // Commencer la ligne en cours.
-                $html .= "                <li>" . " [$deep] "
+                $html .= '                <li>'
                     . '<a href="' . $href . '">' . $escape($current['label']) . '</a>';
                 // Ouvrir le prochain niveau ou fermer la ligne en cours.
                 if ($next && $current['level'] < $next['level']) {

@@ -30,7 +30,10 @@ foreach ($page->blocks() as $block) {
         $layouts[$layout] = null;
         $blockLayout->prepareRender($layout);
     }
-    if ($layout === 'html' && strpos((string) $block->dataValue('template'), 'aside')) {
+    if (
+        ($layout === 'html' && strpos((string) $block->dataValue('template'), 'aside'))
+        || ($layout === 'block' && strpos((string) $block->dataValue('template'), 'aside'))
+    ) {
         $asides .= $blockLayout->render($block);
         ++$countAsides;
     } elseif ($layout === 'pageMetadata') {

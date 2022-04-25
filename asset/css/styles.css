@@ -3578,8 +3578,8 @@ p:empty {
         margin-bottom: 5px;
     }
 
-    main.open-science-content > aside > nav > ul > li > ul > li > a,
-    main.aside-page > aside > nav > ul > li > ul > li > a {
+    main.open-science-content > aside > nav > ul > li > ul > li a,
+    main.aside-page > aside > nav > ul > li > ul > li a {
         color: #313232;
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
@@ -3588,9 +3588,9 @@ p:empty {
     }
 
     main.open-science-content > aside > nav > ul > li > a:hover,
-    main.open-science-content > aside > nav > ul > li > ul > li > a:hover,
+    main.open-science-content > aside > nav > ul > li > ul > li a:hover,
     main.aside-page > aside > nav > ul > li > a:hover,
-    main.aside-page > aside > nav > ul > li > ul > li > a:hover {
+    main.aside-page > aside > nav > ul > li > ul > li a:hover {
         color: #BA0000;
     }
 
@@ -3642,6 +3642,11 @@ p:empty {
         font-size: 13px;
         line-height: 20px;
         margin-bottom: 8px;
+    }
+
+    .page-block ol,
+    .page-block ul {
+        list-style: disc;
     }
 
     .page-block h2 {
