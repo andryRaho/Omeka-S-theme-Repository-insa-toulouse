@@ -48,6 +48,27 @@ class ThemeFunctions extends AbstractHelper
     }
 
     /**
+     * Get the current page (site page) from the view or the route.
+     *
+     * It may be useful when a block doesn't return it or the block.
+     */
+    public function currentPage(): ?\Omeka\Api\Representation\SitePageRepresentation
+    {
+        if ($this->view->page && $this->view->page instanceof \Omeka\Api\Representation\SitePageRepresentation) {
+            return $this->view->page;
+        }
+        if ($this->view->block && $this->view->block instanceof \Omeka\Api\Representation\SitePageBlockRepresentation) {
+            return $this->view->page = $this->view->block->page();
+        }
+        $pageSlug = $this->view->params()->fromRoute('page-slug');
+        if (empty($pageSlug)) {
+            return null;
+        }
+        $site = $this->currentSite();
+        return $this->view->page = $this->view->api()->searchOne('site_pages', ['site_id' => $site->id(), 'slug' => $pageSlug])->getContent();
+    }
+
+    /**
      * Add a value to the root view model.
      */
     public function appendVarToView($key, $value): self
