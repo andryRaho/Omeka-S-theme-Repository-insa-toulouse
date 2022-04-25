@@ -542,7 +542,7 @@ class ThemeFunctions extends AbstractHelper
                     ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
                 ]]);
                 $baseSearchQueryVr = http_build_query(['filter' => [
-                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
+                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'res', 'value' => '__VALUE__'],
                 ]]);
             } else {
                 $baseSearchUrl = $url('site/resource', ['site-slug' => $siteSlug, 'controller' => 'item', 'action' => 'browse'], true);
