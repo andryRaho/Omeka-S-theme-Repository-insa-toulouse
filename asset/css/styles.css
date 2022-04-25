@@ -3243,6 +3243,8 @@ p:empty {
 
     /* ----------------------- */
 
+    /* Item */
+
     main.item-content {
         min-height: calc( 100vh - 247px );
         padding: 0 80px 50px;
@@ -3346,6 +3348,12 @@ p:empty {
 
     ul.resource-metadata > li.uri {
         margin-top: 30px;
+    }
+
+    ul.resource-metadata li.value .language {
+        font-weight: 200;
+        font-style: italic;
+        font-size: 13px;
     }
 
     .resource-metadata-and-document-parts {

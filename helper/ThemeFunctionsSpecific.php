@@ -305,12 +305,12 @@ SQL;
             'mode' => $mode,
             'stepNumber' => $stepNumber,
         ];
-   }
+    }
 
-   /**
-    * Pour gérer les options spécifiques directement.
-    */
-   public function templatePropertyThemeOption(
+    /**
+     * Pour gérer les options spécifiques directement.
+     */
+    public function templatePropertyThemeOption(
        ?\AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty,
        ?string $metadata = null
     ) {
@@ -331,7 +331,7 @@ SQL;
             return $ls;
         }
         return $val;
-   }
+    }
 
     public function sommaire(?string $pageSlugs, $tags = ['h1', 'h2']): array
     {
@@ -488,5 +488,59 @@ SQL;
         }
 
         return $idLabels;
+    }
+
+    public function danteAdvancedTemplateValues(
+        ?\Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource,
+        array $values
+    ): array {
+        if (!$resource) {
+            return $values;
+        }
+        $template = $resource->resourceTemplate();
+        if (!$template) {
+            return $values;
+        }
+
+        $vals = [];
+        foreach ($values as $term => $propertyData) {
+            $propertyId = $propertyData['property']->id();
+            $templateProperty = $template->resourceTemplateProperty($propertyId);
+            if (!$templateProperty) {
+                $vals[$term] = $propertyData;
+                continue;
+            }
+            $multilang = $this->templatePropertyThemeOption($templateProperty, 'multilang');
+            if (!$multilang) {
+                $vals[$term] = $propertyData;
+                continue;
+            }
+            // Avec multilang, il faut un label spécifique pour chaque langue.
+            // La langue correspond à l'ordre des valeurs (deux pour les mémoires, trois pour les thèses).
+
+            /** @var \Omeka\Api\Representation\ValueRepresentation $pdValue */
+            $pdValues = array_values($propertyData['values']);
+            foreach ($pdValues as $index => $pdValue) {
+                $lang = $pdValue->lang();
+                if ($lang && isset($multilang[$lang])) {
+                    $idx = $term . '/' . $lang;
+                    if (!isset($vals[$idx])) {
+                        $vals[$idx] = $propertyData;
+                        $vals[$idx]['alternate_label'] = $multilang[$lang];
+                        $vals[$idx]['term'] = $term;
+                        $vals[$idx]['values'] = [];
+                    }
+                    $vals[$idx]['values'][] = $pdValue;
+                    unset($pdValues[$index]);
+                }
+            }
+            if (count($pdValues)) {
+                $vals[$term] = $propertyData;
+                $vals[$term]['term'] = $term;
+                $vals[$term]['values'] = $pdValues;
+            }
+        }
+
+        return $vals;
     }
 }

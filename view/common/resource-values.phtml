@@ -54,7 +54,9 @@ $notBrowseTerms = [
 $values = $themeFunctions->danteAdvancedTemplateValues($resource, $values);
 ?>
 
-<?php foreach ($values as $term => $propertyData): ?>
+<?php foreach ($values as $term => $propertyData):
+    if (isset($propertyData['term'])) $term = $propertyData['term'];
+    ?>
     <li>
        <label>
             <?php if ($propertyData['alternate_label']): ?>
