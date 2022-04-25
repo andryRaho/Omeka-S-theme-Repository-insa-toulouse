@@ -376,6 +376,37 @@ SQL;
         return $headers;
     }
 
+    public function sommaireIds(?string $html, $tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']): string
+    {
+        if (!$html || !$tags) {
+           return (string) $html;
+        }
+
+        if (!is_array($tags)) {
+            $tags = [$tags];
+        }
+
+        $dom = new \DOMDocument('1.1', 'UTF-8');
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = true;
+        try {
+            $html = '<div>' . mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
+            @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
+            /** @var \DOMElement $element */
+            foreach ($tags as $tag) {
+                foreach ($dom->getElementsByTagName($tag) ?: [] as $element){
+                    $content = strip_tags((string) $element->textContent);
+                    $id = $this->slugify($content);
+                    $element->setAttributeNode(new \DOMAttr('id', $id));
+                }
+            }
+            $html = mb_substr((string) @$dom->saveHTML(), 5, -7);
+        } catch (\Exception $e) {
+        }
+
+        return $html;
+    }
+
     /**
      * Extract any tag content associated with an id.
      *
