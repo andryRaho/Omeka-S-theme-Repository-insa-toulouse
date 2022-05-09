@@ -562,7 +562,7 @@ class ThemeFunctions extends AbstractHelper
     public function browseValueForTerm(ValueRepresentation $value, string $termOrField, $lang = null): array
     {
         static $hasModuleAdvancedSearch;
-        static $hasModuleSearchSolr;
+        static $useSearchSolr;
         static $hyperlink;
         static $baseSearchUrl;
         static $baseSearchQuery;
@@ -578,7 +578,16 @@ class ThemeFunctions extends AbstractHelper
 
             // Avoid multiple useless calls to the helper url().
             $hasModuleAdvancedSearch = $this->isModuleActive('AdvancedSearch');
-            $hasModuleSearchSolr = $this->isModuleActive('SearchSolr');
+            $hasModuleSearchSolr = $hasModuleAdvancedSearch && $this->isModuleActive('SearchSolr');
+            /** @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig */
+            if ($hasModuleSearchSolr) {
+                $searchConfig = $this->view->searchForm()->getSearchConfig();
+                $searchEngine = $searchConfig ? $searchConfig->engine() : null;
+                $searchAdapter = $searchEngine ? $searchEngine->adapter() : null;
+                $useSearchSolr = $searchAdapter && $searchAdapter instanceof \SearchSolr\Adapter\SolariumAdapter;
+            } else {
+                $useSearchSolr = false;
+            }
             if ($hasModuleAdvancedSearch) {
                 $baseSearchUrl = $this->view->searchingUrl();
                 $baseSearchQuery = http_build_query(['filter' => [
@@ -612,7 +621,7 @@ class ThemeFunctions extends AbstractHelper
 
         // In most of the cases, the terms to search are indexed as multiple
         // strings ("_ss" in default config of Solr).
-        if ($hasModuleSearchSolr && strpos($termOrField, ':')) {
+        if ($useSearchSolr && strpos($termOrField, ':')) {
             $termOrField = str_replace(':', '_', $termOrField) . '_ss';
         }
 
