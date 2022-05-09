@@ -35,13 +35,14 @@ $action = $steps['action'];
 $step = $steps['step'];
 $mode = $steps['mode'];
 
+$hasContribution = $contribution && $contribution->id();
 $urls = [
-    'add-template' => $contribution ? $escapeAttr($contribution->url('add')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
-    'edit-template' => $contribution ? $escapeAttr($contribution->url('add')) : '#',
-    'add-notice' => $contribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
-    'edit-notice' => $contribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
-    'edit-fichiers' => $contribution ? $escapeAttr($contribution->url('edit') . '?next=fichiers') : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true) . '?step=fichiers'),
-    'show-depot' => $contribution ? $escapeAttr($contribution->url('view')) : '#',
+    'add-template' => $hasContribution ? $escapeAttr($contribution->url('add')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
+    'edit-template' => $hasContribution ? $escapeAttr($contribution->url('add')) : '#',
+    'add-notice' => $hasContribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
+    'edit-notice' => $hasContribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
+    'edit-fichiers' => $hasContribution ? $escapeAttr($contribution->url('edit') . '?next=fichiers') : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true) . '?step=fichiers'),
+    'show-depot' => $hasContribution ? $escapeAttr($contribution->url('view')) : '#',
 ];
 
 // Affichage en haut (avec les étapes) ou en bas (précédent/suivant seuls).
