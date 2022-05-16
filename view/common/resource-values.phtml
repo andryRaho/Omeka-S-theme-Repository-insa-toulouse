@@ -77,6 +77,8 @@ if ($resource) {
         <ul>
         <?php foreach ($propertyData['values'] as $value): ?>
             <?php
+            // TODO A supprimer après réimport des données sans notice utilisateur.
+            if ($term === 'dcterms:creator' && count($propertyData['values']) > 1 && strpos($value->value(), '@')) continue;
             $valueType = $value->type();
             $valueLang = $value->lang();
             $class = ['value'];
