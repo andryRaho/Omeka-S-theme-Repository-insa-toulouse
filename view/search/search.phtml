@@ -126,7 +126,8 @@ $themeFunctions->appendVarToView('ariane', $ariane);
             'searchPage' => $searchPage,
             'query' => $query,
             'response' => $response,
-            'title' => sprintf($translatePlural('%s item set', '%s item sets', $itemSetsCount), $itemSetsCount),
+            // 'title' => sprintf($translatePlural('%s item set', '%s item sets', $itemSetsCount), $itemSetsCount),
+            'title' => sprintf($translatePlural('%s collection', '%s collections', $itemSetsCount), $itemSetsCount),
             'resourceName' => 'item_sets',
         ]) ?>
         <?php endif; ?>
@@ -137,7 +138,8 @@ $themeFunctions->appendVarToView('ariane', $ariane);
             'searchPage' => $searchPage,
             'query' => $query,
             'response' => $response,
-            'title' => sprintf($translatePlural('%s item', '%s items', $itemsCount), $itemsCount),
+            // 'title' => sprintf($translatePlural('%s item', '%s items', $itemsCount), $itemsCount),
+            'title' => sprintf($translatePlural('%s document', '%s documents', $itemsCount), $itemsCount),
             'resourceName' => 'items',
         ]) ?>
         <?php endif; ?>
