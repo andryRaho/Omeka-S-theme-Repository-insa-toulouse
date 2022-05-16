@@ -33,6 +33,12 @@ $(document).ready(function () {
     const navigationDepotSuivant = $('.depot-precedent-suivant li:last-child a');
     const navigationDepotPrecedent = $('.depot-precedent-suivant li:first-child a');
 
+    // Liens externes
+    $('a[href^="http"]').attr('target', function() {
+        if (this.host === location.host) return '_self'
+        else return '_blank'
+    });
+
     $('#edit-resource').on('change', '.contribute-media [data-term=file]', function(e) {
         const fileInput = $(this).find('input[type=file]');
         if (fileInput.length) {
@@ -264,6 +270,10 @@ $(document).ready(function () {
     openSciencePageMenu.on('click', function(e) {
         e.stopPropagation();
     });
+
+    // On cache les liens vides du menu Science ouverte
+    $('.aside-sommaire-page nav > ul > li > a:empty').closest('li').hide();
+
 
     /* */
 
