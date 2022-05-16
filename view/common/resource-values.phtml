@@ -23,7 +23,7 @@ $langHtml = $filterLocale ? $lang : null;
 $browseTerms = [
     'dcterms:creator',
     'dcterms:subject',
-    'curation:tag',
+//    'curation:tag',
     'curation:access',
 ];
 $notBrowseTerms = [
@@ -48,6 +48,8 @@ $notBrowseTerms = [
     'curation:dateEnd',
     'curation:dateStart',
     'bibo:argued',
+    // Plus de rebond pour les mots-clés.
+    'curation:tag',
 ];
 
 // TODO Déplacer cela dans le module via les événements.
