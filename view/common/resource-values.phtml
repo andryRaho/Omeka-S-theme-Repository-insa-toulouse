@@ -51,7 +51,9 @@ $notBrowseTerms = [
 ];
 
 // TODO Déplacer cela dans le module via les événements.
-$values = $themeFunctions->danteAdvancedTemplateValues($resource, $values);
+if ($resource) {
+    $values = $themeFunctions->danteAdvancedTemplateValues($resource->resourceTemplate(), $values);
+}
 ?>
 
 <?php foreach ($values as $term => $propertyData):

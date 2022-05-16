@@ -490,17 +490,14 @@ SQL;
         return $idLabels;
     }
 
-    public function danteAdvancedTemplateValues(
-        ?\Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource,
-        array $values
-    ): array {
-        if (!$resource) {
+    public function danteAdvancedTemplateValues($templateOrResourceOrContribution, array $values): array
+    {
+        if (!$templateOrResourceOrContribution) {
             return $values;
         }
-        $template = $resource->resourceTemplate();
-        if (!$template) {
-            return $values;
-        }
+        $template = $templateOrResourceOrContribution instanceof \Omeka\Api\Representation\ResourceTemplateRepresentation
+            ? $templateOrResourceOrContribution
+            : $templateOrResourceOrContribution->resourceTemplate();
 
         $vals = [];
         foreach ($values as $term => $propertyData) {
@@ -515,29 +512,64 @@ SQL;
                 $vals[$term] = $propertyData;
                 continue;
             }
-            // Avec multilang, il faut un label spécifique pour chaque langue.
-            // La langue correspond à l'ordre des valeurs (deux pour les mémoires, trois pour les thèses).
 
-            /** @var \Omeka\Api\Representation\ValueRepresentation $pdValue */
-            $pdValues = array_values($propertyData['values']);
-            foreach ($pdValues as $index => $pdValue) {
-                $lang = $pdValue->lang();
-                if ($lang && isset($multilang[$lang])) {
-                    $idx = $term . '/' . $lang;
-                    if (!isset($vals[$idx])) {
-                        $vals[$idx] = $propertyData;
-                        $vals[$idx]['alternate_label'] = $multilang[$lang];
-                        $vals[$idx]['term'] = $term;
-                        $vals[$idx]['values'] = [];
+            // Avec multilang, il faut un label spécifique pour chaque langue.
+
+            // La langue correspond à l'ordre des valeurs (deux pour les mémoires, trois pour les thèses).
+            // Devrait néanmoins être enregistré (pour les ressources).
+
+            // Pour les contributions et les ressources.
+
+            if (isset($propertyData['contributions'])) {
+                $isThese = $template->label() === 'Thèse';
+                $pdContributions = array_values($propertyData['contributions']);
+                foreach ($pdContributions as $index => $pdContribution) {
+                    if ($index === 0) {
+                        $lang = 'fra';
+                    } elseif ($isThese && $index === 1) {
+                        $lang = 'eng';
+                    } else {
+                        $lang = 'und';
                     }
-                    $vals[$idx]['values'][] = $pdValue;
-                    unset($pdValues[$index]);
+                    if ($lang && isset($multilang[$lang])) {
+                        $idx = $term . '/' . $lang;
+                        if (!isset($vals[$idx])) {
+                            $vals[$idx] = $propertyData;
+                            $vals[$idx]['alternate_label'] = $multilang[$lang];
+                            $vals[$idx]['term'] = $term;
+                            $vals[$idx]['contributions'] = [];
+                        }
+                        $vals[$idx]['contributions'][] = $pdContribution;
+                        unset($pdContributions[$index]);
+                    }
                 }
-            }
-            if (count($pdValues)) {
-                $vals[$term] = $propertyData;
-                $vals[$term]['term'] = $term;
-                $vals[$term]['values'] = $pdValues;
+                if (count($pdContributions)) {
+                    $vals[$term] = $propertyData;
+                    $vals[$term]['term'] = $term;
+                    $vals[$term]['contributions'] = $pdContributions;
+                }
+            } else {
+                /** @var \Omeka\Api\Representation\ValueRepresentation $pdValue */
+                $pdValues = array_values($propertyData['values']);
+                foreach ($pdValues as $index => $pdValue) {
+                    $lang = $pdValue->lang();
+                    if ($lang && isset($multilang[$lang])) {
+                        $idx = $term . '/' . $lang;
+                        if (!isset($vals[$idx])) {
+                            $vals[$idx] = $propertyData;
+                            $vals[$idx]['alternate_label'] = $multilang[$lang];
+                            $vals[$idx]['term'] = $term;
+                            $vals[$idx]['values'] = [];
+                        }
+                        $vals[$idx]['values'][] = $pdValue;
+                        unset($pdValues[$index]);
+                    }
+                }
+                if (count($pdValues)) {
+                    $vals[$term] = $propertyData;
+                    $vals[$term]['term'] = $term;
+                    $vals[$term]['values'] = $pdValues;
+                }
             }
         }
 
