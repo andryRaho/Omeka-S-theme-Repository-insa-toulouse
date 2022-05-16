@@ -75,6 +75,12 @@ $themeFunctions->appendVarsToView(['status' => $status, 'message' => $message]);
 
             <?php if ($user): ?>
             <div>
+                <?php if ($form->has('name')): ?>
+                <?= $formHidden($form->get('name')) ?>
+                <?php endif; ?>
+                <?php if ($form->has('from')): ?>
+                <?= $formHidden($form->get('from')) ?>
+                <?php endif; ?>
                 <p>
                     <?= $escape(sprintf($translate('Message de %s (%s)'), $user->getName(), $user->getEmail())) ?>
                 </p>
