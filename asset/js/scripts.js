@@ -360,6 +360,11 @@ $(document).ready(function () {
     $('a.clear-button').on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        $('.advanced-search-popup form input').val('');
+        $('.advanced-search-popup form select').each(function(no, select) {
+            let val = $(select).find('option').first().val();
+            $(select).val(val === 'eq' ? 'in' : val);
+        });
         $('li', advancedSearchTemplateTarget).each(function(no, item) {
             // On laisse le premier
             if (no > 0) {
