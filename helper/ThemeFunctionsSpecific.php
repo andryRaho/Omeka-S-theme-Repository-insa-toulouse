@@ -180,13 +180,10 @@ SQL;
 
     public function danteAnnee(ItemRepresentation $resource): string
     {
-        $value = $resource->value('dcterms:created');
-        if ($value) {
-            $year = substr((string) $value, 0, 4);
-        } else {
-            $year = 'sans date';
-        }
-        return $year;
+        $value = $resource->value('dcterms:date');
+        return $value
+            ? substr($value->value(), 0, 4)
+            : 'sans date';
     }
 
     /**
