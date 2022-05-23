@@ -1397,6 +1397,7 @@ p:empty {
         z-index: 2;
     }
 
+    main aside.aside-document-parts::before,
     main .asides > aside::before,
     main.depot-content > aside::before {
         content: '';
@@ -3272,7 +3273,7 @@ p:empty {
         align-items: center;
         border-bottom: 3px solid #EA3535;
         margin-top: 5px;
-        padding-bottom: 30px;
+        padding-bottom: 8px;
     }
 
     .item-content-header h1 {
@@ -3287,11 +3288,8 @@ p:empty {
         text-align: center;
     }
 
-    .authors-and-date a {
-
-    }
-
     .item-content-header > div {
+        margin-top: 12px;
         margin-bottom: 12px;
     }
 

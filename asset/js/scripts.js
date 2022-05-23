@@ -272,7 +272,12 @@ $(document).ready(function () {
     });
 
     // On cache les liens vides du menu Science ouverte
-    $('.aside-sommaire-page nav > ul > li > a:empty').closest('li').hide();
+    $('aside nav ul > li > a').each(function(no, item) {
+        const $item = $(item);
+        if ($item.text().length === 0) {
+            $item.closest('li').hide();
+        }
+    });
 
 
     /* */
