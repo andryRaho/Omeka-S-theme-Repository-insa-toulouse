@@ -51,6 +51,7 @@ trait ThemeFunctionsSpecific
         // $label = $resource->displayResourceClassLabel($default);
         $template = $resource->resourceTemplate();
         $label = $template ? $template->label() : $default;
+        // TODO Sans doute inutile désormais.
         return $label === 'Document' ? 'Mémoire' : $label;
     }
 
