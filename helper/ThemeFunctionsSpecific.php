@@ -80,6 +80,7 @@ trait ThemeFunctionsSpecific
                 ?: 'Non consultable';
         }
 
+        // Pour les médias.
         $access = $resource->value('curation:access')
             ?? ($resource->value('curation:reserved') ? 'Accès restreint' : 'Accès libre');
         $code = $this->classesAccess[(string) $access] ?? 'no-access';
@@ -121,6 +122,7 @@ trait ThemeFunctionsSpecific
         if ($templateLabel === 'Fichier (thèse)') {
             return true;
         }
+
         return (bool) strpos($user->getEmail(), 'univ-tlse2.fr');
     }
 
