@@ -948,6 +948,10 @@ p:empty {
         color: #474948;
     }
 
+    .document-version {
+        margin-bottom: 16px;
+    }
+
     .document-edition.document-parts li .form-buttons .form-button {
         margin-right: 0;
     }

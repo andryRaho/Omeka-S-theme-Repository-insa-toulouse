@@ -130,29 +130,35 @@ trait ThemeFunctionsSpecific
      *
      * Pour les documents entièrement privés, il faut juste le titre.
      *
-     * Néanmoins, ces fichiers sont mis en privé/réservé justement pour éviter cela.
+     * Pour les thèses, il faut aussi le numéro de version.
+     *
+     * Néanmoins, ces fichiers sont mis en privé/réservé justement pour éviter
+     * cela et cela devrait pouvoir être évité.
      */
     public function danteMediaItem(ItemRepresentation $item): array
     {
-        $medias = [];
-        foreach ($item->media() as $media) {
-            $medias[$media->id()] = $media;
-        }
-
+        // 275 = dante:version
         $sql = <<<'SQL'
-SELECT `resource`.`id`, `resource`.`title`
+SELECT
+    `resource`.`id` AS "id",
+    `resource`.`id` AS "o:id",
+    "" AS "resource",
+    `resource`.`title` AS "o:title",
+    `resource`.`is_public` AS "o:is_public",
+    `value`.`value` AS "dante:version"
 FROM `resource`
 JOIN `media` ON `media`.`id` = `resource`.`id`
+LEFT JOIN `value` ON `value`.`resource_id` = `media`.`id` AND `value`.`property_id` = 275
 WHERE `media`.`item_id` = :item_id
-    AND `resource`.`is_public` = 0
+;
 SQL;
-        $privateMedias = $item->getServiceLocator()->get('Omeka\Connection')
-            ->executeQuery($sql, ['item_id' => $item->id()])->fetchAllKeyValue();
-        foreach ($privateMedias as $privateMediaId => $privateMediaLabel) {
-            $medias[$privateMediaId] = $medias[$privateMediaId]
-                ?? ['o:id' => $privateMediaId, 'o:title' => $privateMediaLabel];
+        /** @var \Doctrine\DBAL\Connection $connection */
+        $connection = $item->getServiceLocator()->get('Omeka\Connection');
+        $medias = $connection
+            ->executeQuery($sql, ['item_id' => $item->id()])->fetchAllAssociativeIndexed();
+        foreach ($item->media() as $media) {
+            $medias[$media->id()]['resource'] = $media;
         }
-
         return $medias;
     }
 

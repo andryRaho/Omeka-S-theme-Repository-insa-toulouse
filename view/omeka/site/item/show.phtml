@@ -35,6 +35,9 @@ $searchingUrl = $plugins->has('searchingUrl') ? $plugins->get('searchingUrl')() 
 
 $resourceUrl = $resource->siteUrl($siteSlug);
 
+$resourceClass = $resource->resourceClass();
+$resourceClassTerm = $resourceClass ? $resourceClass->term() : null;
+$isThese = $resourceClassTerm === 'bibo:Thesis';
 $documentType = $themeFunctions->danteDocumentType($resource);
 $access = $themeFunctions->danteAccess($resource);
 $citation = $themeFunctions->danteCitation($resource);
@@ -117,11 +120,12 @@ $themeFunctions->appendVarsToView([
                 <?php else: ?>
                 <ul class="media-list">
                     <?php foreach ($medias as $media):
-                        if (is_object($media)) {
-                            $access = $themeFunctions->danteAccess($media);
+                        $mediaRes = $media['resource'];
+                        if ($mediaRes) {
+                            $title = $mediaRes->displayTitle();
+                            $access = $themeFunctions->danteAccess($mediaRes);
                             $accessCode = $themeFunctions->danteAccessClass($access);
-                            $originalUrl = $media->originalUrl();
-                            $title = $media->displayTitle();
+                            $originalUrl = $mediaRes->originalUrl();
                         } else {
                             $title = $media['o:title'];
                             $access = $translate('Non consultable');
@@ -130,11 +134,14 @@ $themeFunctions->appendVarsToView([
                     ?>
                     <li class="document-parts">
                         <span class="document-part-name"><?= $title ?></span>
+                        <?php if ($isThese): ?>
+                        <div class="document-part-name document-version">Version : <span class="dante-version"><?= $escape($media['dante:version'] ?: '[indéfini]') ?></span></div>
+                        <?php endif; ?>
                         <div class="document-access <?= $accessCode ?>"><?= $access ?></div>
                         <div class="document-edition">
 
                             <?php if ($accessCode === 'free-access'
-                                || (is_object($media) && $themeFunctions->danteAccessMedia($media))
+                                || ($mediaRes && $themeFunctions->danteAccessMedia($mediaRes))
                             ): ?>
 
                             <ul class="form-buttons">
