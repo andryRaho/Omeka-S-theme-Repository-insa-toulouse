@@ -9,12 +9,14 @@ if (!count($filters)) return;
 $plugins = $this->getHelperPluginManager();
 $escape = $plugins->get('escapeHtml');
 $escapeAttr = $this->plugin('escapeHtmlAttr');
+
+// TODO Corriger la traduction de degree (et autres ?)
 ?>
 
 <ul class="search-filters select-parent resources-list-selected-filters">
     <?php foreach ($filters as $filterLabel => $filterValues): ?>
     <li class="search-filters-filter filter">
-        <span class="filter-label"><?= $escape($filterLabel) ?></span>
+        <span class="filter-label"><?= $escape($filterLabel === 'degree est' ? 'Diplôme est' : $filterLabel) ?></span>
         <ul>
             <?php foreach ($filterValues as $urlQuery => $filterValue): ?>
             <li><a href="<?= $escapeAttr($urlQuery) ?>" class="filter-value"><?= $escape($filterValue) ?></a></li>
