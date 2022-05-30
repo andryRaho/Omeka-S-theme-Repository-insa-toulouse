@@ -47,7 +47,26 @@ trait ThemeFunctionsSpecific
     {
         // Cette donnée est désormais remplie automatiquement.
         $value = $resource->value('curation:access');
-        return $value ? $value->value() : 'Non consultable';
+        $v = $value ? $value->value() : 'Non consultable';
+        $vs = [
+            'Accès libre' => 'Accès libre',
+            'free' => 'Accès libre',
+            'free-access' => 'Accès libre',
+            'open' => 'Accès libre',
+            'public' => 'Accès libre', // Recommandé
+
+            'Accès restreint' => 'Accès restreint',
+            'limited' => 'Accès restreint',
+            'limited-access' => 'Accès restreint',
+            'reserved' => 'Accès restreint', // Recommandé
+            'restricted' => 'Accès restreint',
+
+            'Non consultable' => 'Non consultable',
+            'no-access' => 'Non consultable',
+            'none' => 'Non consultable',
+            'private' => 'Non consultable', // Défaut.
+        ];
+        return $vs[$v] ?? 'Non consultable';
     }
 
     /**
