@@ -9,6 +9,8 @@
  * @var ?\Omeka\Api\Representation\ItemSetRepresentation $itemSet
  */
 
+$ufrOuComposante = 31595;
+
 if (!isset($response) || empty($searchPage->subSetting('facet', 'facets'))) return;
 
 $plugins = $this->getHelperPluginManager();
@@ -80,8 +82,9 @@ $options = $searchPage->setting('facet', []);
 if (stripos($name, 'ufrOuComposante') !== false) {
     // Conserve la présentation des ufr à 2 niveaux pour les composantes.
     // Ne fonctionne que pour deux niveaux (Ufr ou composante).
+    // Attention : il y a le cas du département des langues qui a un 3e niveau
     /** @var \Thesaurus\View\Helper\Thesaurus $thesaurus */
-    $thesaurus = $plugins->get('thesaurus')(31595);
+    $thesaurus = $plugins->get('thesaurus')($ufrOuComposante);
     $counts = array_column($facetValues, 'count', 'value');
     $facetValues = [];
     $flatTree = $thesaurus->flatTree();
@@ -96,6 +99,19 @@ if (stripos($name, 'ufrOuComposante') !== false) {
         }
         // Mettre les titres qui ont des enfants et au moins une facette réelle.
         elseif ($data['level'] === 0 && $data['self']['children']) {
+            foreach ($data['self']['children'] as $childId) {
+                if (isset($counts[$flatTree[$childId]['self']['title']])) {
+                    $facetValues[] = [
+                        'value' => $data['self']['title'],
+                        'count' => 0,
+                        'is' => false,
+                    ];
+                    break;
+                }
+            }
+        }
+        // Gère le 3e niveau.
+        elseif ($data['level'] === 1 && $data['self']['children']) {
             foreach ($data['self']['children'] as $childId) {
                 if (isset($counts[$flatTree[$childId]['self']['title']])) {
                     $facetValues[] = [
