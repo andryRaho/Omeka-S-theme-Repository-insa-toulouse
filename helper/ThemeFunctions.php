@@ -613,7 +613,13 @@ class ThemeFunctions extends AbstractHelper
             } else {
                 $useSearchSolr = false;
             }
-            if ($hasModuleAdvancedSearch) {
+            if ($useSearchSolr) {
+                $baseSearchUrl = $this->view->searchingUrl();
+                $baseSearchQuery = http_build_query(['filter' => [
+                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
+                ]]);
+                $baseSearchQueryVr = $baseSearchQuery;
+            } elseif ($hasModuleAdvancedSearch) {
                 $baseSearchUrl = $this->view->searchingUrl();
                 $baseSearchQuery = http_build_query(['filter' => [
                     ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
@@ -653,8 +659,13 @@ class ThemeFunctions extends AbstractHelper
         if ($vr = $value->valueResource()) {
             $val['class'] .= ' resource ' . $vr->resourceName();
             $val['value'] = $vr->displayTitle(null, $lang);
-            $val['url'] = $baseSearchUrl . '?'
-                . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode((string) $vr->id())], $baseSearchQueryVr);
+            if ($useSearchSolr) {
+                $val['url'] = $baseSearchUrl . '?'
+                    . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode((string) $val['value'])], $baseSearchQueryVr);
+            } else {
+                $val['url'] = $baseSearchUrl . '?'
+                    . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode((string) $vr->id())], $baseSearchQueryVr);
+            }
         } elseif ($uri = $value->uri()) {
             $val['class'] .= ' uri';
             $val['value'] = $value->value() ?: $uri;
