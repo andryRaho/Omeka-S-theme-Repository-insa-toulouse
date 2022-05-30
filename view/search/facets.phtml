@@ -77,7 +77,9 @@ $options = $searchPage->setting('facet', []);
             <li class="search-facet toggle-parent opened">
                 <a class="toggle" href="#"><?= $translate($facetLabel($name)) ?></a>
 <?php
-if (stripos($name, 'ufrOuComposante')) {
+if (stripos($name, 'ufrOuComposante') !== false) {
+    // Conserve la présentation des ufr à 2 niveaux pour les composantes.
+    // Ne fonctionne que pour deux niveaux (Ufr ou composante).
     /** @var \Thesaurus\View\Helper\Thesaurus $thesaurus */
     $thesaurus = $plugins->get('thesaurus')(31595);
     $counts = array_column($facetValues, 'count', 'value');
@@ -89,7 +91,21 @@ if (stripos($name, 'ufrOuComposante')) {
             $facetValues[] = [
                 'value' => $data['self']['title'],
                 'count' => $counts[$data['self']['title']],
+                'is' => true,
             ];
+        }
+        // Mettre les titres qui ont des enfants et au moins une facette réelle.
+        elseif ($data['level'] === 0 && $data['self']['children']) {
+            foreach ($data['self']['children'] as $childId) {
+                if (isset($counts[$flatTree[$childId]['self']['title']])) {
+                    $facetValues[] = [
+                        'value' => $data['self']['title'],
+                        'count' => 0,
+                        'is' => false,
+                    ];
+                    break;
+                }
+            }
         }
     }
 } elseif (stripos($name, 'Date') !== false) {
