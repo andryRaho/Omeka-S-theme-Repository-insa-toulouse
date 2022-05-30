@@ -69,9 +69,25 @@ class ThemeFunctions extends AbstractHelper
     }
 
     /**
+     * @deprecated Use appendVarToRootView()
+     */
+    public function appendVarToView($key, $value): void
+    {
+        $this->appendVarToRootView($key, $value);
+    }
+
+    /**
+     * @deprecated Use appendVarsToRootView()
+     */
+    public function appendVarsToView($values): void
+    {
+        $this->appendVarsToRootView($values);
+    }
+
+    /**
      * Add a value to the root view model.
      */
-    public function appendVarToView($key, $value): self
+    public function appendVarToRootView($key, $value): self
     {
         $this->view
             ->getHelperPluginManager()
@@ -84,7 +100,7 @@ class ThemeFunctions extends AbstractHelper
     /**
      * Add values to the root view model.
      */
-    public function appendVarsToView($values): self
+    public function appendVarsToRootView($values): self
     {
         $rootModel = $this->view
             ->getHelperPluginManager()
@@ -95,6 +111,15 @@ class ThemeFunctions extends AbstractHelper
                 ->setVariable($key, $value);
         }
         return $this;
+    }
+
+    public function getVarFromRootView($key)
+    {
+        return $this->view
+            ->getHelperPluginManager()
+            ->get(\Laminas\View\Helper\ViewModel::class)
+            ->getRoot()
+            ->getVariable($key);
     }
 
     /**
