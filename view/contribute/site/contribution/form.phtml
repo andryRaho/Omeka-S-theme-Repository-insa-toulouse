@@ -75,6 +75,8 @@ $form->get('submit')
     ->setAttribute('form', $form->getAttribute('id'))
     ->setAttribute('class', 'form-button save-button')
     ->setValue('Enregistrer'); // @translate
+
+$contributionId = isset($contribution) ? $contribution->id() : null;
 ?>
 
 <?= $this->form()->openTag($form->setAttribute('class', $form->getAttribute('class') . ' etape-' . $steps['stepNumber'])) ?>
@@ -85,11 +87,11 @@ $form->get('submit')
         <?php if ($mode === 'read'): ?>
         <li><a href="<?= $contribution ? $contribution->url('edit') : '' ?>" class="form-button edit-button">Éditer</a></li>
         <?php else: ?>
-        <?php if ($steps['step'] === 'fichiers'): ?>
-        <li><a href="<?= $contribution ? $contribution->url('view') . '?next=fichiers' : '' ?>" class="form-button cancel-button"><?= $escape($translate('Annuler')) ?></a></li>
+        <?php if ($steps['step'] === 'fichiers'): // TODO Il y a un bogue : dans certains cas, il y a contribution, mais sans id. ?>
+        <li><a href="<?= $contributionId ? $contribution->url('view') . '?next=fichiers' : '' ?>" class="form-button cancel-button"><?= $escape($translate('Annuler')) ?></a></li>
         <li><button class="form-button" type="submit" name="next" value="edit-fichiers" form="<?= $form->getAttribute('id') ?>"><span><?= $escape($translate('Valider')) ?></span></button></li>
         <?php else: ?>
-        <li><a href="<?= $contribution ? $contribution->url('view') : '' ?>" class="form-button cancel-button"><?= $escape($translate('Annuler')) ?></a></li>
+        <li><a href="<?= $contributionId ? $contribution->url('view') : '' ?>" class="form-button cancel-button"><?= $escape($translate('Annuler')) ?></a></li>
         <li><button class="form-button" type="submit" name="next" value="edit-notice" form="<?= $form->getAttribute('id') ?>"><span><?= $escape($translate('Enregistrer')) ?></span></button></li>
         <?php endif; ?>
         <?php endif; ?>
