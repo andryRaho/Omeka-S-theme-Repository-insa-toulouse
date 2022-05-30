@@ -123,7 +123,8 @@ trait ThemeFunctionsSpecific
             return true;
         }
 
-        return (bool) strpos($user->getEmail(), 'univ-tlse2.fr');
+        // return (bool) strpos($user->getEmail(), 'univ-tlse2.fr');
+        return $user->getRole() !== 'guest_ext';
     }
 
     /**

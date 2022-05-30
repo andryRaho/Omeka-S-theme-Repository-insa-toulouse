@@ -25,6 +25,7 @@ $assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $themeSetting = $plugins->get('themeSetting');
+$userIsAllowed = $plugins->get('userIsAllowed');
 $themeFunctions = $plugins->get('ThemeFunctions');
 $themeSettingAssetUrl = $plugins->get('themeSettingAssetUrl');
 
@@ -119,11 +120,9 @@ $headScript
     ->appendFile($assetUrl('js/scripts.js'), 'text/javascript', ['defer' => 'defer']);
 
 $user = $this->identity();
-if ($user && $user->getRole() !== 'guest') {
-    $userBar = $this->userBar();
-} else {
-    $userBar = '';
-}
+$userBar = $user && $userIsAllowed('Omeka\Controller\Admin\Index', 'index')
+    ? $this->userBar()
+    : '';
 
 $baseAssetUrl = $assetUrl('', null, false, false);
 $baseSiteUrl = $site->url('site', [], true);
