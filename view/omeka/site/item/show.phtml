@@ -38,6 +38,8 @@ $resourceUrl = $resource->siteUrl($siteSlug);
 $resourceClass = $resource->resourceClass();
 $resourceClassTerm = $resourceClass ? $resourceClass->term() : null;
 $isThese = $resourceClassTerm === 'bibo:Thesis';
+// $isTravailEtudiant = !$isThese;
+
 $documentType = $themeFunctions->danteDocumentType($resource);
 $access = $themeFunctions->danteAccess($resource);
 $citation = $themeFunctions->danteCitation($resource);
@@ -126,10 +128,24 @@ $themeFunctions->appendVarsToView([
                             $access = $themeFunctions->danteAccess($mediaRes);
                             $accessCode = $themeFunctions->danteAccessClass($access);
                             $originalUrl = $mediaRes->originalUrl();
+                            // Attention : en cas d'accès restreint, le message est différent selon les documents et selon l'embargo.
+                            // Pour les travaux étudiants = accès restreint UT2
+                            // Pour les thèses = accès restreint communauté universitaire
+                            // Si embargo, ajouter : jusqu'au JJ/MM/AAAA
+                            if ($accessCode === 'limited-access') {
+                                $access = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
+                            }
+                            if ($accessCode !== 'free-access') {
+                                $embargo = $mediaRes->value('curation:dateEnd');
+                                if ($embargo) {
+                                    $access .= ' jusqu’au ' . DateTime::createFromFormat('Y-m-d', $embargo->value())->format('d-m-Y');
+                                }
+                            }
                         } else {
                             $title = $media['o:title'];
                             $access = $translate('Non consultable');
                             $accessCode = 'no-access';
+                            $embargo = null;
                         }
                     ?>
                     <li class="document-parts">

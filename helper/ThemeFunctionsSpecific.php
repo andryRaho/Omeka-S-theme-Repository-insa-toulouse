@@ -55,14 +55,11 @@ trait ThemeFunctionsSpecific
         return $label === 'Document' ? 'Mémoire' : $label;
     }
 
-    /**
-     * Toutes les métadonnées sont accessibles : le type d'accès est donc défini
-     * par le média le plus libre.
-     *
-     * On ne regarde pas l'embargo ici : il est déjà pris en compte (mise en public).
-     */
     public function danteAccess(AbstractResourceEntityRepresentation $resource): string
     {
+        // Toutes les métadonnées sont accessibles : le type d'accès est donc
+        // défini par le média le plus libre.
+        // On ne regarde pas l'embargo ici : il est déjà pris en compte (mise en public).
         if ($resource instanceof ItemRepresentation) {
             // S'il n'y a pas de fichier, c'est qu'il est non consultable de fait.
             $medias = $resource->media();
