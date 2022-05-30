@@ -11,6 +11,7 @@ $plugins = $this->getHelperPluginManager();
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');
+$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
 $labelInfo = $siteSetting('property_label_information');
@@ -20,6 +21,8 @@ $filterLocale = (bool) $siteSetting('filter_locale_values');
 $lang = $plugins->get('lang')();
 $langHtml = $filterLocale ? $lang : null;
 
+$browseTerms = $themeSetting('resource_values_properties_browse', []);
+/*
 $browseTerms = [
     'dcterms:creator',
     'dcterms:subject',
@@ -27,6 +30,7 @@ $browseTerms = [
     'curation:access',
     'bibo:degree',
 ];
+*/
 $notBrowseTerms = [
     'dcterms:title',
     'dcterms:abstract',
