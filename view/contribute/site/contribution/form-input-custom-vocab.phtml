@@ -67,6 +67,7 @@ if ($customVocabId) {
         $itemSetClass = $itemSet ? $itemSet->resourceClass() : null;
         $plugins = $this->getHelperPluginManager();
         if ($itemSetClass && in_array($itemSetClass->term(), ['skos:Collection', 'skos:OrderedCollection']) && $plugins->has('thesaurus')) {
+            /** @var \Thesaurus\View\Helper\Thesaurus $thesaurus */
             $thesaurus = $plugins->get('thesaurus')($itemSet);
             $select = $thesaurus->asSelect(['output_type' => 'listTree', 'indent' => '– ', 'empty_option' => ''])
                 ->setName('customvocab')
@@ -74,6 +75,11 @@ if ($customVocabId) {
                     'data-value-key' => 'value_resource_id',
                     'class' => 'terms to-require',
                 ]);
+                if (in_array($thesaurus->scheme()->id(), [31683, 31685, 31686])) {
+                    $valueOptions = $select->getValueOptions();
+                    ksort($valueOptions);
+                    $select->setValueOptions($valueOptions);
+                }
             $selectHtml = $this->formSelect($select);
         } else {
             $selectHtml = (new \CustomVocab\DataType\CustomVocab($customVocab))->form($this);
