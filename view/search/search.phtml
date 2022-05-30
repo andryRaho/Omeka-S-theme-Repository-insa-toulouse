@@ -129,6 +129,7 @@ $themeFunctions->appendVarToView('ariane', $ariane);
             // 'title' => sprintf($translatePlural('%s item set', '%s item sets', $itemSetsCount), $itemSetsCount),
             'title' => sprintf($translatePlural('%s collection', '%s collections', $itemSetsCount), $itemSetsCount),
             'resourceName' => 'item_sets',
+            'next' => empty($itemsCount),
         ]) ?>
         <?php endif; ?>
 
@@ -141,6 +142,7 @@ $themeFunctions->appendVarToView('ariane', $ariane);
             // 'title' => sprintf($translatePlural('%s item', '%s items', $itemsCount), $itemsCount),
             'title' => sprintf($translatePlural('%s document', '%s documents', $itemsCount), $itemsCount),
             'resourceName' => 'items',
+            'next' => true,
         ]) ?>
         <?php endif; ?>
 

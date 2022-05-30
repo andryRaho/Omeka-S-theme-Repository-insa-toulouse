@@ -7,6 +7,8 @@
  * @var \AdvancedSearch\Response $response
  * @var string $title
  * @var string $resourceName
+ *
+ * @var bool $next
  */
 
 $resources = $response->getResources($resourceName);
@@ -77,4 +79,7 @@ $documentTypes = [
         </div>
     </li>
     <?php endforeach; ?>
+    <?php if (!empty($next) && count($resources) > 10): ?>
+    <li class="resources-list-more-link"><a href=""><?= $translate('Lire la suite') ?></a></li>
+    <?php endif; ?>
 </ul>
