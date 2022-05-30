@@ -2590,6 +2590,10 @@ p:empty {
         transform: rotate(180deg);
     }
 
+    li.search-facet-item [type="checkbox"] + label span {
+        display: contents;
+    }
+
     main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label {
         position: relative;
     }
