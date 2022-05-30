@@ -299,10 +299,10 @@ SQL;
      * Pour gérer les options spécifiques directement.
      */
     public function templatePropertyThemeOption(
-       ?\AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty,
-       ?string $metadata = null
+        ?\Omeka\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty,
+        ?string $metadata = null
     ) {
-        if (!$templateProperty) {
+        if (!$templateProperty || !$templateProperty instanceof \AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation) {
             return null;
         }
         $val = $templateProperty->mainDataValueMetadata('settings', $metadata, '');
