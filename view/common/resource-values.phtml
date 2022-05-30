@@ -103,13 +103,11 @@ if ($resource) {
                     <?php if ($showLocale && $valueLang): ?>
                     <span class="language"><?= $valueLang ?></span>
                     <?php endif; ?>
-                    <?php $val = $value->asHtml($langHtml) ?>
+                    <?php $val = $valueResource ? $valueResource->displayTitle() : $value->asHtml($langHtml) ?>
                     <?php // if ($term === 'dcterms:date' && preg_match('~\d\d\d\d~', $val)): ?>
                     <?php // echo substr($val, 0, 4) ?>
                     <?php // else: ?>
-                    <?= in_array($term, $browseTerms) || (!in_array($term, $notBrowseTerms) && mb_strlen(strip_tags($val)) < 50)
-                        ? $themeFunctions->browseValueForTerm($value, $term, $lang)['link']
-                        : $val ?>
+                    <?= $val ?>
                     <?php // endif ?>
                 </li>
             <?php endif; ?>
