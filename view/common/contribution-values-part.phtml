@@ -75,7 +75,8 @@ if ($contribution) {
                         elseif ($valueBaseType === 'resource'):
                             try {
                                 $res = $api->read('resources', ['id' => $contributionData['proposed']['@resource']])->getContent();
-                                echo $res->link($res->displayTitle());
+                                // echo $res->link($res->displayTitle());
+                                echo $res->displayTitle();
                             } catch (\Exception $e) {
                                 echo sprintf($translate('%s [unavailable]'), $contributionData['proposed']['@resource']);
                             }

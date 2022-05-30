@@ -87,9 +87,10 @@ if ($resource) {
             $valueType = $value->type();
             $valueLang = $value->lang();
             $class = ['value'];
-            if (substr($valueType, 0, 8) === 'resource') {
+            $valueResource = $value->valueResource();
+            if ($valueResource) {
                 $class[] = 'resource';
-                $class[] = $escape($value->valueResource()->resourceName());
+                $class[] = $escape($valueResource->resourceName());
             } elseif ('uri' == $valueType) {
                 $class[] = 'uri';
             }
