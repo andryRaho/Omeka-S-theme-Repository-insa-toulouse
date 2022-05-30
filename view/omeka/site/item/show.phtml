@@ -122,6 +122,7 @@ $themeFunctions->appendVarsToView([
                 <?php else: ?>
                 <ul class="media-list">
                     <?php foreach ($medias as $media):
+                        /** @var \Omeka\Api\Representation\MediaRepresentation $mediaRes */
                         $mediaRes = $media['resource'];
                         if ($mediaRes) {
                             $title = $mediaRes->displayTitle();
@@ -138,7 +139,11 @@ $themeFunctions->appendVarsToView([
                             if ($accessCode !== 'free-access') {
                                 $embargo = $mediaRes->value('curation:dateEnd');
                                 if ($embargo) {
-                                    $access .= ' jusqu’au ' . DateTime::createFromFormat('Y-m-d', $embargo->value())->format('d-m-Y');
+                                    $date = DateTime::createFromFormat('Y-m-d', $embargo->value());
+                                    if (!$date) {
+                                        $this->logger()->err('Date incorrecte dans curation:dateEnd du media #' . $mediaRes->id());
+                                    }
+                                    $access .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
                                 }
                             }
                         } else {
