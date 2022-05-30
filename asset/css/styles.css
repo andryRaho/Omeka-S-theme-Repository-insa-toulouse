@@ -2715,7 +2715,8 @@ p:empty {
     ul.resources-list-selected-filters {
         margin: 12px 0 8px 0;
         display: flex;
-        gap:8px;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
     ul.resources-list-selected-filters > li {
