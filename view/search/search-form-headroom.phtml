@@ -31,7 +31,7 @@ $advancedSearchUrl = $themeSetting('search_advanced_page') ?: $this->searchingUr
 <div class="search-form-parent">
     <?= $this->form()->openTag($form) ?>
         <div class="form-input-and-buttons">
-            <?= $formSearch($mainElement->setAttribute('class', 'search-text')->setAttribute('placeholder', $translate('Search'))->setAttribute('aria-label', $translate('Search'))) ?>
+            <?= $formSearch($mainElement->setAttribute('class', $mainElement->getAttribute('class') . ' search-text')->setAttribute('placeholder', $translate('Search'))->setAttribute('aria-label', $translate('Search'))) ?>
             <div class="form-buttons">
                 <button type="submit" class="icon-search-btn" aria-label="<?= $translate('Lancer la recherche dans le corpus') ?>">
                     <span class="icon-loupe"></span>
