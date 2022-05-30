@@ -39,6 +39,10 @@ if (!empty($itemSet)) {
 }
 
 $options = $searchPage->setting('facet', []);
+
+// Affichage du sélecteur ufr/composante en l'absence de recherche.
+// $noQuery = $query && !$query->getQuery() && !$query->getFilters() && !$query->getFilterQueries() && !$query->getDateRangeFilters();
+
 ?>
 
 <aside class="search-facets">
@@ -72,6 +76,34 @@ $options = $searchPage->setting('facet', []);
             <?php foreach ($facets as $name => $facetValues): ?>
             <li class="search-facet toggle-parent opened">
                 <a class="toggle" href="#"><?= $translate($facetLabel($name)) ?></a>
+<?php
+if (stripos($name, 'ufrOuComposante')) {
+    /** @var \Thesaurus\View\Helper\Thesaurus $thesaurus */
+    $thesaurus = $plugins->get('thesaurus')(31595);
+    $counts = array_column($facetValues, 'count', 'value');
+    $facetValues = [];
+    $flatTree = $thesaurus->flatTree();
+    foreach ($flatTree as $data) {
+        // Mettre tous les vraies facettes avec des résultats.
+        if (isset($counts[$data['self']['title']])) {
+            $facetValues[] = [
+                'value' => $data['self']['title'],
+                'count' => $counts[$data['self']['title']],
+            ];
+        }
+    }
+} elseif (stripos($name, 'Date') !== false) {
+    $counts = array_column($facetValues, 'count', 'value');
+    krsort($counts);
+    $facetValues = [];
+    foreach ($counts as $key => $value) {
+        $facetValues[] = [
+            'value' => $key,
+            'count' => $value,
+        ];
+    }
+}
+?>
                 <?php if (($options['facets'][$name]['type'] ?? 'Checkbox') === 'Select'): ?>
                 <?= $facetSelect($name, $facetValues, $options) ?>
                 <?php else: ?>
