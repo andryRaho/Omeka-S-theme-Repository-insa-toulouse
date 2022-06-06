@@ -46,8 +46,31 @@ trait ThemeFunctionsSpecific
     public function danteAccess(AbstractResourceEntityRepresentation $resource): string
     {
         // Cette donnée est désormais remplie automatiquement.
+
+        // Attention : curation:access est parfois privée et les visiteurs n'y
+        // ont pas accès, ce qui peut rendre non consultable une ressource
+        // publique.
+
         $value = $resource->value('curation:access');
-        $v = $value ? $value->value() : 'Non consultable';
+        if ($value) {
+            $v = $value->value();
+        } else {
+            // curation:access = 243
+            $sql = <<<'SQL'
+SELECT `value`.`value`
+FROM `resource`
+JOIN `value` ON `value`.`resource_id` = `resource`.`id` AND `value`.`property_id` = 243
+WHERE `resource`.`id` = :resource_id
+LIMIT 1
+;
+SQL;
+            /** @var \Doctrine\DBAL\Connection $connection */
+            $connection = $resource->getServiceLocator()->get('Omeka\Connection');
+            $v = $connection
+                ->executeQuery($sql, ['resource_id' => $resource->id()])->fetchOne()
+                ?: 'Non consultable';
+        }
+
         $vs = [
             'Accès libre' => 'Accès libre',
             'free' => 'Accès libre',
