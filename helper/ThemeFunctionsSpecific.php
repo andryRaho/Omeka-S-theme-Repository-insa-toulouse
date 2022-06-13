@@ -181,6 +181,8 @@ SQL;
                 if (!$name) {
                     $name = $vr->value('foaf:name')->asHtml();
                 }
+            } elseif ($uri = $value->uri()) {
+                $name = $value->value() ?: $uri;
             } else {
                 $name = $value->asHtml();
             }

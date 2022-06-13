@@ -103,7 +103,11 @@ if ($resource) {
                     <?php if ($showLocale && $valueLang): ?>
                     <span class="language"><?= $valueLang ?></span>
                     <?php endif; ?>
-                    <?php $val = $value->asHtml($langHtml) ?>
+                    <?php if ($valueType === 'uri'):
+                        $val = $value->value();
+                    else:
+                        $val = $value->asHtml($langHtml);
+                    endif; ?>
                     <?php // if ($term === 'dcterms:date' && preg_match('~\d\d\d\d~', $val)): ?>
                     <?php // echo substr($val, 0, 4) ?>
                     <?php // else: ?>
