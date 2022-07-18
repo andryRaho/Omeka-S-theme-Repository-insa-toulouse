@@ -668,13 +668,13 @@ class ThemeFunctions extends AbstractHelper
             }
         } elseif ($uri = $value->uri()) {
             $val['class'] .= ' uri';
-            $val['value'] = $value->value() ?: $uri;
+            $val['value'] = (string) $value->value() ?: $uri;
             $val['url'] = $baseSearchUrl . '?'
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($uri)], $baseSearchQuery);
         } else {
             $val['class'] .= ' literal';
             // $val['value'] = $value->asHtml(null, $lang);
-            $val['value'] = $value->value();
+            $val['value'] = (string) $value->value();
             $val['url'] = $baseSearchUrl . '?'
                 . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($val['value'])], $baseSearchQuery);
         }
@@ -712,7 +712,7 @@ class ThemeFunctions extends AbstractHelper
     }
 
     /**
-     * Get the description and the "see more" description as html.
+     * Separate the description and the "see more" description.
      *
      * @param string[]|string $property Specific properties instead of default
      *   template description. Append null to use default description.
