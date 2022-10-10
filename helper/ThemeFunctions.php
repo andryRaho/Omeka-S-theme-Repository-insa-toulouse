@@ -40,6 +40,7 @@ class ThemeFunctions extends AbstractHelper
      */
     public function currentSite(): ?\Omeka\Api\Representation\SiteRepresentation
     {
+        // Or $this->layout()->site
         return $this->view->site ?? $this->view->site = $this->view
             ->getHelperPluginManager()
             ->get(\Laminas\View\Helper\ViewModel::class)
@@ -124,6 +125,8 @@ class ThemeFunctions extends AbstractHelper
 
     /**
      * Check if the current page is the home page (first page in main menu).
+     *
+     * @todo IsHomePage() with blockplus ? $this->view->pageMetadata('type') === 'home'
      */
     public function isHomePage(): bool
     {
@@ -433,7 +436,7 @@ class ThemeFunctions extends AbstractHelper
     /**
      * Add hidden input from the query.
      *
-     * @deprecated Use queryToHiddenInputs (Omeka) or HiddenInputsFromFilteredQuery() (module Search).
+     * @deprecated Use queryToHiddenInputs (Omeka) or HiddenInputsFromFilteredQuery() (module AdvancedSearch).
      */
     public function inputHiddenFromQuery(array $query, array $skipKeys = []): string
     {
@@ -468,61 +471,27 @@ class ThemeFunctions extends AbstractHelper
         }
 
         $val = $this->simpleValueForTerm($value, $term);
-        return $val['link'] ?? (string) $escape($val['value']);
+        return $val['link'] ?? (string) $val['value'];
     }
 
     /**
      * Convertit une value en valeur simple pour le html.
+     *
+     * @todo Check and use CleanUrl.
      */
     public function simpleValueForTerm(ValueRepresentation $value, string $term, ?array $linkables = null): array
     {
-        static $escape;
-        static $escapeAttr;
-        static $escapedBaseQuery;
-        static $siteSlug;
-
-        if (is_null($escape)) {
-            $plugins = $this->view->getHelperPluginManager();
-            $url = $plugins->get('url');
-            $escape = $plugins->get('escapeHtml');
-            $escapeAttr = $plugins->get('escapeHtmlAttr');
-
-            $siteSlug = $this->currentSite()->slug();
-            // TODO Check and use clean url.
-            // $useCleanUrl = $plugins->has('cleanUrl');
-
-            // Avoid multiple useless calls to the helper url().
-            $simpleRoute = $this->simpleRoute();
-            if ($simpleRoute['controller'] === 'search') {
-                $escapedBaseQuery = $escapeAttr($url(
-                    // $this->currentSite()->getServiceLocator()->get('Application')->getMvcEvent()->getRouteMatch()->getMatchedRouteName(),
-                    $plugins->get('status')->getRouteMatch()->getMatchedRouteName(),
-                    ['controller' => 'search'],
-                    // Old module Search.
-                    // ['query' => ['text' => ['filters' => [['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__']]]]],
-                    // Module Advanced Search.
-                    ['query' => ['filter' => [['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__']]]],
-                    true
-                ));
-            } else {
-                $escapedBaseQuery = $escapeAttr($url(
-                    'site/resource',
-                    ['action' => 'browse', 'site-slug' => $siteSlug],
-                    ['query' => ['property' => [['joiner' => 'and', 'property' => '__FIELD__', 'type' => 'eq', 'text' => '__VALUE__']]]],
-                    true
-                ));
-            }
-        }
-
-        $escapedTerm = rawurlencode($term);
+        // Manage AdvancedResourceTemplate terms.
+        $mainTerm = strtok($term, '/');
 
         /** @var \Omeka\Api\Representation\ValueRepresentation $value*/
         $valueType = $value->type();
         $val = [
             'class' => 'value',
-            'link' => null,
-            'value' => null,
             'lang' => $value->lang(),
+            'value' => null,
+            'url' => null,
+            'link' => null,
         ];
 
         // Une ressource peut être gérée via custom vocab: son type n’est pas seulement "resource"…
@@ -531,28 +500,25 @@ class ThemeFunctions extends AbstractHelper
         if ($valueResource) {
             $val['class'] .= ' resource ' . $valueResource->resourceName();
             $val['link'] = $valueResource->link($valueResource->displayTitle());
-        } elseif ($valueType === 'uri') {
+        } elseif ($uri = (string) $value->uri()) {
+            // TODO Le AsHtml() devrait suffire avec les événements.
+            $vv = (string) $value->value();
+            // Pas d’autres classes pour les autres types de données.
             $val['class'] .= ' uri';
-            $val['link'] = $value->asHtml();
+            $val['url'] = $uri;
+            // Value suggest, rights statement, etc.
+            if (strlen($vv)) {
+                // Lien de recherche interne.
+                return $this->browseValueForTerm($value, $mainTerm);
+            } else {
+                // Lien externe en l’absence de label, car sinon ce n’est pas clair.
+                $val['link'] = str_replace('<a ', '<a _target="blank"', $value->asHtml());
+            }
         } else {
             // Pas d’autres classes pour les autres types de données.
             // TODO Le AsHtml() devrait suffire avec les événements.
             $vv = (string) $value->value();
-            $uri = (string) $value->uri();
-            // Value suggest, rights statement, etc.
-            if (strlen($uri) && strlen($vv)) {
-                // Lien de recherche interne.
-                $val['link'] = sprintf(
-                    '<a href="%s">%s</a>',
-                    str_replace(['__FIELD__', '__VALUE__'], [$escapedTerm, rawurlencode($uri)], $escapedBaseQuery),
-                    $escape($vv)
-                );
-            } elseif (strlen($uri)) {
-                // Lien externe en l’absence de label, car sinon ce n’est pas clair.
-                // TODO Ajouter _target blank.
-                $val['class'] = ' uri';
-                $val['link'] = $value->asHtml();
-            } elseif (
+            if (
                 // Toujours liens.
                 (is_null($linkables)
                     || in_array($term, $linkables)
@@ -563,11 +529,8 @@ class ThemeFunctions extends AbstractHelper
                     || in_array($valueType, ['numeric:timestamp', 'numeric:integer', 'numeric:interval', 'numeric:duration', 'html', 'xml', 'boolean', 'geometry:geography', 'geometry:geometry'])
                 )
             ) {
-                $val['link'] = sprintf(
-                    '<a href="%s">%s</a>',
-                    str_replace(['__FIELD__', '__VALUE__'], [$escapedTerm, rawurlencode($vv)], $escapedBaseQuery),
-                    $escape($vv)
-                );
+                // Lien de recherche interne.
+                return $this->browseValueForTerm($value, $mainTerm);
             } else {
                 // $val['value'] = $vv;
                 $val['value'] = $value->asHtml();
@@ -646,6 +609,10 @@ class ThemeFunctions extends AbstractHelper
             'link' => null,
         ];
 
+        // Manage AdvancedResourceTemplate terms.
+        $originalTermOrField = $termOrField;
+        $termOrField = strtok($originalTermOrField, '/');
+
         // Don't check type, but presence of value resource, uri, or literal in
         // order to manage all cases directly (resource, custom vocab, value
         // suggest, etc.
@@ -716,8 +683,10 @@ class ThemeFunctions extends AbstractHelper
      *
      * @param string[]|string $property Specific properties instead of default
      *   template description. Append null to use default description.
+     *
+     * @todo Don't use nl2br?
      */
-    public function descriptionAndMore(AbstractResourceEntityRepresentation $resource, $property = null, $lang = null): array
+    public function descriptionAndMore(AbstractResourceEntityRepresentation $resource, $property = null, $lang = null, int $maxWords = 100, ?string $mode = null): array
     {
         if (empty($property)) {
             $properties = [null];
@@ -745,37 +714,103 @@ class ThemeFunctions extends AbstractHelper
 
         $more = null;
 
-        $descriptionMore = $this->view->themeSetting('description_more') ?: 'auto';
+        $descriptionMore = $mode ?? ($this->view->themeSetting('description_more') ?: 'auto');
         switch ($descriptionMore) {
+            case 'nth':
+            // @deprecated "auto" is replaced by "nth".
             case 'auto':
-                if (mb_substr($description, 0, 1) !== '<') {
-                    $v = explode(' ', $description);
-                    if (count($v) > 100) {
-                        $description = implode(' ', array_slice($v, 0, 100)) . '…';
-                        $more = implode(' ', array_slice($v, 100));
+                // Experimental for html.
+                if (mb_substr($description, 0, 1) === '<') {
+                    // The simplest way, but imperfect, is to strip tags, then
+                    // get the word at the 100th word, then find it in the
+                    // original string.
+                    // Possible issue: the word is short or a punctuation sign
+                    // and already in the beginning of the text or it exists in
+                    // attributes. So count the number of words before the found
+                    // one.
+                    // TODO Improve html cut at nth word.
+                    $desc = $description;
+                    $v = explode(' ', strip_tags($description));
+                    if (count($v) > $maxWords) {
+                        $word = $v[$maxWords];
+                        $start = implode(' ', array_slice($v, 0, $maxWords));
+                        $minPosChar = max($maxWords * 2, mb_strlen($start));
+                        $minPosText = substr_count($start, $word);
+                        if ($minPosText <= 1) {
+                            $pos = mb_strpos($description, $word, $minPosChar) + mb_strlen($word);
+                        } else {
+                            for ($i = 0, $pos = 0, $len = 0; $i < $minPosText; $i++) {
+                                $pos = mb_strpos($description, $word, $pos + $len);
+                                if (!$i) {
+                                    $len = mb_strlen($word);
+                                }
+                            }
+                        }
+                        $description = mb_substr($description, 0, $pos + 1) . '…';
+                        $more = mb_substr($desc, $pos + 1);
+                    }
+                } else {
+                    $v = explode(' ', strip_tags($description));
+                    if (count($v) > $maxWords) {
+                        $description = implode(' ', array_slice($v, 0, $maxWords)) . '…';
+                        $more = implode(' ', array_slice($v, $maxWords));
                     }
                 }
                 break;
 
             case 'new_line':
-                if (mb_substr($description, 0, 1) !== '<') {
+                if (mb_substr($description, 0, 1) === '<') {
+                    // A end p, div or br followed by an empty full <p></p>, div (without attributes) or br.
+                    $result = preg_split('~(?<cut></p>|</div>|<br\s*/?>|<br [^>]*/?>)~u', $description, 2, PREG_SPLIT_DELIM_CAPTURE);
+                    if ($result && count($result) === 3) {
+                        $description = $result[0] . $result[1];
+                        $more = $result[2];
+                    }
+                } else {
                     $pos = mb_strpos($description, "\n");
                     if ($pos) {
                         $desc = $description;
-                        $description = mb_substr($description, 0, $pos) . '…';
+                        $description = mb_substr($description, 0, $pos + 1) . '…';
+                        $more = mb_substr($desc, $pos + 1);
+                    }
+                }
+                break;
+
+            case 'double_new_line':
+                if (mb_substr($description, 0, 1) === '<') {
+                    // A end p, div or br followed by an empty full <p></p>, div (without attributes) or br.
+                    $result = preg_split('~(?<cut><(?:/(?:p|div)|br(?:\s*| [^>]*)/?)>\s*<(?:(?:p|div)>\s*</(?:p|div)|br(?:\s*| [^>]*)/?)>)~u', $description, 2, PREG_SPLIT_DELIM_CAPTURE);
+                    if ($result && count($result) === 3) {
+                        $description = $result[0] . $result[1];
+                        $more = $result[2];
+                    }
+                } else {
+                    // Normally cleaned on save.
+                    $description = str_replace(["\n\r", "\r\n", "\r"], ["\n", "\n", "\n"], $description);
+                    $pos = mb_strpos($description, "\n\n");
+                    if ($pos) {
+                        $desc = $description;
+                        $description = mb_substr($description, 0, $pos + 1) . '…';
                         $more = mb_substr($desc, $pos + 1);
                     }
                 }
                 break;
 
             case 'second':
+            case 'second_or_nth':
+            case 'second_or_new_line':
+            case 'second_or_double_new_line':
                 if ($description) {
                     $template = $resource->resourceTemplate();
                     $term = $template && $template->descriptionProperty()
                         ? $template->descriptionProperty()->term()
                         : 'dcterms:description';
                     $v = $resource->value($term, ['all' => true]);
-                    if (!empty($v[1])) {
+                    if (empty($v[1])) {
+                        if ($descriptionMore !== 'second') {
+                            return $this->descriptionAndMore($resource, $property, $lang, substr($descriptionMore, 10));
+                        }
+                    } else {
                         $more = $v[1]->asHtml();
                     }
                 }
@@ -793,12 +828,18 @@ class ThemeFunctions extends AbstractHelper
                 break;
         }
 
-
-        if ($description && mb_substr($description, 0, 1) !== '<') {
-            $description = nl2br(trim($description));
+        if ($description) {
+            $description = trim($description);
+            if (mb_substr($description, 0, 1) !== '<') {
+                $description = nl2br($description);
+            }
         }
-        if ($more && mb_substr($more, 0, 1) !== '<') {
-            $more = nl2br(trim($more));
+
+        if ($more) {
+            $more = trim($more);
+            if (mb_substr($more, 0, 1) !== '<') {
+                $more = nl2br($more);
+            }
         }
 
         return [
