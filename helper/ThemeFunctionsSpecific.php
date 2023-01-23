@@ -29,6 +29,25 @@ trait ThemeFunctionsSpecific
         'private' => 'no-access', // Défaut.
     ];
 
+    protected $accessToLabels = [
+        'Accès libre' => 'Accès libre',
+        'free' => 'Accès libre',
+        'free-access' => 'Accès libre',
+        'open' => 'Accès libre',
+        'public' => 'Accès libre', // Recommandé
+
+        'Accès restreint' => 'Accès restreint',
+        'limited' => 'Accès restreint',
+        'limited-access' => 'Accès restreint',
+        'reserved' => 'Accès restreint', // Recommandé
+        'restricted' => 'Accès restreint',
+
+        'Non consultable' => 'Non consultable',
+        'no-access' => 'Non consultable',
+        'none' => 'Non consultable',
+        'private' => 'Non consultable', // Défaut.
+    ];
+
     /**
      * Le type du document (le nom du modèle utilisé).
      *
@@ -71,25 +90,7 @@ SQL;
                 ?: 'Non consultable';
         }
 
-        $vs = [
-            'Accès libre' => 'Accès libre',
-            'free' => 'Accès libre',
-            'free-access' => 'Accès libre',
-            'open' => 'Accès libre',
-            'public' => 'Accès libre', // Recommandé
-
-            'Accès restreint' => 'Accès restreint',
-            'limited' => 'Accès restreint',
-            'limited-access' => 'Accès restreint',
-            'reserved' => 'Accès restreint', // Recommandé
-            'restricted' => 'Accès restreint',
-
-            'Non consultable' => 'Non consultable',
-            'no-access' => 'Non consultable',
-            'none' => 'Non consultable',
-            'private' => 'Non consultable', // Défaut.
-        ];
-        return $vs[$v] ?? 'Non consultable';
+        return $this->accessToLabels[$v] ?? 'Non consultable';
     }
 
     /**
@@ -132,7 +133,7 @@ SQL;
     }
 
     /**
-     * Tous les médias doivent être listées, y compris les médias privés (quand
+     * Tous les médias doivent être listés, y compris les médias privés (quand
      * l'item est accessible), afin de pouvoir afficher l'information "non consultable".
      *
      * Pour les documents entièrement privés, il faut juste le titre.
