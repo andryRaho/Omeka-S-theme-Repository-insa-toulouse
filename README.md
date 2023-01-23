@@ -107,7 +107,7 @@ See commits for full list of contributors and copyright of the libraries.
 [Omeka S]: https://omeka.org/s
 [dante]: https://dante.univ-tlse2.fr
 [Université de Toulouse Jean-Jaurès]: https://www.univ-tlse2.fr
-[Installing a module]: http://dev.omeka.org/docs/s/user-manual/modules/#installing-modules
+[Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [Advanced Search]: https://gitlab.com/Daniel-KM/Omeka-S-module-AdvancedSearch
 [Block Plus]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlockPlus
 [Reference]: https://gitlab.com/Daniel-KM/Omeka-S-module-Reference
