@@ -18,7 +18,7 @@ $formSelect = $plugins->get('formSelect');
 $formButton = $plugins->get('formButton');
 $formHidden = $plugins->get('formHidden');
 $formSearch = $plugins->get('formSearch');
-// $formElement = $plugins->get('formElement');
+$formElement = $plugins->get('formElement');
 $formCollection = $plugins->get('formCollection');
 
 // $site = $themeFunctions->currentSite();
@@ -121,7 +121,7 @@ $filtersReplace = [
                     <div class="field select-multi">
                         <?= $formLabel($element) ?>
                         <div class="select-parent">
-                            <?= $formSelect($element) ?>
+                            <?= $element instanceof \Laminas\Form\Element\Select ? $formSelect($element) : $formElement($element) ?>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -131,7 +131,7 @@ $filtersReplace = [
                     <div class="field select-multi">
                         <?= $formLabel($element) ?>
                         <div class="select-parent">
-                            <?= $formSelect($element) ?>
+                            <?= $element instanceof \Laminas\Form\Element\Select ? $formSelect($element) : $formElement($element) ?>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -141,7 +141,7 @@ $filtersReplace = [
                     <div class="field select-multi">
                         <?= $formLabel($element) ?>
                         <div class="select-parent">
-                            <?= $formSelect($element) ?>
+                            <?= $element instanceof \Laminas\Form\Element\Select ? $formSelect($element) : $formElement($element) ?>
                         </div>
                     </div>
                     <?php endif; ?>
