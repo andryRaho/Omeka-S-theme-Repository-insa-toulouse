@@ -526,7 +526,7 @@ class ThemeFunctions extends AbstractHelper
                 )
                 // Jamais liens.
                 && !(substr($valueType, 0, 7) === 'numeric'
-                    || in_array($valueType, ['numeric:timestamp', 'numeric:integer', 'numeric:interval', 'numeric:duration', 'html', 'xml', 'boolean', 'geometry:geography', 'geometry:geometry'])
+                    || in_array($valueType, ['numeric:timestamp', 'numeric:integer', 'numeric:interval', 'numeric:duration', 'html', 'xml', 'boolean', 'geography', 'geometry', 'geography:coordinates', 'geometry:coordinates', 'geometry:position'])
                 )
             ) {
                 // Lien de recherche interne.
