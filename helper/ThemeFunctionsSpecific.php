@@ -27,6 +27,7 @@ trait ThemeFunctionsSpecific
         'no-access' => 'no-access',
         'none' => 'no-access',
         'private' => 'no-access', // Défaut.
+        'forbidden' => 'forbidden', // Défaut.
     ];
 
     protected $accessToLabels = [
@@ -46,6 +47,7 @@ trait ThemeFunctionsSpecific
         'no-access' => 'Non consultable',
         'none' => 'Non consultable',
         'private' => 'Non consultable', // Défaut.
+        'forbidden' => 'Non consultable', // Défaut.
     ];
 
     /**
