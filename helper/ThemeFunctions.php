@@ -126,6 +126,7 @@ class ThemeFunctions extends AbstractHelper
     /**
      * Check if the current page is the home page (first page in main menu).
      *
+     * @deprecated: use BlockPlus pageMetadata('is_home_page') or $this->isHomePage().
      * @todo IsHomePage() with blockplus ? $this->view->pageMetadata('type') === 'home'
      */
     public function isHomePage(): bool
@@ -251,21 +252,28 @@ class ThemeFunctions extends AbstractHelper
     }
 
     /**
-     * Check if a module is active.
+     * Check if a module is active and greater or equal to a version.
      */
-    public function isModuleActive(string $module): bool
+    public function isModuleActive(string $module, ?string $minimumVersion = null): bool
     {
-        static $activeModules;
-        if (is_null($activeModules)) {
-            $activeModules = $this->getServiceLocator()->get('Omeka\Connection')
-                ->fetchFirstColumn('SELECT id FROM module WHERE is_active = 1 ORDER BY id;');
+        static $activeModuleVersions;
+        if (is_null($activeModuleVersions)) {
+            /** @var \Doctrine\DBAL\Connection $connection */
+            $connection = $this->getServiceLocator()->get('Omeka\Connection');
+            $activeModuleVersions = $connection->fetchAllKeyValue('SELECT id, version FROM module WHERE is_active = 1 ORDER BY id ASC;');
         }
-        return in_array($module, $activeModules);
+        if (!isset($activeModuleVersions[$module])) {
+            return false;
+        }
+        return $minimumVersion
+            ? version_compare($minimumVersion, $activeModuleVersions[$module], '>=')
+            : true;
     }
 
     public function hasMappingOrMarkers(?int $siteId = null): bool
     {
         static $hasMappingInAllSites;
+        static $isOldVersion;
         static $results = [];
 
         if (is_null($hasMappingInAllSites)) {
@@ -275,7 +283,10 @@ class ThemeFunctions extends AbstractHelper
             }
             $api = $this->view->plugin('api');
             $mapping = $api->search('mappings', ['limit' => 1])->getTotalResults();
-            $markers = $api->search('mapping_markers', ['limit' => 1])->getTotalResults();
+            $isOldVersion = !$this->isModuleActive('Mapping', '2.0');
+            $markers = $isOldVersion
+                ? $api->search('mapping_markers', ['limit' => 1])->getTotalResults()
+                : $api->search('mapping_features', ['limit' => 1])->getTotalResults();
             $hasMappingInAllSites = $results[$siteId] = ($mapping + $markers) > 0;
         }
 
@@ -285,7 +296,9 @@ class ThemeFunctions extends AbstractHelper
 
         if (!isset($results[$siteId])) {
             $mapping = $api->search('mappings', ['site_id' => $siteId, 'limit' => 1])->getTotalResults();
-            $markers = $api->search('mapping_markers', ['site_id' => $siteId, 'limit' => 1])->getTotalResults();
+            $markers = $isOldVersion
+                ? $api->search('mapping_markers', ['site_id' => $siteId, 'limit' => 1])->getTotalResults()
+                : $api->search('mapping_features', ['site_id' => $siteId, 'limit' => 1])->getTotalResults();
             $results[$siteId] = ($mapping + $markers) > 0;
         }
 
@@ -361,10 +374,13 @@ class ThemeFunctions extends AbstractHelper
                 'omeka\controller\site\item' => 'item',
                 'omeka\controller\site\itemset' => 'item-set',
                 'omeka\controller\site\media' => 'media',
-                'omeka\vontroller\site\page' => 'page',
+                'omeka\controller\site\page' => 'page',
+                'advancedsearch\controller\searchcontroller' => 'advanced-search',
+                'advanced-search\controller\searchcontroller' => 'advanced-search',
+                'search\controller\indexcontroller' => 'search',
+                // Deprecated.
                 'advancedsearch\controller\indexcontroller' => 'advanced-search',
                 'advanced-search\controller\indexcontroller' => 'advanced-search',
-                'search\controller\indexcontroller' => 'search',
             ];
             if (isset($resources[$controller])) {
                 $controller = $resources[$controller];
@@ -487,6 +503,7 @@ class ThemeFunctions extends AbstractHelper
         /** @var \Omeka\Api\Representation\ValueRepresentation $value*/
         $valueType = $value->type();
         $val = [
+            'v' => $value,
             'class' => 'value',
             'lang' => $value->lang(),
             'value' => null,
@@ -512,7 +529,7 @@ class ThemeFunctions extends AbstractHelper
                 return $this->browseValueForTerm($value, $mainTerm);
             } else {
                 // Lien externe en l’absence de label, car sinon ce n’est pas clair.
-                $val['link'] = str_replace('<a ', '<a _target="blank"', $value->asHtml());
+                $val['link'] = str_replace('<a ', '<a _target="blank" ', $value->asHtml());
             }
         } else {
             // Pas d’autres classes pour les autres types de données.
@@ -526,7 +543,20 @@ class ThemeFunctions extends AbstractHelper
                 )
                 // Jamais liens.
                 && !(substr($valueType, 0, 7) === 'numeric'
-                    || in_array($valueType, ['numeric:timestamp', 'numeric:integer', 'numeric:interval', 'numeric:duration', 'html', 'xml', 'boolean', 'geography', 'geometry', 'geography:coordinates', 'geometry:coordinates', 'geometry:position'])
+                    || in_array($valueType, [
+                        'numeric:timestamp',
+                        'numeric:integer',
+                        'numeric:interval',
+                        'numeric:duration',
+                        'html',
+                        'xml',
+                        'boolean',
+                        'geography',
+                        'geometry',
+                        'geography:coordinates',
+                        'geometry:coordinates',
+                        'geometry:position',
+                    ])
                 )
             ) {
                 // Lien de recherche interne.
@@ -569,7 +599,7 @@ class ThemeFunctions extends AbstractHelper
             $hasModuleSearchSolr = $hasModuleAdvancedSearch && $this->isModuleActive('SearchSolr');
             /** @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig */
             if ($hasModuleSearchSolr) {
-                $searchConfig = $this->view->searchForm()->getSearchConfig();
+                $searchConfig = $this->view->getSearchConfig();
                 $searchEngine = $searchConfig ? $searchConfig->engine() : null;
                 $searchAdapter = $searchEngine ? $searchEngine->adapter() : null;
                 $useSearchSolr = $searchAdapter && $searchAdapter instanceof \SearchSolr\Adapter\SolariumAdapter;
@@ -602,6 +632,7 @@ class ThemeFunctions extends AbstractHelper
         }
 
         $val = [
+            'v' => $value,
             'class' => 'value',
             'lang' => $value->lang(),
             'value' => null,
@@ -679,6 +710,119 @@ class ThemeFunctions extends AbstractHelper
     }
 
     /**
+     * Divide a text in two parts according to settings.
+     *
+     * @return array The two parts.
+     */
+    public function startAndMore($text, int $maxWords = 100, ?string $mode = null): array
+    {
+        $text = (string) $text;
+        if (!strlen($text)) {
+            return ['', ''];
+        }
+        $output = $text;
+        $more = null;
+
+        $mode = $mode ?? ($this->view->themeSetting('ellipsis_mode') ?: 'nth');
+        switch ($mode) {
+            default:
+            case 'nth':
+                // Experimental for html.
+                if (mb_substr($text, 0, 1) === '<') {
+                    // The simplest way, but imperfect, is to strip tags, then
+                    // get the word at the 100th word, then find it in the
+                    // original string.
+                    // Possible issue: the word is short or a punctuation sign
+                    // and already in the beginning of the text or it exists in
+                    // attributes. So count the number of words before the found
+                    // one.
+                    // TODO Improve html cut at nth word.
+                    $v = explode(' ', strip_tags($text));
+                    if (count($v) > $maxWords) {
+                        $word = $v[$maxWords];
+                        $start = implode(' ', array_slice($v, 0, $maxWords));
+                        $minPosChar = max($maxWords * 2, mb_strlen($start));
+                        $minPosText = substr_count($start, $word);
+                        if ($minPosText <= 1) {
+                            $pos = mb_strpos($text, $word, $minPosChar) + mb_strlen($word);
+                        } else {
+                            for ($i = 0, $pos = 0, $len = 0; $i < $minPosText; $i++) {
+                                $pos = mb_strpos($text, $word, $pos + $len);
+                                if (!$i) {
+                                    $len = mb_strlen($word);
+                                }
+                            }
+                        }
+                        $output = mb_substr($text, 0, $pos + 1) . '…';
+                        $more = mb_substr($text, $pos + 1);
+                    }
+                } else {
+                    $v = explode(' ', strip_tags($text));
+                    if (count($v) > $maxWords) {
+                        $output = implode(' ', array_slice($v, 0, $maxWords)) . '…';
+                        $more = implode(' ', array_slice($v, $maxWords));
+                    }
+                }
+                break;
+
+            case 'new_line':
+                if (mb_substr($text, 0, 1) === '<') {
+                    // A end p, div or br followed by an empty full <p></p>, div (without attributes) or br.
+                    $result = preg_split('~(?<cut></p>|</div>|<br\s*/?>|<br [^>]*/?>)~u', $text, 2, PREG_SPLIT_DELIM_CAPTURE);
+                    if ($result && count($result) === 3) {
+                        $output = $result[0] . $result[1];
+                        $more = $result[2];
+                    }
+                } else {
+                    $pos = mb_strpos($text, "\n");
+                    if ($pos) {
+                        $output = mb_substr($text, 0, $pos + 1) . '…';
+                        $more = mb_substr($text, $pos + 1);
+                    }
+                }
+                break;
+
+            case 'double_new_line':
+                if (mb_substr($text, 0, 1) === '<') {
+                    // A end p, div or br followed by an empty full <p></p>, div (without attributes) or br.
+                    $result = preg_split('~(?<cut><(?:/(?:p|div)|br(?:\s*| [^>]*)/?)>\s*<(?:(?:p|div)>\s*</(?:p|div)|br(?:\s*| [^>]*)/?)>)~u', $text, 2, PREG_SPLIT_DELIM_CAPTURE);
+                    if ($result && count($result) === 3) {
+                        $output = $result[0] . $result[1];
+                        $more = $result[2];
+                    }
+                } else {
+                    // Normally cleaned on save.
+                    $output = str_replace(["\n\r", "\r\n", "\r"], ["\n", "\n", "\n"], $text);
+                    $pos = mb_strpos($output, "\n\n");
+                    if ($pos) {
+                        $output = mb_substr($output, 0, $pos + 1) . '…';
+                        $more = mb_substr($output, $pos + 1);
+                    }
+                }
+                break;
+        }
+
+        if ($output) {
+            $output = trim($output);
+            if (mb_substr($output, 0, 1) !== '<') {
+                $output = nl2br($output);
+            }
+        }
+
+        if ($more) {
+            $more = trim($more);
+            if (mb_substr($more, 0, 1) !== '<') {
+                $more = nl2br($more);
+            }
+        }
+
+        return [
+            $output,
+            $more,
+        ];
+    }
+
+    /**
      * Separate the description and the "see more" description.
      *
      * @param string[]|string $property Specific properties instead of default
@@ -714,7 +858,7 @@ class ThemeFunctions extends AbstractHelper
 
         $more = null;
 
-        $descriptionMore = $mode ?? ($this->view->themeSetting('description_more') ?: 'auto');
+        $descriptionMore = $mode ?? ($this->view->themeSetting('description_more') ?: 'nth');
         switch ($descriptionMore) {
             case 'nth':
             // @deprecated "auto" is replaced by "nth".
@@ -855,11 +999,11 @@ class ThemeFunctions extends AbstractHelper
      */
     public function typeSearchEngine(\Laminas\Form\Form $form): ?string
     {
-        $searchPage = $form->getOption('search_config');
-        if (!$searchPage) {
+        $searchConfig = $form->getOption('search_config');
+        if (!$searchConfig) {
             return null;
         }
-        $adapter = $searchPage->engine()->adapter();
+        $adapter = $searchConfig->engine()->adapter();
         if (!$adapter) {
             return null;
         }
@@ -1012,8 +1156,11 @@ class ThemeFunctions extends AbstractHelper
         return null;
     }
 
-    public function isAdvancedSearchForm(\Laminas\Form\Form $form): bool
+    public function isAdvancedSearchForm(?\Laminas\Form\Form $form): bool
     {
+        if (!$form) {
+            return false;
+        }
         $result = $this->explodeSearchForm($form);
         return (bool) $result['advancedForm'];
     }
@@ -1044,6 +1191,7 @@ class ThemeFunctions extends AbstractHelper
 
         $viewing['viewer'] = null;
 
+        // This option is deprecated in Omeka S v4.
         $viewing['item_media_embed'] = $siteSetting('item_media_embed', false);
         if (!$viewing['item_media_embed'] || empty($viewing['all'])) {
             $viewing['links'] = $viewing['all'];
@@ -1079,17 +1227,26 @@ class ThemeFunctions extends AbstractHelper
 
         // Use the iiif viewer when at least one file is managed by the viewer.
         if ($iiifViewer === 'universalViewer') {
-            if ($viewing['universalViewer']) {
+            if ($viewing['iiif_3x']) {
                 $viewing['viewer'] = 'universalViewer';
                 $viewing['is_iiif'] = true;
-                $viewing['links'] = array_diff_key($viewing['all'], $viewing['universalViewer']);
+                $viewing['links'] = array_diff_key($viewing['all'], $viewing['iiif_3x']);
                 return $viewing;
             }
-        } elseif ($iiifViewer && count($viewing['iiifImage'])) {
-            $viewing['viewer'] = $iiifViewer;
-            $viewing['is_iiif'] = true;
-            $viewing['links'] = array_diff_key($viewing['all'], $viewing['iiifImage']);
-            return $viewing;
+        } elseif ($iiifViewer === 'mirador') {
+            if ($viewing['iiif_3']) {
+                $viewing['viewer'] = 'mirador';
+                $viewing['is_iiif'] = true;
+                $viewing['links'] = array_diff_key($viewing['all'], $viewing['iiif_3']);
+                return $viewing;
+            }
+        } elseif ($iiifViewer === 'diva') {
+            if ($viewing['iiif_2']) {
+                $viewing['viewer'] = 'diva';
+                $viewing['is_iiif'] = true;
+                $viewing['links'] = array_diff_key($viewing['all'], $viewing['iiif_2']);
+                return $viewing;
+            }
         }
 
         // LightGallery.
@@ -1133,12 +1290,18 @@ class ThemeFunctions extends AbstractHelper
             // be displayed with some other ones, or be downloaded.
             'pdf' => [],
 
+            // Other files.
+            'other_files' => [],
+
             // Images directly viewable by a browser.
             'image_web' => [],
 
-            // Mirador or Diva accepts only images currently.
-            'iiifImage' => [],
-            'universalViewer' => [],
+            // Diva accepts only images currently.
+            'iiif_2' => [],
+            // Mirador accept image, audio and video.
+            'iiif_3' => [],
+            // Universal viewer accept extended data (pdf, models).
+            'iiif_3x' => [],
 
             'lightGallery' => [],
             'lightGalleryIframe' => [],
@@ -1173,30 +1336,37 @@ class ThemeFunctions extends AbstractHelper
                     if (in_array($mediaType, $webImageTypes)) {
                         $viewing['image_web'][$mediaId] = $media;
                     }
-                    $viewing['iiifImage'][$mediaId] = $media;
-                    $viewing['universalViewer'][$mediaId] = $media;
+                    $viewing['iiif_2'][$mediaId] = $media;
+                    $viewing['iiif_3'][$mediaId] = $media;
+                    $viewing['iiif_3x'][$mediaId] = $media;
                     $viewing['lightGallery'][$mediaId] = $media;
                 } elseif ($mediaTypeBase === 'audio') {
                     $viewing['audio'][$mediaId] = $media;
-                    $viewing['universalViewer'][$mediaId] = $media;
+                    $viewing['iiif_3'][$mediaId] = $media;
+                    $viewing['iiif_3x'][$mediaId] = $media;
                     $viewing['lightGallery'][$mediaId] = $media;
                 } elseif ($mediaTypeBase === 'video') {
                     $viewing['video'][$mediaId] = $media;
-                    $viewing['universalViewer'][$mediaId] = $media;
+                    $viewing['iiif_3'][$mediaId] = $media;
+                    $viewing['iiif_3x'][$mediaId] = $media;
                     $viewing['lightGallery'][$mediaId] = $media;
                 } elseif ($mediaTypeBase === 'model') {
                     $viewing['model'][$mediaId] = $media;
-                    $viewing['universalViewer'][$mediaId] = $media;
+                    $viewing['iiif_3x'][$mediaId] = $media;
                     $viewing['lightGalleryIframe'][$mediaId] = $media;
                 } elseif ($mediaType === 'application/pdf') {
                     $viewing['pdf'][$mediaId] = $media;
-                    $viewing['universalViewer'][$mediaId] = $media;
+                    $viewing['iiif_3x'][$mediaId] = $media;
                     $viewing['lightGallery'][$mediaId] = $media;
                     $viewing['lightGalleryIframe'][$mediaId] = $media;
+                } else {
+                    $viewing['other_files'][$mediaId] = $media;
                 }
             } elseif ($mediaRenderer === 'iiif' || $mediaRenderer === 'tile') {
-                $viewing['iiifImage'][$mediaId] = $media;
-                $viewing['universalViewer'][$mediaId] = $media;
+                // TODO Not sure what is the iiif content.
+                $viewing['iiif_2'][$mediaId] = $media;
+                $viewing['iiif_3'][$mediaId] = $media;
+                $viewing['iiif_3x'][$mediaId] = $media;
                 $viewing['lightGallery'][$mediaId] = $media;
                 $viewing['lightGalleryIframe'][$mediaId] = $media;
             } else {
@@ -1327,6 +1497,7 @@ HTML;
         foreach ($socialMedia as $social) {
             $attrs = [];
             switch ($social) {
+                case 'social_facebook':
                 case 'facebook':
                     $attrs = [
                         'href' => 'https://www.facebook.com/sharer/sharer.php?u=' . $encodedUrl . '&t=' . $encodedTitle,
@@ -1337,6 +1508,21 @@ HTML;
                         'tabindex' => '0',
                     ];
                     break;
+
+                case 'social_pinterest':
+                case 'pinterest':
+                    $attrs = [
+                        'id' => 'button-pinterest',
+                        'href' => 'https://pinterest.com/pin/create/link/?url=' . $encodedUrl . '&description=' . $encodedTitle,
+                        'title' => $translate('Share on Pinterest'), // @translate
+                        'onclick' => $onclick,
+                        'target' => '_blank',
+                        'class' => 'share-page icon-pinterest',
+                        'tabindex' => '0',
+                    ];
+                    break;
+
+                case 'social_twitter':
                 case 'twitter':
                     $attrs = [
                         'href' => 'https://twitter.com/share?url=' . $encodedUrl . '&text=' . $encodedTitle,
@@ -1347,6 +1533,8 @@ HTML;
                         'tabindex' => '0',
                     ];
                     break;
+
+                case 'social_email':
                 case 'email':
                     $attrs = [
                         'href' => 'mailto:?subject=' . $encodedTitle . '&body=' . rawurlencode(sprintf($translate("%s%s\n-\n%s"), $siteTitle, $title === $siteTitle ? '' : "\n-\n" . $title, $url)),
@@ -1355,6 +1543,8 @@ HTML;
                         'tabindex' => '0',
                     ];
                     break;
+                default:
+                    continue 2;
             }
             $result[$social] = $attrs;
         }
@@ -1363,16 +1553,17 @@ HTML;
 
     /**
      * @todo Keys are not checked, but this is only use internaly.
+     * @see \Laminas\View\Helper\HtmlAttributes
      */
     public function arrayToAttributes(array $attributes): string
     {
         $escapeAttr = $this->view->plugin('escapeHtmlAttr');
-        return implode(' ', array_map(function($key) use ($attributes, $escapeAttr) {
-            if (is_bool($attributes[$key])) {
-                return $attributes[$key] ? $key . '="' . $key . '"' : '';
+        return implode(' ', array_map(function ($key, $value) use ($escapeAttr) {
+            if (is_bool($value)) {
+                return $value ? $key . '="' . $key . '"' : '';
             }
-            return $key . '="' . $escapeAttr($attributes[$key]) . '"';
-        }, array_keys($attributes)));
+            return $key . '="' . $escapeAttr($value) . '"';
+        }, array_keys($attributes), $attributes));
     }
 
     /**
@@ -1486,7 +1677,7 @@ SELECT
 FROM site_setting
 JOIN site ON site.id = site_setting.site_id
 WHERE site_setting.id = :setting_id
-ORDER BY site.id
+ORDER BY site.id ASC
 SQL;
             $bind = ['setting_id' => 'locale'];
             if ($isPublic) {

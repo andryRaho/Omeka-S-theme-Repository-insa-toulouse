@@ -333,7 +333,7 @@ SQL;
         if (!$templateProperty || !$templateProperty instanceof \AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation) {
             return null;
         }
-        $val = $templateProperty->mainDataValueMetadata('settings', $metadata, '');
+        $val = $templateProperty->mainDataValueMetadata('settings', $metadata);
         if ($metadata === 'multilang') {
             $ls = [];
             foreach (array_map('trim', explode('|', trim((string) $val))) as $keyValue) {
