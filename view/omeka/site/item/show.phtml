@@ -137,11 +137,11 @@ $themeFunctions->appendVarsToView([
                                 $access = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
                             }
                             if ($accessCode !== 'free-access') {
-                                $embargo = $mediaRes->value('curation:dateEnd');
+                                $embargo = $mediaRes->value('curation:end');
                                 if ($embargo) {
                                     $date = DateTime::createFromFormat('Y-m-d', $embargo->value());
                                     if (!$date) {
-                                        $this->logger()->err('Date incorrecte dans curation:dateEnd du media #' . $mediaRes->id());
+                                        $this->logger()->err('Date incorrecte dans curation:end du media #' . $mediaRes->id());
                                     }
                                     $access .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
                                 }
