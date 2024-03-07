@@ -99,9 +99,11 @@ $themeFunctions->appendVarsToView([
             </li>
             <?php endif; ?>
             <?php /*
-            $page = $this->params()->fromQuery('page', 1);
-            $property = $this->params()->fromQuery('property');
-            $subjectValues = $item->displaySubjectValues($page, 25, $property);
+            $subjectValues = $item->displaySubjectValues([
+                'page' => (int) $this->params()->fromQuery('page', 1),
+                'perPage' => 25,
+                'resourceProperty' => $this->params()->fromQuery('resource_property'),
+            ]);
             ?>
             <?php if ($subjectValues): ?>
             <li>
