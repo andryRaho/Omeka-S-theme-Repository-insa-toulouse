@@ -2,7 +2,7 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchPage
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
  * @var \AdvancedSearch\Query $query
  * @var \AdvancedSearch\Response $response
  * @var string $title
@@ -31,7 +31,7 @@ $langValue = $filterLocale ? [$siteLang, ''] : null;
 $headingTerm = $siteSetting('browse_heading_property_term');
 // $bodyTerm = $siteSetting('browse_body_property_term');
 
-$gridListMode = $searchPage ? $searchPage->subSetting('display', 'grid_list_mode', 'auto') : 'auto';
+$gridListMode = $searchConfig ? $searchConfig->subSetting('display', 'grid_list_mode', 'auto') : 'auto';
 
 $documentTypes = [
     'items' => 'Documents',

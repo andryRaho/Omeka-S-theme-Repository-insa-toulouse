@@ -146,9 +146,11 @@ $filtersReplace = [
                     </div>
                     <?php endif; ?>
 
+                    <?php if ($form->has('submit')): ?>
                     <ul class="form-buttons">
                         <li><?= $formButton($form->get('submit')) ?></li>
                     </ul>
+                    <?php endif; ?>
 
                 <?php
                 foreach ($form->getElements() as $element):
