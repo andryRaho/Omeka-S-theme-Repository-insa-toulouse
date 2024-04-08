@@ -134,7 +134,7 @@ $name = $themeFunctions->danteUserName($user);
                             <li><a class="button form-button edit-button edit-contribution" href="<?= $escapeAttr($url('site/contribution-id', ['action' => 'edit', 'resource' => 'contribution', 'id' => $contribution->id()], true)) ?>"><?= $escape($translate('Éditer')) ?></a></li>
                             <?php endif; ?>
                             <?php if ($contribution->userIsAllowed('delete')): ?>
-                            <li><a class="button form-button delete-button remove-contribution" data-contribution-id="<?= $contribution->id() ?>" data-contribution-url="<?= $contribution->url('delete') ?>" href="#"><?= $escape($translate('Supprimer')) ?></a></li>
+                            <li><a class="button form-button delete-button remove-contribution" data-contribution-id="<?= $contribution->id() ?>" data-contribution-url="<?= $contribution->url('delete') ?>" data-redirect-url="<?= $escapeAttr($url('site/guest/contribution', ['action' => 'browse'], true)) ?>" href="#"><?= $escape($translate('Supprimer')) ?></a></li>
                             <?php endif; ?>
                         </ul>
                         <ul class="document-status-infos">

@@ -11,7 +11,7 @@ $translate = $plugins->get('translate');
 // $guestWidget = $plugins->get('guestWidget');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
-$hasContribute = $plugins->has('linkContribute');
+$hasContribute = $plugins->has('canContribute');
 $hasSelection = $plugins->has('showSelectionLink');
 
 $route = $themeFunctions->simpleRoute()['route'] ?? 'site/guest/guest';

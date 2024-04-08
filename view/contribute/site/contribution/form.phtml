@@ -43,13 +43,14 @@ if ($isMainForm) {
     // No echo: only includes css, js and variables.
     $partial('contribute/site/contribution/form-include');
     /**
+     * @var \Laminas\View\HelperPluginManager $plugins
      * @var \Laminas\View\Helper\Url $url
      * @var \Laminas\View\Helper\Partial $partial
      * @var \Laminas\View\Helper\EscapeHtml $escape
      * @var \Laminas\I18n\View\Helper\Translate $translate
      * @var \Laminas\View\Helper\EscapeHtmlAttr $escapeAttr
      * @var \Omeka\Api\Manager $apiManager
-     * @var ?array $customVocabBaseTypes
+     * @var \Common\Stdlib\EasyMeta $easyMeta
      * @var array $valueResourceTypes
      * @var array $valueResourceQueries
      * @var callable $shortResourceTitle
@@ -181,7 +182,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
         </label>
         <?php endif; ?>
 
-        <?php // Simple display of the value for properties that are not editable or without datatypes. ?>
+        <?php // Simple display of the value for properties that are not editable or without data types. ?>
 
         <?php if (!$field['editable'] && !$field['fillable'] || !count($field['datatypes'])): ?>
         <?php
@@ -283,7 +284,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
                             echo $partial('contribute/site/contribution/form-input-value-suggest');
                             break;
                         default:
-                            // Other datatypes are not yet editable.
+                            // Other data types are not yet editable.
                             if ($value):
                                 echo $partial('contribute/site/contribution/form-value');
                             endif;
@@ -403,7 +404,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
     <?php //= $partial('common/resource-form-templates') ?>
     <?= $partial('contribute/site/contribution/form-inputs-default') ?>
 
-    <?php if (count($fieldsMediaBase)): ?>
+    <?php if (!empty($templateMedia) && !$resource): // TODO Make possible to edit media with item. ?>
     <div id="edit_template_media" class="contribute_template media" style="display:none;">
         <div class="contribute-media sub-form form-content document-parts-forms" name="media[]" data-index-media="">
             <div class="document-part-template document-part-fields">
