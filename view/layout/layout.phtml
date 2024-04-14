@@ -37,7 +37,6 @@ $siteTitle = $site->title();
 $simpleRoute = $themeFunctions->simpleRoute();
 $isResource = in_array($simpleRoute['controller'], ['item', 'item-set', 'media']);
 $isItemShow = $isResource && $simpleRoute['controller'] === 'item' && $simpleRoute['action'] === 'show';
-$hasMapping = $themeFunctions->hasMappingOrMarkers();
 $hasGuest = $plugins->has('guestWidget');
 $hasContactUs = $plugins->has('contactUs');
 // $isSitePage = $simpleRoute['controller'] === 'page' && $simpleRoute['action'] === 'show';
@@ -69,31 +68,6 @@ $headScript = $this->headScript()
     ->prependFile($assetUrl('vendor/jquery/jquery.min.js', 'Omeka'))
     ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
 ;
-if ($hasMapping) {
-    // Cf. Mapping view/mapping/site/index/browse, view/mapping/index/show et view/mapping/index/advanced search.
-    $headLink
-        ->appendStylesheet($assetUrl('node_modules/leaflet/dist/leaflet.css', 'Mapping'))
-        ->appendStylesheet($assetUrl('node_modules/leaflet.markercluster/dist/MarkerCluster.css', 'Mapping'))
-        ->appendStylesheet($assetUrl('node_modules/leaflet.markercluster/dist/MarkerCluster.Default.css', 'Mapping'))
-        ->appendStylesheet($assetUrl('node_modules/leaflet.fullscreen/Control.FullScreen.css', 'Mapping'))
-    ;
-    $headScript
-        ->appendFile($assetUrl('node_modules/leaflet/dist/leaflet.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
-        ->appendFile($assetUrl('node_modules/leaflet.markercluster/dist/leaflet.markercluster-src.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
-        ->appendFile($assetUrl('node_modules/leaflet-providers/leaflet-providers.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
-        ->appendFile($assetUrl('node_modules/leaflet.fullscreen/Control.FullScreen.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
-        ->appendFile($assetUrl('js/control.fit-bounds.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
-    ;
-    // FIXME Module Mapping uses the same ids for show and browse, so browse cannot be used twice in the item/show pages.
-    if ($isItemShow) {
-        $headScript
-            ->appendFile($assetUrl('js/mapping-show.js', 'Mapping'), 'text/javascript', ['defer' => 'defer']);
-    } else {
-        $headScript
-            ->appendFile($assetUrl('js/mapping-browse.js', 'Mapping'), 'text/javascript', ['defer' => 'defer'])
-            ->appendFile($assetUrl('js/advanced-search.js', 'Omeka'), 'text/javascript', ['defer' => 'defer']);
-    }
-}
 
 if ($searchingForm):
     // if ($searchPage->subSetting('autosuggest', 'enable')) {

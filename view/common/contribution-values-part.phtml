@@ -50,46 +50,46 @@ if ($contribution) {
             <span class="field-term">(<?= $escape($propertyData['property']->vocabulary()->label()) ?>)</span>
             <?php endif; ?>
         </label>
-            <?php foreach ($propertyData['contributions'] as $contributionData):
-                if ($contributionData['empty']) continue;
-                $valueType = $contributionData['type'];
-                $valueBaseType = $contributionData['basetype'];
-                $valueLang = $contributionData['lang'] ?? '';
-                $class = ['value'];
-                if ($valueBaseType === 'resource') {
-                    $class[] = 'resource';
-                    // Only item is supported for now.
-                    $class[] = substr($valueType, 0, 9) === 'resource:' ? substr($valueType, 9) : 'item';
-                } elseif ($valueBaseType === 'uri') {
-                    $class[] = 'uri';
-                }
-                ?>
-            <span class="<?= implode(' ', $class) ?>" lang="<?= $escape($valueLang) ?>">
-                <?php if ($showLocale && $valueLang): ?>
-                <span class="language"><?= $valueLang ?></span>
-                <?php endif; ?>
-                <?php // Uniquement les nouvelles métadonnées (nouveau document). ?>
-                <span class="value-content"><?php
-                        if ($valueBaseType === 'uri'):
-                            echo $escape($contributionData['proposed']['@uri'] . ' / ' . $contributionData['proposed']['@label']);
-                        elseif ($valueBaseType === 'resource'):
-                            try {
-                                $res = $api->read('resources', ['id' => $contributionData['proposed']['@resource']])->getContent();
-                                // echo $res->link($res->displayTitle());
-                                echo $res->displayTitle();
-                            } catch (\Exception $e) {
-                                echo sprintf($translate('%s [unavailable]'), $contributionData['proposed']['@resource']);
-                            }
-                        elseif ($term === 'file'): // File is always a new value.
-                            echo isset($contributionData['proposed']['store'])
-                                ? '<a href="' . $escapeAttr($baseUrlFiles . '/contribution/' . $contributionData['proposed']['store']) . '" download="download">' . $escape($contributionData['proposed']['@value']) . '</a>'
-                                : sprintf('%s [missing file]', $escape($contributionData['proposed']['@value']));
-                        else:
-                            echo $escape($contributionData['proposed']['@value']);
-                        endif;
-                ?></span>
-            </span>
-            <?php endforeach; ?>
+        <?php foreach ($propertyData['contributions'] as $contributionData):
+            if ($contributionData['empty']) continue;
+            $valueType = $contributionData['type'];
+            $valueBaseType = $contributionData['basetype'];
+            $valueLang = $contributionData['lang'] ?? '';
+            $class = ['value'];
+            if ($valueBaseType === 'resource') {
+                $class[] = 'resource';
+                // Only item is supported for now.
+                $class[] = substr($valueType, 0, 9) === 'resource:' ? substr($valueType, 9) : 'item';
+            } elseif ($valueBaseType === 'uri') {
+                $class[] = 'uri';
+            }
+            ?>
+        <span class="<?= implode(' ', $class) ?>" lang="<?= $escape($valueLang) ?>">
+            <?php if ($showLocale && $valueLang): ?>
+            <span class="language"><?= $valueLang ?></span>
+            <?php endif; ?>
+            <?php // Uniquement les nouvelles métadonnées (nouveau document). ?>
+            <span class="value-content"><?php
+                    if ($valueBaseType === 'uri'):
+                        echo $escape($contributionData['proposed']['@uri'] . ' / ' . $contributionData['proposed']['@label']);
+                    elseif ($valueBaseType === 'resource'):
+                        try {
+                            $res = $api->read('resources', ['id' => $contributionData['proposed']['@resource']])->getContent();
+                            // echo $res->link($res->displayTitle());
+                            echo $res->displayTitle();
+                        } catch (\Exception $e) {
+                            echo sprintf($translate('%s [unavailable]'), $contributionData['proposed']['@resource']);
+                        }
+                    elseif ($term === 'file'): // File is always a new value.
+                        echo isset($contributionData['proposed']['store'])
+                            ? '<a href="' . $escapeAttr($baseUrlFiles . '/contribution/' . $contributionData['proposed']['store']) . '" download="download">' . $escape($contributionData['proposed']['@value']) . '</a>'
+                            : sprintf('%s [missing file]', $escape($contributionData['proposed']['@value']));
+                    else:
+                        echo $escape($contributionData['proposed']['@value']);
+                    endif;
+            ?></span>
+        </span>
+        <?php endforeach; ?>
     </li>
 <?php endforeach; ?>
 

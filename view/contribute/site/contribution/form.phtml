@@ -236,25 +236,43 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
                 }
             }
 
-            foreach ($field['contributions'] as $indexContribution => $fieldContribution):
+            foreach ($field['contributions'] as $indexContribution => $fieldContribution) {
                 /** @var \Omeka\Api\Representation\ValueRepresentation $value */
                 $value = $fieldContribution['original']['value'];
                 if (!$value && !$field['fillable']) continue;
                 // TODO Utiliser min_values pour gérer les valeurs requises.
+                // TODO Utiliser main type plutôt que type colon.
                 // if ($field['required'] && $minValues && ($indexContribution + 1) < $minValues) $field['contributions'][$pointer]['required'];
                 $typeColon = strtok((string) $fieldContribution['type'], ':');
                 $vars->offsetSet('indexContribution', $indexContribution);
                 $vars->offsetSet('fieldContribution', $fieldContribution);
                 $vars->offsetSet('value', $value);
                 // Check if the value exists or is editable (the value may be empty).
-                if ($value && !$field['editable']):
+                if ($value && !$field['editable']) {
                     echo $partial('contribute/site/contribution/form-value');
-                else:
-                    switch ($fieldContribution['type']):
+                } else {
+                    switch ($fieldContribution['type']) {
+                        // Check special cases first in a switch.
                         // Gère le champ spécifique pour les personnes, qui sont des doubles champs noms prénoms.
                         // TODO Ajouter un champ spécial dans omeka (champ double ou triple avec mail) ou gérer les ressources liées (création et maj).
                         case in_array($term, ['dcterms:creator', 'dante:directeur', 'dante:codirecteur']):
                             echo $partial('contribute/site/contribution/form-input-literal-person');
+                            break;
+                        case $typeColon === 'customvocab':
+                            echo $partial('contribute/site/contribution/form-input-custom-vocab');
+                            break;
+                        case $typeColon === 'valuesuggest':
+                        case $typeColon === 'valuesuggestall':
+                            if ($disableIdref && $fieldContribution['type'] === 'valuesuggest:idref:person') {
+                                break;
+                            }
+                            echo $partial('contribute/site/contribution/form-input-value-suggest');
+                            break;
+                        case 'numeric:integer':
+                            echo $partial('contribute/site/contribution/form-input-numeric-integer');
+                            break;
+                        case 'numeric:timestamp':
+                            echo $partial('contribute/site/contribution/form-input-numeric-timestamp');
                             break;
                         case 'literal':
                             echo $partial('contribute/site/contribution/form-input-literal');
@@ -268,32 +286,17 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
                         case 'uri':
                             echo $partial('contribute/site/contribution/form-input-uri');
                             break;
-                        case 'numeric:integer':
-                            echo $partial('contribute/site/contribution/form-input-numeric-integer');
-                            break;
-                        case 'numeric:timestamp':
-                            echo $partial('contribute/site/contribution/form-input-numeric-timestamp');
-                            break;
-                        case $typeColon === 'customvocab':
-                            echo $partial('contribute/site/contribution/form-input-custom-vocab');
-                            break;
-                        case $typeColon === 'valuesuggest' || $typeColon === 'valuesuggestall':
-                            if ($disableIdref && $fieldContribution['type'] === 'valuesuggest:idref:person') {
-                                break;
-                            }
-                            echo $partial('contribute/site/contribution/form-input-value-suggest');
-                            break;
                         default:
                             // Other data types are not yet editable.
                             if ($value):
                                 echo $partial('contribute/site/contribution/form-value');
                             endif;
                             break;
-                    endswitch;
-                endif;
+                    }
+                }
                 ++$indexFieldInput;
                 $vars->offsetSet('indexFieldInput', $indexFieldInput);
-            endforeach;
+            }
             ?>
         </ul>
 

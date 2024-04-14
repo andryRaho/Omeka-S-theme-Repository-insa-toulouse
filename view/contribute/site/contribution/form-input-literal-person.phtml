@@ -61,9 +61,9 @@ $baseName = $isMainForm
 $val = $proposed['@value'] ?? $original['@value'] ?? '';
 
 $class = ['value', 'group-input-part'];
-if ($isPrivate):
+if ($isPrivate) {
     $class[] = 'private';
-endif;
+}
 
 [$familyName, $givenName] = explode(',', $val . ',', 2);
 $familyName = trim((string) $familyName, ", \n\r\t");
