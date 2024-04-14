@@ -303,9 +303,18 @@ class ThemeFunctions extends AbstractHelper
         $siteSlug = $this->currentSite()->slug();
         $baseSiteUrl = '/s/' . $siteSlug . '/';
 
+        $isMenuString = !is_array($menu);
+        if ($isMenuString) {
+            $menu = $this->stringToList($menu);
+        }
+
         $links = [];
-        foreach ($this->stringToList($menu) as $element) {
-            [$urlOrSlug, $label] = array_map('trim', explode('=', $element, 2));
+        foreach ($menu as $urlOrSlug => $label) {
+            if ($isMenuString) {
+                [$urlOrSlug, $label] = array_map('trim', explode('=', $label, 2));
+            } else {
+                $urlOrSlug = (string) $urlOrSlug;
+            }
             if (!strlen($urlOrSlug)) {
                 continue;
             }

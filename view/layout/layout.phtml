@@ -38,7 +38,8 @@ $simpleRoute = $themeFunctions->simpleRoute();
 $isResource = in_array($simpleRoute['controller'], ['item', 'item-set', 'media']);
 $isItemShow = $isResource && $simpleRoute['controller'] === 'item' && $simpleRoute['action'] === 'show';
 $hasGuest = $plugins->has('guestWidget');
-$hasContactUs = $plugins->has('contactUs');
+$navMenu = $plugins->has('navMenu') ? $plugins->get('navMenu') : null;
+$contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 // $isSitePage = $simpleRoute['controller'] === 'page' && $simpleRoute['action'] === 'show';
 // $isHomePage = $themeFunctions->isHomePage();
 
@@ -140,6 +141,11 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             ]) ?>
         </style>
         <?php endif; ?>
+        <?php if ($value = $themeSettingAssetUrl('logo')): ?>
+            <style>
+                a.logo-header { background-image: url(<?= $value ?>); }
+            </style>
+        <?php endif; ?>
         <?= $headScript ?>
     </head>
     <?= $this->htmlElement('body') ?>
@@ -153,17 +159,18 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                         </a>
                     </div>
                 </div>
-                <?php if ($value = $themeSettingAssetUrl('logo')): ?>
-                    <style>a.logo-header { background-url: url(<?= $value ?>); }</style>
-                <?php endif; ?>
                 <a href="<?= $value = $themeSetting('logo_url') ? $escapeAttr($value) : $site->url() ?>" class="site-title logo-header" title=<?= $escapeAttr($themeSetting('logo_title') ?: $siteTitle) ?>></a>
                 <div class="search-form-mask">
                     <?= $searchingForm ? $searchingForm('search/search-form-headroom') : $partial('common/search-form-headroom') ?>
                 </div>
                 <div class="header-top-links">
                     <a href="" class="search-menu-toggle"><span><?= $translate('Menu recherche') ?></span></a>
-                    <a href="<?= $baseSiteUrl ?>/page/contact" class="contact-link"><span><?= $translate('Contact') ?></span></a>
-                    <a href="<?= $baseSiteUrl ?>/page/aide" class="support-link"><span><?= $translate('Aide') ?></span></a>
+                    <?php if ($link = $themeSetting('header_page_contact', 'contact')): ?>
+                    <a href="<?= $escapeAttr(substr($link, 0, 1) === '/' ? $link : "$baseSiteUrl/page/$link") ?>" class="contact-link"><span><?= $translate('Contact') ?></span></a>
+                    <?php endif; ?>
+                    <?php if ($link = $themeSetting('header_page_support', 'aide')): ?>
+                    <a href="<?= $escapeAttr(substr($link, 0, 1) === '/' ? $link : "$baseSiteUrl/page/$link") ?>" class="support-link"><span><?= $translate('Aide') ?></span></a>
+                    <?php endif; ?>
                     <?php if ($user): ?>
                     <a href="<?= $hasGuest ? $baseSiteUrl . '/guest' : '/admin/user/' . $user->getId() ?>" class="login-link"><span><?= $translate('Mon compte') ?></span></a>
                     <?php else: ?>
@@ -192,12 +199,12 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             <?= $this->content ?>
         </main>
         <footer id="footer" class="content-with-padding" aria-label="<?= $translate('Footer navigation') ?>" role="navigation">
-            <?= $themeSetting('footer') ?: $partial('layout/footer') ?>
+            <?= ($navMenu ? $navMenu('footer') : '') ?: $themeFunctions->navMenu('footer_menu') ?: $themeSetting('footer') ?: $partial('layout/footer') ?>
             <a href="" class="cd-top footer-back-to-top"></a>
         </footer>
         <?php // Pop-ups en fonction des pages. ?>
         <?= $searchingForm ? $searchingForm('search/search-form-popup') : $partial('common/search-form-popup') ?>
-        <?php if (!empty($resource)): ?>
+        <?php if (!empty($resource)): // Pour les pages ressources. ?>
         <div class="limited-access-popup">
             <div class="popup-scroll-content">
                 <div class="limited-access-popup-content">
@@ -207,7 +214,7 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                     <div class="limited-access-form-parent">
                         <h1><?= $translate('Ce document est en accès restreint')?></h1>
                         <p><?= $translate('Contacter l’auteur pour pouvoir consulter le document') ?></p>
-                        <?php if ($hasContactUs): ?>
+                        <?php if ($contactUs): ?>
                         <?= $this->contactUs(['resource' => $resource, 'contact' => 'author', 'template' => 'common/contact-us-author']) ?>
                         <?php else: ?>
                         <p><?= $escape($translate('Demander à l’adminstrateur du site pour plus d’information.')) ?></p>
