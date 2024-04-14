@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+/*
+ * En cas de personnalisation via les paramètres du thème pour la couleur principale et les liens,
+ * ne pas oublier de reporter les modifications dans view/layout/css.phtml.
+ */
+
 /* Reset */
 
 html, body, div, span, applet, object, iframe,

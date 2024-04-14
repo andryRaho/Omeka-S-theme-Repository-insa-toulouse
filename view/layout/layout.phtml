@@ -130,6 +130,9 @@ $userBar = $user && $userIsAllowed('Omeka\Controller\Admin\Index', 'index')
 
 $baseAssetUrl = $assetUrl('', null, false, false);
 $baseSiteUrl = $site->url('site', [], true);
+
+$mainColor = strtoupper($themeSetting('main_color', '')) ?: '#EA3535';
+$accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
 ?>
 <?= $this->doctype() ?>
 <?= $this->htmlElement('html') ?>
@@ -155,6 +158,14 @@ $baseSiteUrl = $site->url('site', [], true);
         */ ?>
         <?= $headLink ?>
         <?= $this->headStyle() ?>
+        <?php if ($mainColor !== '#EA3535' || $accentColor !== '#BA0000'): ?>
+        <style>
+            <?= $partial('layout/css.phtml', [
+                'mainColor' => $mainColor,
+                'accentColor' => $accentColor,
+            ]) ?>
+        </style>
+        <?php endif; ?>
         <?= $headScript ?>
     </head>
     <?= $this->htmlElement('body') ?>
