@@ -116,7 +116,8 @@ $this->trigger('view.layout');
 
 // Garder les styles du thème en dernier.
 $headLink
-    ->appendStylesheet($assetUrl('css/styles.css'));
+    ->appendStylesheet($assetUrl('css/styles.css'))
+    ->appendStylesheet($assetUrl('css/custom.css'));
 
 $headScript
     ->appendFile($assetUrl('js/top.js'), 'text/javascript', ['defer' => 'defer'])
