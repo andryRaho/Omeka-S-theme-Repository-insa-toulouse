@@ -15,13 +15,7 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 $form
     ->setAttribute('class', $form->getAttribute('class') . ' search-form');
 
-/*
-$hasMapping = $themeFunctions->hasMappingOrMarkers()
-    // FIXME Module Mapping uses the same ids for show and browse, so mapping cannot be used  in the item/show pages.
-    && $themeFunctions->simpleRoute() !== ['controller' => 'item', 'action' => 'show'];
-$isAdvancedSearchForm = $themeFunctions->isAdvancedSearchForm($form);
-*/
-$mainElement = $themeFunctions->mainElementOfSearchForm($form);
+$mainElement = $form->get('q');
 
 // TODO Vérifier si le module Advanced Search est présent.
 

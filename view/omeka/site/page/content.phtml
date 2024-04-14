@@ -38,7 +38,7 @@ foreach ($page->blocks() as $block) {
         ++$countAsides;
     } elseif ($layout === 'pageMetadata') {
         if ($blockMetadata && $mainClass = $blockMetadata('mainClass', $block)) {
-            $themeFunctions->appendVarToView('mainClass', $mainClass);
+            $themeFunctions->appendVarToRootView('mainClass', $mainClass);
         }
     } else {
         $main .= $blockLayout->render($block);
@@ -46,7 +46,7 @@ foreach ($page->blocks() as $block) {
 }
 
 if (!$hasMainClass) {
-    $themeFunctions->appendVarToView('mainClass', $asides ? 'aside-page' : 'simple-page');
+    $themeFunctions->appendVarToRootView('mainClass', $asides ? 'aside-page' : 'simple-page');
 }
 
 if ($countAsides > 1): ?>

@@ -38,7 +38,7 @@ if ($documentCount):
     $displayPartsFooter = array_filter($displayParts, function ($v) { return in_array($v, ['footer', 'both']); });
 endif;
 
-$themeFunctions->appendVarToView('mainClass', 'resources-list-and-filters');
+$themeFunctions->appendVarToRootView('mainClass', 'resources-list-and-filters');
 
 $isBrowse = $query->isBrowse();
 
@@ -48,7 +48,7 @@ $ariane = '<nav class="breadcrumbs content-with-margin">
         <li><span>' . $translate($isBrowse ? 'Consulter un document' : 'Résultats de recherche') . '</span></li>
     </ul>
 </nav>';
-$themeFunctions->appendVarToView('ariane', $ariane);
+$themeFunctions->appendVarToRootView('ariane', $ariane);
 ?>
 
 <?php /* // Le formulaire de recherche principal est dans l'entête.

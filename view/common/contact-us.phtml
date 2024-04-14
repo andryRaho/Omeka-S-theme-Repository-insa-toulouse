@@ -27,7 +27,7 @@ $formCheckbox = $plugins->get('formCheckbox');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
 $element = null;
-$themeFunctions->appendVarsToView(['status' => $status, 'message' => $message]);
+$themeFunctions->appendVarsToRootView(['status' => $status, 'message' => $message]);
 ?>
 
 <div class="contact-us-block">

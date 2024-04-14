@@ -25,13 +25,13 @@ $activePage = $nav->findActive($container);
 $isHomePage = $themeFunctions->isHomePage();
 
 if ($isHomePage):
-    $themeFunctions->appendVarToView('mainClass', 'home-content');
+    $themeFunctions->appendVarToRootView('mainClass', 'home-content');
 else:
 
     if ($activePage):
         if ($activePage['depth'] !== 0):
             $this->vars()->offsetSet('ariane', trim($nav->breadcrumbs()->setSeparator('')));
-            $themeFunctions->appendVarToView('ariane', $this->partial('common/breadcrumbs-fix'));
+            $themeFunctions->appendVarToRootView('ariane', $this->partial('common/breadcrumbs-fix'));
         else:
             // On affiche le fil pour la page de niveau 0 en ajoutant Accueil.
             $url = $plugins->get('url');
@@ -43,7 +43,7 @@ else:
         <li><span>' . $escape($page->title()) . '</span></li>
     </ul>
 </nav>';
-            $themeFunctions->appendVarsToView(['ariane' => $ariane]);
+            $themeFunctions->appendVarsToRootView(['ariane' => $ariane]);
         endif;
     endif;
 
