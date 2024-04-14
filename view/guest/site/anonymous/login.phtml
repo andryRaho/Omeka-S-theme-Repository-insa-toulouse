@@ -11,8 +11,6 @@ $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
-$pageTitle = $plugins->get('pageTitle');
-$escapeAttr = $plugins->get('escapeHtmlAttr');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
 $siteSlug = $site->slug();
@@ -37,11 +35,13 @@ $themeFunctions->appendVarsToRootView([
 
     <?= $this->pageTitle($this->siteSetting('guest_login_text') ?: ($this->setting('guest_login_text') ?: $translate('Login'))) ?>
 
+    <?php if (class_exists('ShibbolethModule', false)): // Support de Shibboleth: utilise la redirection admin pour éviter une boucle. ?>
     <div class="page-block">
         <p class="forgot-password">
-            <a href="https://dante-omeka.univ-tlse2.fr/admin">Se connecter via Shibboleth</a>
+            <a href="<?= $url('admin') ?>">Se connecter via Shibboleth</a>
         </p>
     </div>
+    <?php endif; ?>
 
     <div class="page-block">
         <?php if (empty($form)): ?>
@@ -53,7 +53,7 @@ $themeFunctions->appendVarsToRootView([
         <?php endif; ?>
 
         <p class="forgot-password">
-            <?= $this->hyperlink($translate('Forgot password?'), $this->url('site/guest/anonymous', ['action' => 'forgot-password'], true)) ?>
+            <?= $this->hyperlink($translate('Forgot password?'), $url('site/guest/anonymous', ['action' => 'forgot-password'], true)) ?>
         </p>
 
         <?php $this->trigger('view.login.after'); ?>
