@@ -4,6 +4,7 @@
  * @var \Omeka\Api\Representation\SiteRepresentation $site
  * @var \Omeka\Entity\User|null $user
  * @var \Contribute\Form\ContributeForm $form
+ * @var \AdvancedResourceTemplate\Api\Representation\ResourceTemplateRepresentation|null $resourceTemplate
  * @var \Contribute\Api\Representation\ContributionRepresentation|null $contribution
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation|null $resource
  * @var array $fields
@@ -87,7 +88,8 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 ?>
 
 <?= $this->form()->openTag($form->setAttribute('class', $form->getAttribute('class') . ' etape-' . $steps['stepNumber'])) ?>
-<fieldset class="etape-2"<?= $disabled ?>><?php // Afficher l'étape permet de la cacher via le css. ?>
+<?php // Afficher l'étape permet de la cacher via le css. ?>
+<fieldset class="etape-2"<?= $disabled ?> data-resource-template-id="<?= $templateMedia->id() ?>" data-resource-class-id="<?= $templateMedia->resourceClass() ? $templateMedia->resourceClass()->id() : '' ?>">
     <h2><?= $escape($translate('2. Détails')) ?></h2>
     <?php // Le même en bas et dans la sous-forme pour les fichiers. ?>
     <ul id="page-actions" class="form-buttons">
@@ -167,7 +169,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
         }
         ?>
 
-    <div class="property form-content<?= $multilang || !$maxValues || $maxValues > 1 ? ' multivalues' : '' ?>" data-term="<?= $term ?>">
+    <div class="property form-content<?= $multilang || !$maxValues || $maxValues > 1 ? ' multivalues' : '' ?>" data-term="<?= $term ?>" data-property-id="<?= $easyMeta->propertyId($term) ?>">
         <?php if (!$multilang): // Dans ce thème, le libellé multingue est affiché avec le champ. ?>
         <?php // Display property label. ?>
         <label<?= empty($field['required']) ? '' : ' class="required"' ?>>
@@ -408,7 +410,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
     <?= $partial('contribute/site/contribution/form-inputs-default') ?>
 
     <?php if (!empty($templateMedia) && !$resource): // TODO Make possible to edit media with item. ?>
-    <div id="edit_template_media" class="contribute_template media" style="display:none;">
+    <div id="edit_template_media" class="contribute_template media" style="display:none;" data-resource-template-id="<?= $templateMedia->id() ?>" data-resource-class-id="<?= $templateMedia->resourceClass() ? $templateMedia->resourceClass()->id() : '' ?>">
         <div class="contribute-media sub-form form-content document-parts-forms" name="media[]" data-index-media="">
             <div class="document-part-template document-part-fields">
                 <?php
