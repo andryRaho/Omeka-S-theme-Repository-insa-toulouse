@@ -33,6 +33,8 @@ See general end user documentation for [Installing a module].
 
 ### Optional dependencies
 
+- Module [Contribute] to manage submission of student works.
+- Module [Guest] to manage student account in public side.
 - Module [Block Plus] to manage pages.
 - Module [Advanced Search] to manage the search.
 - Module [Reference] to display facets in the results with the internal adapter.
@@ -110,6 +112,8 @@ See commits for full list of contributors and copyright of the libraries.
 [Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [Advanced Search]: https://gitlab.com/Daniel-KM/Omeka-S-module-AdvancedSearch
 [Block Plus]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlockPlus
+[Contribute]: https://gitlab.com/Daniel-KM/Omeka-S-module-Contribute
+[Guest]: https://gitlab.com/Daniel-KM/Omeka-S-module-Guest
 [Reference]: https://gitlab.com/Daniel-KM/Omeka-S-module-Reference
 [theme issues]: https://gitlab.com/Daniel-KM/Omeka-S-theme-Dante/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
