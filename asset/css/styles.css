@@ -272,7 +272,7 @@ p:empty {
     .select-parent > select {
         width: calc(100% + 20px);
         border: none;
-        background: url(../img/Triangle_deroulant.svg) right 26px top 12px / 9px auto no-repeat;
+        background: url(../img/triangle_deroulant.svg) right 26px top 12px / 9px auto no-repeat;
         padding: 10px;
 
         appearance: none;
@@ -2666,7 +2666,7 @@ p:empty {
     }
 
     a.resources-list-toggle-page-menu {
-        background: url(../img/menu-SO.svg) left center / 18px auto no-repeat;
+        background: url(../img/menu-so.svg) left center / 18px auto no-repeat;
     }
 
     a.resources-list-toggle-filters {
@@ -2838,12 +2838,12 @@ p:empty {
     }
 
     .search-results-tools .export-select {
-        background: url(../img/Export.svg) left center / 17px auto no-repeat;
+        background: url(../img/export.svg) left center / 17px auto no-repeat;
         padding-left: 10px;
     }
 
     .search-results-tools .syndication-select {
-        background: url(../img/RSS.svg) left center / 20px auto no-repeat;
+        background: url(../img/rss.svg) left center / 20px auto no-repeat;
         padding-left: 10px;
     }
 
