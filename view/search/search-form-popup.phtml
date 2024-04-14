@@ -75,10 +75,13 @@ $form
 
 // Implémentation rapide des filtres.
 $filtersReplace = [
-    '<fieldset class="filter">' => '',
+//     '<fieldset class="filter">' => '',
     '</fieldset>' => '',
     '<select ' => '<div class="select-parent"><select ',
     '</select>' => '</select></div>',
+];
+$filtersReplacePreg = [
+    '~<fieldset class="filter"[^>]>~' => '',
 ];
 ?>
 
@@ -105,7 +108,7 @@ $filtersReplace = [
                     <ul class="search-filters">
                         <?php foreach ($form->get('filter') as $elements): ?>
                             <li class="search-filter">
-                                <?= str_replace(array_keys($filtersReplace), array_values($filtersReplace), $formCollection($elements)) ?>
+                                <?= preg_replace(array_keys($filtersReplacePreg), array_values($filtersReplacePreg), str_replace(array_keys($filtersReplace), array_values($filtersReplace), $formCollection($elements))) ?>
                                 <a href="#" class="advanced-search-remove-filter"></a>
                             </li>
                         <?php endforeach; ?>
