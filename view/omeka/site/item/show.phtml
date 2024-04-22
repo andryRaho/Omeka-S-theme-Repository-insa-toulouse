@@ -23,7 +23,7 @@ $hasContactUs = $plugins->has('contactUs');
 
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 $embedMedia = $siteSetting('item_media_embed', false);
-$medias = $themeFunctions->danteMediaItem($item);
+$medias = $themeFunctions->mediaItem($item);
 
 $filterLocale = (bool) $siteSetting('filter_locale_values');
 $siteLang = $plugins->get('lang')();
@@ -40,11 +40,11 @@ $resourceClassTerm = $resourceClass ? $resourceClass->term() : null;
 $isThese = $resourceClassTerm === 'bibo:Thesis';
 // $isTravailEtudiant = !$isThese;
 
-$documentType = $themeFunctions->danteDocumentType($resource);
+$documentType = $themeFunctions->documentType($resource);
 
-$accessLevel = $themeFunctions->danteAccessLevel($resource);
-$accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
-$citation = $themeFunctions->danteCitation($resource);
+$accessLevel = $themeFunctions->accessLevel($resource);
+$accessLabel = $themeFunctions->accessLabel($accessLevel);
+$citation = $themeFunctions->citation($resource);
 
 $resourceTitle = $resource->displayTitle(null, $lang);
 $itemSets = $item->itemSets();
@@ -70,7 +70,7 @@ $themeFunctions->appendVarsToRootView([
 
     <div class="item-content-header">
         <?= $this->pageTitle($resourceTitle, 1) ?>
-        <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->danteAuteur($resource), $themeFunctions->danteAnnee($resource)) ?></ul>
+        <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->formatAuthor($resource), $themeFunctions->year($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
             <?php if ($accessLevel): ?>
@@ -132,8 +132,8 @@ $themeFunctions->appendVarsToRootView([
                         $mediaRes = $media['resource'];
                         if ($mediaRes) {
                             $title = $mediaRes->displayTitle();
-                            $accessLevelMedia = $themeFunctions->danteAccessLevel($mediaRes);
-                            $accessLabelMedia = $themeFunctions->danteAccessLabel($accessLevelMedia);
+                            $accessLevelMedia = $themeFunctions->accessLevel($mediaRes);
+                            $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
                             $originalUrl = $mediaRes->originalUrl();
                             // Attention : en cas d'accès restreint, le message est différent selon les documents et selon l'embargo.
                             // Pour les travaux étudiants = accès restreint UT2
@@ -168,7 +168,7 @@ $themeFunctions->appendVarsToRootView([
                         <div class="document-edition">
 
                             <?php if ($accessLevelMedia === 'free'
-                                || ($mediaRes && $themeFunctions->danteAccessMedia($mediaRes))
+                                || ($mediaRes && $themeFunctions->accessMedia($mediaRes))
                             ): ?>
 
                             <ul class="form-buttons">

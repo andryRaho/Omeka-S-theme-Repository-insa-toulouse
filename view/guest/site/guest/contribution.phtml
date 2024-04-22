@@ -36,7 +36,7 @@ $themeFunctions->appendVarsToRootView([
     'mainClass' => 'user-account',
 ]);
 
-$name = $themeFunctions->danteUserName($user);
+$name = $themeFunctions->userName($user);
 ?>
 
 <div class="content">
@@ -71,9 +71,9 @@ $name = $themeFunctions->danteUserName($user);
                 if ($contributionResource) {
                     $resourceType = $contributionResource->resourceName();
                     $resourceUrl = $contributionResource->siteUrl($siteSlug);
-                    $documentType = $themeFunctions->danteDocumentType($contributionResource);
-                    $accessLevel = $themeFunctions->danteAccessLevel($contributionResource);
-                    $citation = $themeFunctions->danteCitation($contributionResource, true);
+                    $documentType = $themeFunctions->documentType($contributionResource);
+                    $accessLevel = $themeFunctions->accessLevel($contributionResource);
+                    $citation = $themeFunctions->citation($contributionResource, true);
                     $medias = $contributionResource->media();
                 } else {
                     $medias = [];
@@ -85,7 +85,7 @@ $name = $themeFunctions->danteUserName($user);
                     $citation = $contribution->displayTitle();
                     $medias = [];
                 }
-                $accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
+                $accessLabel = $themeFunctions->accessLabel($accessLevel);
                 ?>
             <li class="resource <?= $resourceType ?> contribution">
                 <div class="document-index"><?= $index ?>.</div>

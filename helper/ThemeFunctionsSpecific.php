@@ -45,14 +45,14 @@ trait ThemeFunctionsSpecific
     /**
      * @var \Omeka\Api\Representation\ValueRepresentation|string $resourceOrCode
      */
-    public function danteAccessNormalize($resourceOrCode): string
+    public function accessNormalize($resourceOrCode): string
     {
         return is_object($resourceOrCode) && $resourceOrCode instanceof AbstractResourceEntityRepresentation
-            ? $this->danteAccessLevel($resourceOrCode)
+            ? $this->accessLevel($resourceOrCode)
             : ($this->normalizedAccess[(string) $resourceOrCode] ?? 'forbidden');
     }
 
-    public function danteAccessLevel(AbstractResourceEntityRepresentation $resource): string
+    public function accessLevel(AbstractResourceEntityRepresentation $resource): string
     {
         // Cette donnée est désormais remplie automatiquement.
 
@@ -86,15 +86,15 @@ SQL;
     /**
      * @var \Omeka\Api\Representation\ValueRepresentation|string $resourceOrCode
      */
-    public function danteAccessLabel($resourceOrCode): string
+    public function accessLabel($resourceOrCode): string
     {
-        $accessLevel = $this->danteAccessNormalize($resourceOrCode);
+        $accessLevel = $this->accessNormalize($resourceOrCode);
         return $this->accessToLabels[$accessLevel];
     }
 
-    public function danteAccessMedia(MediaRepresentation $media): bool
+    public function accessMedia(MediaRepresentation $media): bool
     {
-        $accessLevel = $this->danteAccessLevel($media);
+        $accessLevel = $this->accessLevel($media);
         if ($accessLevel === 'free') {
             return true;
         }
@@ -127,7 +127,7 @@ SQL;
      *
      * Le type n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
      */
-    public function danteDocumentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
+    public function documentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
     {
         // $label = $resource->displayResourceClassLabel($default);
         $template = $resource->resourceTemplate();
@@ -147,7 +147,7 @@ SQL;
      * Néanmoins, ces fichiers sont mis en privé/réservé justement pour éviter
      * cela et cela devrait pouvoir être évité.
      */
-    public function danteMediaItem(ItemRepresentation $item): array
+    public function mediaItem(ItemRepresentation $item): array
     {
         // 275 = dante:version
         $sql = <<<'SQL'
@@ -175,9 +175,9 @@ SQL;
     }
 
     /**
-     * Formatte l'auteur, qui peut être une ressource liée.
+     * Formate l'auteur, qui peut être une ressource liée.
      */
-    public function danteAuteur(ItemRepresentation $resource): string
+    public function formatAuthor(ItemRepresentation $resource): string
     {
         if ($value = $resource->value('dcterms:creator')) {
             if ($vr = $value->valueResource()) {
@@ -203,7 +203,7 @@ SQL;
     /**
      * Extrait l'année d'une date.
      */
-    public function danteAnnee(AbstractResourceEntityRepresentation $resource, string $property = 'dcterms:date'): string
+    public function year(AbstractResourceEntityRepresentation $resource, string $property = 'dcterms:date'): string
     {
         $value = $resource->value($property);
         if (!$value) {
@@ -217,7 +217,7 @@ SQL;
     /**
      * Get the html citation from an item.
      */
-    public function danteCitation(ItemRepresentation $resource, bool $short = false): string
+    public function citation(ItemRepresentation $resource, bool $short = false): string
     {
         static $escape;
 
@@ -225,8 +225,8 @@ SQL;
             $escape = $this->view->plugin('escapeHtml');
         }
 
-        $auteur = $this->danteAuteur($resource);
-        $annee = $this->danteAnnee($resource);
+        $auteur = $this->formatAuthor($resource);
+        $annee = $this->year($resource);
         $titre = $resource->displayTitle('sans titre');
 
         if ($short) {
@@ -236,14 +236,14 @@ SQL;
             );
         }
 
-        $documentType = $this->danteDocumentType($resource);
+        $documentType = $this->documentType($resource);
         return sprintf(
             '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
             $auteur, $escape($annee), $escape($titre), $escape($documentType)
         );
     }
 
-    public function danteUserAuteur(User $user): ?ItemRepresentation
+    public function userAuthor(User $user): ?ItemRepresentation
     {
         static $author = false;
 
@@ -270,9 +270,9 @@ SQL;
         return $author;
     }
 
-    public function danteUserName(User $user): string
+    public function userName(User $user): string
     {
-        $author = $this->danteUserAuteur($user);
+        $author = $this->userAuthor($user);
         return $author ? $author->value('foaf:familyName', ['default' => $user->getName()]) : $user->getName();
     }
 
@@ -517,7 +517,7 @@ SQL;
         return $idLabels;
     }
 
-    public function danteAdvancedTemplateValues($templateOrResourceOrContribution, array $values): array
+    public function advancedTemplateValues($templateOrResourceOrContribution, $values): array
     {
         if (!$templateOrResourceOrContribution) {
             return $values;

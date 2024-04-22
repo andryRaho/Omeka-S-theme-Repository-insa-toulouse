@@ -53,9 +53,9 @@ $documentTypes = [
         $resourceType = $resource->resourceName();
         $resourceUrl = $resource->siteUrl($siteSlug);
         if ($resourceType === 'items') {
-            $documentType = $themeFunctions->danteDocumentType($resource);
-            $accessLevel = $themeFunctions->danteAccessLevel($resource);
-            $citation = $themeFunctions->danteCitation($resource, true);
+            $documentType = $themeFunctions->documentType($resource);
+            $accessLevel = $themeFunctions->accessLevel($resource);
+            $citation = $themeFunctions->citation($resource, true);
         } else {
             $documentType = $documentTypes[$resourceType] ?? 'Autre type';
             $heading = $headingTerm ? $resource->value($headingTerm, ['lang' => $langValue]) : null;
@@ -64,7 +64,7 @@ $documentTypes = [
             // $body = $body ? $body->asHtml() : $escape($resource->displayDescription(null, $lang));
             $accessLevel = $resource->isPublic() ? 'free' : 'forbidden';
         }
-        $accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
+        $accessLabel = $themeFunctions->accessLabel($accessLevel);
     ?>
 
     <li class="resource <?= $resourceType ?>">
