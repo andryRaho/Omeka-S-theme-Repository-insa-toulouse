@@ -86,14 +86,13 @@ $name = $themeFunctions->danteUserName($user);
                     $medias = [];
                 }
                 $accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
-                $accessClass = $themeFunctions->danteAccessClass($accessLevel);
                 ?>
             <li class="resource <?= $resourceType ?> contribution">
                 <div class="document-index"><?= $index ?>.</div>
                 <div class="document-details">
                     <div class="document-type-and-access">
                         <div class="document-type"><?= $escape($translate($documentType)) ?></div>
-                        <div class="document-access <?= $accessClass ?>"><?= $accessLabel ?></div>
+                        <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
                     </div>
                     <div class="document-link">
                         <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>

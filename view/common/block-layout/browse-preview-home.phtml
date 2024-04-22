@@ -35,7 +35,6 @@ $siteSlug = $site->slug();
         $documentType = $themeFunctions->danteDocumentType($resource);
         $accessLevel = $themeFunctions->danteAccessLevel($resource);
         $accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
-        $accessClass = $themeFunctions->danteAccessClass($accessLevel);
         $citation = $themeFunctions->danteCitation($resource, true);
         ?>
         <li class="resource <?= $resourceType ?>">
@@ -43,7 +42,7 @@ $siteSlug = $site->slug();
             <div class="document-details">
                 <div class="document-type-and-access">
                     <div class="document-type"><?= $escape($translate($documentType)) ?></div>
-                    <div class="document-access <?= $accessClass ?>"><?= $accessLabel ?></div>
+                    <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
                 </div>
                 <div class="document-link">
                     <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>

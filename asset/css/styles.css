@@ -2487,17 +2487,18 @@ p:empty {
         line-height: 18px;
     }
 
-    .document-access.free-access {
+    .document-access.access-free {
         background: url(../img/oeil.svg) left center / 21px auto no-repeat;
         padding-left: 27px;
     }
 
-    .document-access.limited-access {
+    .document-access.access-reserved {
         background: url(../img/cadenas.svg) left center / 12px auto no-repeat;
         padding-left: 20px;
     }
 
-    .document-access.no-access {
+    .document-access.access-protected,
+    .document-access.access-forbidden {
         background: url(../img/oeil-barre.svg) left center / 21px auto no-repeat;
         padding-left: 27px;
     }

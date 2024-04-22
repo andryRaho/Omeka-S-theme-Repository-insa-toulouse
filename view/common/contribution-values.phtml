@@ -74,13 +74,12 @@ if (count($valuesMedias)): ?>
             $file = $fieldsMedia['file']['contributions'][0]['proposed']['store'] ?? null;
             $accessLabel = $fieldsMedia['curation:access']['contributions'][0]['proposed']['@value'] ?? 'Non consultable';
             $accessLevel = $themeFunctions->danteAccessNormalize($accessLabel);
-            $accessClass = $themeFunctions->danteAccessClass($accessLevel);
             ?>
             <a class="document-preview" href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download">
                 <label>Prévisualiser</label>
                 <div class="document-preview-filename"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value'] ?? '') ?></div>
                 <div class="document-type-and-access">
-                    <div class="document-access <?= $accessClass ?>"><?= $accessLabel ?></div>
+                    <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
                 </div>
             </a>
             <?php

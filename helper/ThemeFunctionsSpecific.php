@@ -35,16 +35,6 @@ trait ThemeFunctionsSpecific
         'forbidden' => 'forbidden',
     ];
 
-    /**
-     * @todo Modifier le css pour utiliser les noms du module Access directement.
-     */
-    protected $accessCssClasses = [
-        'free' => 'free-access',
-        'reserved' => 'limited-access',
-        'protected' => 'no-access',
-        'forbidden' => 'no-access',
-    ];
-
     protected $accessToLabels = [
         'free' => 'Accès libre',
         'reserved' => 'Accès restreint',
@@ -100,15 +90,6 @@ SQL;
     {
         $accessLevel = $this->danteAccessNormalize($resourceOrCode);
         return $this->accessToLabels[$accessLevel];
-    }
-
-    /**
-     * @var \Omeka\Api\Representation\ValueRepresentation|string $resourceOrCode
-     */
-    public function danteAccessClass($resourceOrCode): string
-    {
-        $accessLevel = $this->danteAccessNormalize($resourceOrCode);
-        return $this->accessCssClasses[$accessLevel];
     }
 
     public function danteAccessMedia(MediaRepresentation $media): bool
