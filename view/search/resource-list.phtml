@@ -54,7 +54,7 @@ $documentTypes = [
         $resourceUrl = $resource->siteUrl($siteSlug);
         if ($resourceType === 'items') {
             $documentType = $themeFunctions->danteDocumentType($resource);
-            $access = $themeFunctions->danteAccess($resource);
+            $accessLevel = $themeFunctions->danteAccessLevel($resource);
             $citation = $themeFunctions->danteCitation($resource, true);
         } else {
             $documentType = $documentTypes[$resourceType] ?? 'Autre type';
@@ -62,8 +62,10 @@ $documentTypes = [
             $citation = $heading ? $heading->asHtml() : $escape($resource->displayTitle($translate('[Untitled]'), $lang));
             // $body = $bodyTerm ? $resource->value($bodyTerm, ['lang' => $langValue]) : null;
             // $body = $body ? $body->asHtml() : $escape($resource->displayDescription(null, $lang));
-            $access = $resource->isPublic() ? 'Accès libre' : 'Non consultable';
+            $accessLevel = $resource->isPublic() ? 'free' : 'forbidden';
         }
+        $accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
+        $accessClass = $themeFunctions->danteAccessClass($accessLevel);
     ?>
 
     <li class="resource <?= $resourceType ?>">
@@ -71,7 +73,7 @@ $documentTypes = [
         <div class="document-details">
             <div class="document-type-and-access">
                 <div class="document-type"><?= $escape($translate($documentType)) ?></div>
-                <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
+                <div class="document-access <?= $accessClass ?>"><?= $accessLabel ?></div>
             </div>
             <div class="document-link">
                 <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>

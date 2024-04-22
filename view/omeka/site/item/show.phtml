@@ -41,7 +41,10 @@ $isThese = $resourceClassTerm === 'bibo:Thesis';
 // $isTravailEtudiant = !$isThese;
 
 $documentType = $themeFunctions->danteDocumentType($resource);
-$access = $themeFunctions->danteAccess($resource);
+
+$accessLevel = $themeFunctions->danteAccessLevel($resource);
+$accessLabel = $themeFunctions->danteAccessLabel($accessLevel);
+$accessClass = $themeFunctions->danteAccessClass($accessLevel);
 $citation = $themeFunctions->danteCitation($resource);
 
 $resourceTitle = $resource->displayTitle(null, $lang);
@@ -71,7 +74,9 @@ $themeFunctions->appendVarsToRootView([
         <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->danteAuteur($resource), $themeFunctions->danteAnnee($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
-            <div class="document-access <?= $themeFunctions->danteAccessClass($access) ?>"><?= $access ?></div>
+            <?php if ($accessLevel): ?>
+            <div class="document-access <?= $accessClass ?>"><?= $accessLabel ?></div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -128,30 +133,32 @@ $themeFunctions->appendVarsToRootView([
                         $mediaRes = $media['resource'];
                         if ($mediaRes) {
                             $title = $mediaRes->displayTitle();
-                            $access = $themeFunctions->danteAccess($mediaRes);
-                            $accessCode = $themeFunctions->danteAccessClass($access);
+                            $accessLevelMedia = $themeFunctions->danteAccessLevel($mediaRes);
+                            $accessLabelMedia = $themeFunctions->danteAccessLabel($accessLevelMedia);
+                            $accessClassMedia = $themeFunctions->danteAccessClass($accessLevelMedia);
                             $originalUrl = $mediaRes->originalUrl();
                             // Attention : en cas d'accès restreint, le message est différent selon les documents et selon l'embargo.
                             // Pour les travaux étudiants = accès restreint UT2
                             // Pour les thèses = accès restreint communauté universitaire
                             // Si embargo, ajouter : jusqu'au JJ/MM/AAAA
-                            if ($accessCode === 'limited-access') {
-                                $access = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
+                            if ($accessLevelMedia === 'reserved') {
+                                $accessLabelMedia = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
                             }
-                            if ($accessCode !== 'free-access') {
+                            if ($accessLevelMedia !== 'free') {
                                 $embargo = $mediaRes->value('curation:end');
                                 if ($embargo) {
                                     $date = DateTime::createFromFormat('Y-m-d', $embargo->value());
                                     if (!$date) {
                                         $this->logger()->err('Date incorrecte dans curation:end du media #' . $mediaRes->id());
                                     }
-                                    $access .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
+                                    $accessLabelMedia .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
                                 }
                             }
                         } else {
                             $title = $media['o:title'];
-                            $access = $translate('Non consultable');
-                            $accessCode = 'no-access';
+                            $accessLevelMedia = 'forbidden';
+                            $accessLabelMedia = $translate('Non consultable');
+                            $accessClassMedia = 'no-access';
                             $embargo = null;
                         }
                     ?>
@@ -160,10 +167,10 @@ $themeFunctions->appendVarsToRootView([
                         <?php if ($isThese): ?>
                         <div class="document-part-name document-version">Version : <span class="dante-version"><?= $escape($media['dante:version'] ?: '[indéfini]') ?></span></div>
                         <?php endif; ?>
-                        <div class="document-access <?= $accessCode ?>"><?= $access ?></div>
+                        <div class="document-access <?= $accessClassMedia ?>"><?= $accessLabelMedia ?></div>
                         <div class="document-edition">
 
-                            <?php if ($accessCode === 'free-access'
+                            <?php if ($accessLevelMedia === 'free'
                                 || ($mediaRes && $themeFunctions->danteAccessMedia($mediaRes))
                             ): ?>
 
@@ -176,13 +183,13 @@ $themeFunctions->appendVarsToRootView([
                                 <?php endif; ?>
                             </ul>
 
-                            <?php elseif ($accessCode === 'limited-access'): ?>
+                            <?php elseif ($accessLevelMedia === 'reserved'): ?>
 
                             <ul class="form-buttons">
                                 <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
                             </ul>
 
-                            <?php elseif ($accessCode === 'no-access'): ?>
+                            <?php elseif ($accessLevelMedia === 'forbidden'): ?>
 
                             <ul class="form-buttons">
                                 <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>

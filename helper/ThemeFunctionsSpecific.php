@@ -10,61 +10,59 @@ use Omeka\Entity\User;
 
 trait ThemeFunctionsSpecific
 {
-    protected $classesAccess = [
-        'Accès libre' => 'free-access',
-        'free' => 'free-access',
-        'free-access' => 'free-access',
-        'open' => 'free-access',
-        'public' => 'free-access', // Recommandé
+    /**
+     * Correspondance entre les valeurs et le nom dans le module Access.
+     * Pas de différence entre "protected" et "forbidden" dans le module Access.
+     */
+    protected $normalizedAccess = [
+        'Accès libre' => 'free',
+        'free' => 'free',
+        'free-access' => 'free',
+        'open' => 'free',
+        'public' => 'free',
 
-        'Accès restreint' => 'limited-access',
-        'limited' => 'limited-access',
-        'limited-access' => 'limited-access',
-        'reserved' => 'limited-access', // Recommandé
-        'restricted' => 'limited-access',
+        'Accès restreint' => 'reserved',
+        'limited' => 'reserved',
+        'limited-access' => 'reserved',
+        'reserved' => 'reserved',
+        'restricted' => 'reserved',
 
-        'Non consultable' => 'no-access',
-        'no-access' => 'no-access',
-        'none' => 'no-access',
-        'private' => 'no-access', // Défaut.
-        'forbidden' => 'forbidden', // Défaut.
-    ];
-
-    protected $accessToLabels = [
-        'Accès libre' => 'Accès libre',
-        'free' => 'Accès libre',
-        'free-access' => 'Accès libre',
-        'open' => 'Accès libre',
-        'public' => 'Accès libre', // Recommandé
-
-        'Accès restreint' => 'Accès restreint',
-        'limited' => 'Accès restreint',
-        'limited-access' => 'Accès restreint',
-        'reserved' => 'Accès restreint', // Recommandé
-        'restricted' => 'Accès restreint',
-
-        'Non consultable' => 'Non consultable',
-        'no-access' => 'Non consultable',
-        'none' => 'Non consultable',
-        'private' => 'Non consultable', // Défaut.
-        'forbidden' => 'Non consultable', // Défaut.
+        'Non consultable' => 'forbidden',
+        'no-access' => 'forbidden',
+        'none' => 'forbidden',
+        'private' => 'forbidden',
+        'protected' => 'forbidden',
+        'forbidden' => 'forbidden',
     ];
 
     /**
-     * Le type du document (le nom du modèle utilisé).
-     *
-     * Le type n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
+     * @todo Modifier le css pour utiliser les noms du module Access directement.
      */
-    public function danteDocumentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
+    protected $accessCssClasses = [
+        'free' => 'free-access',
+        'reserved' => 'limited-access',
+        'protected' => 'no-access',
+        'forbidden' => 'no-access',
+    ];
+
+    protected $accessToLabels = [
+        'free' => 'Accès libre',
+        'reserved' => 'Accès restreint',
+        'protected' => 'Non consultable',
+        'forbidden' => 'Non consultable',
+    ];
+
+    /**
+     * @var \Omeka\Api\Representation\ValueRepresentation|string $resourceOrCode
+     */
+    public function danteAccessNormalize($resourceOrCode): string
     {
-        // $label = $resource->displayResourceClassLabel($default);
-        $template = $resource->resourceTemplate();
-        $label = $template ? $template->label() : $default;
-        // TODO Sans doute inutile désormais.
-        return $label === 'Document' ? 'Mémoire' : $label;
+        return is_object($resourceOrCode) && $resourceOrCode instanceof AbstractResourceEntityRepresentation
+            ? $this->danteAccessLevel($resourceOrCode)
+            : ($this->normalizedAccess[(string) $resourceOrCode] ?? 'forbidden');
     }
 
-    public function danteAccess(AbstractResourceEntityRepresentation $resource): string
+    public function danteAccessLevel(AbstractResourceEntityRepresentation $resource): string
     {
         // Cette donnée est désormais remplie automatiquement.
 
@@ -92,26 +90,35 @@ SQL;
                 ?: 'Non consultable';
         }
 
-        return $this->accessToLabels[$v] ?? 'Non consultable';
+        return $this->normalizedAccess[$v] ?? 'forbidden';
     }
 
     /**
-     * @var \Omeka\Api\Representation\ValueRepresentation|string $value
+     * @var \Omeka\Api\Representation\ValueRepresentation|string $resourceOrCode
      */
-    public function danteAccessClass($value): string
+    public function danteAccessLabel($resourceOrCode): string
     {
-        return $this->classesAccess[(string) $value] ?? 'no-access';
+        $accessLevel = $this->danteAccessNormalize($resourceOrCode);
+        return $this->accessToLabels[$accessLevel];
+    }
+
+    /**
+     * @var \Omeka\Api\Representation\ValueRepresentation|string $resourceOrCode
+     */
+    public function danteAccessClass($resourceOrCode): string
+    {
+        $accessLevel = $this->danteAccessNormalize($resourceOrCode);
+        return $this->accessCssClasses[$accessLevel];
     }
 
     public function danteAccessMedia(MediaRepresentation $media): bool
     {
-        $access = $this->danteAccess($media);
-        $accessCode = $this->danteAccessClass($access);
-        if ($accessCode === 'free-access') {
+        $accessLevel = $this->danteAccessLevel($media);
+        if ($accessLevel === 'free') {
             return true;
         }
 
-        if ($accessCode === 'no-access') {
+        if ($accessLevel === 'forbidden') {
             return false;
         }
 
@@ -132,6 +139,20 @@ SQL;
 
         // return (bool) strpos($user->getEmail(), 'univ-tlse2.fr');
         return $user->getRole() !== 'guest_ext';
+    }
+
+    /**
+     * Le type du document (le nom du modèle utilisé).
+     *
+     * Le type n'est pas forcément la classe, mais tout type, mais le formulaire ne le prévoit pas.
+     */
+    public function danteDocumentType(ItemRepresentation $resource, ?string $default = 'Travail étudiant'): string
+    {
+        // $label = $resource->displayResourceClassLabel($default);
+        $template = $resource->resourceTemplate();
+        $label = $template ? $template->label() : $default;
+        // TODO Sans doute inutile désormais.
+        return $label === 'Document' ? 'Mémoire' : $label;
     }
 
     /**
@@ -172,7 +193,9 @@ SQL;
         return $medias;
     }
 
-
+    /**
+     * Formatte l'auteur, qui peut être une ressource liée.
+     */
     public function danteAuteur(ItemRepresentation $resource): string
     {
         if ($value = $resource->value('dcterms:creator')) {
@@ -196,12 +219,18 @@ SQL;
         return $name;
     }
 
-    public function danteAnnee(ItemRepresentation $resource): string
+    /**
+     * Extrait l'année d'une date.
+     */
+    public function danteAnnee(AbstractResourceEntityRepresentation $resource, string $property = 'dcterms:date'): string
     {
-        $value = $resource->value('dcterms:date');
-        return $value
-            ? substr($value->value(), 0, 4)
-            : 'sans date';
+        $value = $resource->value($property);
+        if (!$value) {
+            return 'sans date';
+        }
+        return $value->type() === 'numeric:timestamp'
+            ? (string) (\NumericDataTypes\DataType\Interval::getDateTimeFromValue((string) $value)['year'] ?? '')
+            : substr((string) $value->value(), 0, 4);
     }
 
     /**
