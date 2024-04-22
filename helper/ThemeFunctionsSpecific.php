@@ -54,33 +54,29 @@ trait ThemeFunctionsSpecific
 
     public function accessLevel(AbstractResourceEntityRepresentation $resource): string
     {
-        // Cette donnée est désormais remplie automatiquement.
+        $plugins = $this->view->getHelperPluginManager();
 
-        // Attention : curation:access est parfois privée et les visiteurs n'y
-        // ont pas accès, ce qui peut rendre non consultable une ressource
-        // publique.
+        $accessCheck = $this->view->themeSetting('access_check', 'auto');
 
-        $value = $resource->value('curation:access');
-        if ($value) {
-            $v = $value->value();
-        } else {
-            // curation:access = 243
-            $sql = <<<'SQL'
-SELECT `value`.`value`
-FROM `resource`
-JOIN `value` ON `value`.`resource_id` = `resource`.`id` AND `value`.`property_id` = 243
-WHERE `resource`.`id` = :resource_id
-LIMIT 1
-;
-SQL;
-            /** @var \Doctrine\DBAL\Connection $connection */
-            $connection = $resource->getServiceLocator()->get('Omeka\Connection');
-            $v = $connection
-                ->executeQuery($sql, ['resource_id' => $resource->id()])->fetchOne()
-                ?: 'Non consultable';
+        if (!in_array($accessCheck, ['module_access', 'curation_access', 'visibility'])) {
+            if ($plugins->has('accessLevel')) {
+                $accessCheck = 'module_access';
+            } elseif ($resource->value('curation:access')) {
+                $accessCheck = 'curation_access';
+            } else {
+                $accessCheck = 'visibility';
+            }
+        } elseif ($accessCheck === 'module_access' && !$plugins->has('accessLevel')) {
+            $accessCheck = 'curation_access';
         }
 
-        return $this->normalizedAccess[$v] ?? 'forbidden';
+        if ($accessCheck === 'module_access') {
+            return $this->view->accessLevel($resource);
+        } elseif ($accessCheck === 'curation_access' && $value = $resource->value('curation:access')) {
+            return $this->normalizedAccess[(string) $value] ?? 'forbidden';
+        } else {
+            return $resource->isPublic() ? 'free' : 'forbidden';
+        }
     }
 
     /**

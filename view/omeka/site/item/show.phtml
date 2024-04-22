@@ -19,9 +19,10 @@ $escapeAttr = $plugins->get('escapeHtmlAttr');
 $themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
-$hasContactUs = $plugins->has('contactUs');
+$contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
+
 $embedMedia = $siteSetting('item_media_embed', false);
 $medias = $themeFunctions->mediaItem($item);
 
@@ -73,9 +74,7 @@ $themeFunctions->appendVarsToRootView([
         <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->formatAuthor($resource), $themeFunctions->year($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
-            <?php if ($accessLevel): ?>
             <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
-            <?php endif; ?>
         </div>
     </div>
 
