@@ -5,8 +5,6 @@ namespace OmekaTheme\Helper;
 use Contribute\Api\Representation\ContributionRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
-use Omeka\Api\Representation\MediaRepresentation;
-use Omeka\Entity\User;
 
 trait ThemeFunctionsSpecific
 {
@@ -159,7 +157,7 @@ trait ThemeFunctionsSpecific
                 } else {
                     [$nextQueryKey, $step] = explode('=', $nextQuery, 2);
                 }
-            } else if ($nextAction === 'notice' || $nextAction === 'fichiers') {
+            } elseif ($nextAction === 'notice' || $nextAction === 'fichiers') {
                 $step = $nextAction;
             }
             $mode = $step === 'template' || (!empty($mode) && $mode === 'read') ? 'read' : 'write';
@@ -193,7 +191,7 @@ trait ThemeFunctionsSpecific
         /** @var \Omeka\Api\Representation\SitePageRepresentation $page */
         $page = $this->currentPage();
         if (!$page && !$pageSlugs) {
-           return [];
+            return [];
         }
 
         if (!is_array($tags)) {
@@ -201,7 +199,7 @@ trait ThemeFunctionsSpecific
         }
 
         if (!$pageSlugs) {
-           return $this->extractTags($page, $tags);
+            return $this->extractTags($page, $tags);
         }
 
         $siteId = $this->currentSite()->id();
@@ -209,12 +207,12 @@ trait ThemeFunctionsSpecific
         $headers = [];
         $api = $this->view->api();
         foreach (array_map('trim', explode("\n", $pageSlugs)) as $pageSlug) {
-           /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
-           $sitePage = $api->searchOne('site_pages', ['site_id' => $siteId, 'slug' => $pageSlug])->getContent();
-           if ($sitePage) {
-               $pageUrl = $sitePage->siteUrl();
-               // Page en cours.
-               $headers[] = [
+            /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
+            $sitePage = $api->searchOne('site_pages', ['site_id' => $siteId, 'slug' => $pageSlug])->getContent();
+            if ($sitePage) {
+                $pageUrl = $sitePage->siteUrl();
+                // Page en cours.
+                $headers[] = [
                    'level' => 0,
                    'tag' => null,
                    'page_id' => $sitePage->id(),
@@ -225,8 +223,8 @@ trait ThemeFunctionsSpecific
                    'label' => $sitePage->title(),
                    'page_url#id' => $pageUrl,
                ];
-               $headers = array_merge($headers, $this->extractTags($sitePage, $tags));
-           }
+                $headers = array_merge($headers, $this->extractTags($sitePage, $tags));
+            }
         }
         return $headers;
     }
@@ -234,7 +232,7 @@ trait ThemeFunctionsSpecific
     public function sommaireIds(?string $html, $tags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']): string
     {
         if (!$html || !$tags) {
-           return (string) $html;
+            return (string) $html;
         }
 
         if (!is_array($tags)) {
@@ -249,7 +247,7 @@ trait ThemeFunctionsSpecific
             @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
             /** @var \DOMElement $element */
             foreach ($tags as $tag) {
-                foreach ($dom->getElementsByTagName($tag) ?: [] as $element){
+                foreach ($dom->getElementsByTagName($tag) ?: [] as $element) {
                     $content = strip_tags((string) $element->textContent);
                     $id = $this->slugify($content);
                     $element->setAttributeNode(new \DOMAttr('id', $id));
@@ -301,7 +299,7 @@ trait ThemeFunctionsSpecific
                 if (count($tags) === 1) {
                     $tag = reset($tags);
                     $level = (int) substr($tag, 1, 1);
-                    foreach ($dom->getElementsByTagName($tag) ?: [] as $element){
+                    foreach ($dom->getElementsByTagName($tag) ?: [] as $element) {
                         $content = strip_tags((string) $element->textContent);
                         $id = $this->slugify($content);
                         $idLabels[] = [
@@ -318,7 +316,7 @@ trait ThemeFunctionsSpecific
                     }
                 } else {
                     $tags = array_map('strtolower', $tags);
-                    foreach ($dom->getElementsByTagName('*') ?: [] as $element){
+                    foreach ($dom->getElementsByTagName('*') ?: [] as $element) {
                         $tag = strtolower($element->tagName);
                         if (!in_array($tag, $tags)) {
                             continue;

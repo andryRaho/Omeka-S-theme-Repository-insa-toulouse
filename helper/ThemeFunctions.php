@@ -4,8 +4,8 @@ namespace OmekaTheme\Helper;
 
 require_once __DIR__ . '/ThemeFunctionsSpecific.php';
 
-use Laminas\View\Helper\AbstractHelper;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Helper\AbstractHelper;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\ValueRepresentation;
@@ -270,19 +270,19 @@ class ThemeFunctions extends AbstractHelper
                 $simpleRoute = [
                     'controller' => 'guest',
                     'action' => $params['action'] ?? 'me',
-                    'route' => 'site/guest/guest'
+                    'route' => 'site/guest/guest',
                 ];
             } elseif ($standardController === 'Contribute\Controller\Site\GuestBoard') {
                 $simpleRoute = [
                     'controller' => 'guest',
                     'action' => 'contribution',
-                    'route' => 'site/guest/contribution'
+                    'route' => 'site/guest/contribution',
                 ];
             } elseif ($standardController === 'Selection\Controller\Site\GuestBoard') {
                 $simpleRoute = [
                     'controller' => 'guest',
                     'action' => 'selection',
-                    'route' => 'site/guest/selection'
+                    'route' => 'site/guest/selection',
                 ];
             }
         }
