@@ -30,7 +30,9 @@
 // See common/resource-values.
 
 $plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
 $partial = $plugins->get('partial');
+$hyperlink = $plugins->get('hyperlink');
 $formElement = $plugins->get('formElement');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
@@ -41,7 +43,7 @@ $labelInfo = $this->siteSetting('property_label_information') ?? $this->setting(
 if ($isMainForm) {
     $disableIdref = (bool) $plugins->get('themeSetting')('contribution_valuesuggest_idref_disable');
 
-    // No echo: only includes css, js and variables.
+    // No echo: only includes variables, css, and js.
     $partial('contribute/site/contribution/form-include');
     /**
      * @var \Laminas\View\HelperPluginManager $plugins
@@ -68,8 +70,8 @@ if ($isMainForm) {
     unset($contributeVars);
 }
 
+// To wrap the elements with a disabled fieldset makes the whole form disabled.
 $disabled = $mode === 'read' ? ' disabled="disabled"' : '';
-
 ?>
 
 <?php if ($isMainForm): ?>
@@ -140,14 +142,14 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
     <?php // Display the edited resource, with edited or non-edited fields, plus the non-editable original fields. ?>
 
     <?php foreach ($isMainForm ? $fields : $fieldsMedia as $term => $field):
-        if ($term === 'file') continue;
-        // Don't display empty values that are not fillable.
-        if (empty($field['contributions']) && !$field['fillable']) continue;
-        $indexFieldInput = 0;
         /**
          * @var \AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyDataRepresentation $templateProperty
          * @var \Omeka\Api\Representation\PropertyRepresentation $property
          */
+        if ($term === 'file') continue;
+        // Don't display empty values that are not fillable.
+        if (empty($field['contributions']) && !$field['fillable']) continue;
+        $indexFieldInput = 0;
         $templateProperty = $field['template_property'];
         $property = $field['property'];
         $multilang = $themeFunctions->templatePropertyThemeOption($templateProperty, 'multilang');
@@ -325,7 +327,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 <?php if ($isMainForm): ?>
 </fieldset>
 
-    <?php if (count($fieldsMediaBase)): ?>
+    <?php if (!empty($templateMedia)): ?>
 <fieldset class="contribute-medias etape-3" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?>>
     <?php // For end user, "media" means "files". ?>
     <h2><?= $escape($translate('3. Téléchargement')) ?></h2>
@@ -349,7 +351,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
                 ?>
                 <?= $partial('contribute/site/contribution/form') ?>
                 <?php if ($mode !== 'read'): ?>
-                <ul class="actions form-buttons">
+                <ul class="actions resource-edit-remove-value form-buttons">
                     <li><button type="button" class="remove-media button o-icon-delete form-button"><?= $escape($translate('Supprimer le fichier')) ?></button></li>
                 </ul>
                 <?php endif; ?>
@@ -371,7 +373,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
     $vars->offsetSet('fieldsMedia', $fieldsMedia);
     ?>
 </fieldset>
-    <?php endif; ?>
+    <?php endif; // End template media. ?>
 
     <?= $formElement($form->get('template')) ?>
     <?= $action === 'add' ? $formElement($form->get('step')) : '' ?>
@@ -424,14 +426,14 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
                 $vars->offsetSet('indexMedia', null);
                 $vars->offsetSet('fieldsMedia', null);
                 ?>
-                <ul class="actions form-buttons">
+                <ul class="actions resource-edit-remove-value form-buttons">
                     <li><button type="button" class="remove-media button o-icon-delete form-button"><?= $escape($translate('Supprimer le fichier')) ?></button></li>
                 </ul>
             </div>
         </div>
     </div>
-    <?php endif; ?>
+    <?php endif; // End template media. ?>
 
 </div>
 
-<?php endif; ?>
+<?php endif; // End isMainForm. ?>

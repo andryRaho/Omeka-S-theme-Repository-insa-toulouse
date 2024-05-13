@@ -16,6 +16,7 @@ $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $formElement = $plugins->get('formElement');
+$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
 $medias = $contribution->valuesMedias();
@@ -79,7 +80,7 @@ $template = $contribution ? $contribution->resourceTemplate() : null;
 $asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these' : '';
 ?>
 
-<?= $this->themeSetting('contribution_help_aside_' . $steps['step'] . $asideThese) ?: $this->partial('contribute/site/contribution/aside') ?>
+<?= $themeSetting('contribution_help_aside_' . $steps['step'] . $asideThese) ?: $this->partial('contribute/site/contribution/aside') ?>
 
 <div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
@@ -110,9 +111,9 @@ $asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these
     <div class="form-content">
         <aside class="depot-admin-message">
             <?php if ($contribution->isSubmitted()): ?>
-            <?= ($msg = $this->themeSetting('contribution_message_is_submitted')) ? $escape($msg) : 'Le document a été déposé.' ?>
+            <?= ($msg = $themeSetting('contribution_message_is_submitted')) ? $escape($msg) : 'Le document a été déposé.' ?>
             <?php else: ?>
-            <?= ($msg = $this->themeSetting('contribution_message_not_submitted')) ? $escape($msg) : 'Une fois le dépot confirmé, l’équipe administrative prendra le temps de vérifier le document. Vous recevrez une notification par mail qui vous indiquera sa validation ou non.' ?>
+            <?= ($msg = $themeSetting('contribution_message_not_submitted')) ? $escape($msg) : 'Une fois le dépot confirmé, l’équipe administrative prendra le temps de vérifier le document. Vous recevrez une notification par mail qui vous indiquera sa validation ou non.' ?>
             <?php endif; ?>
         </aside>
     </div>

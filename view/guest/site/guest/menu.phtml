@@ -23,7 +23,7 @@ $route = $themeFunctions->simpleRoute()['route'] ?? 'site/guest/guest';
     </li>
     <?php if ($hasContribute && $user->getRole() !== 'guest_ext' /* // TODO Utiliser les droits. */): ?>
     <li<?= $route === 'site/guest/contribution' ? ' class="active"' : '' ?>>
-        <a href="<?= $url('site/guest/contribution', [], true) ?>"><?= $translate('Documents déposés') ?></a>
+        <a href="<?= $url('site/guest/contribution', ['action' => 'browse'], true) ?>"><?= $translate('Documents déposés') ?></a>
     </li>
     <?php endif; ?>
     <?php if ($hasSelection): ?>

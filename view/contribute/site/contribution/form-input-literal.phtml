@@ -83,7 +83,7 @@ $hasLanguage = !empty($fieldContribution['@language']);
     <?php endif; ?>
     <textarea maxlength="4000" class="form-control input-value" data-value-key="@value" name="<?= $baseName ?>[@value]" aria-labelledby="property-<?= $property ? $property->id() : '__PROPERTYID__' ?>-label"<?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?>><?= $escape($val) ?></textarea>
     <?php if (!$hasLanguage): ?>
-    <ul class="actions">
+    <ul class="actions resource-edit-remove-value">
         <li><button type="button" class="<?= $isRequired ? 'o-icon-clear' : 'o-icon-delete' ?> remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>
     </ul>
     <?php endif; ?>
