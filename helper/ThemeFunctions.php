@@ -733,6 +733,8 @@ class ThemeFunctions extends AbstractHelper
      * @todo Use a module or resource page block.
      *
      * @return array List of medias for the main viewer, and list of links.
+     *
+     * @deprecated Use module BlockPlus.
      */
     public function mainViewerAndLinks(ItemRepresentation $item, bool $hasLightGallery = false): array
     {
@@ -814,6 +816,8 @@ class ThemeFunctions extends AbstractHelper
 
     /**
      * Get the medias of an item according to media type, renderer and viewer.
+     *
+     * @deprecated Use module BlockPlus.
      */
     public function listMediasByViewer(ItemRepresentation $item, ?string $viewer = null): array
     {
@@ -950,6 +954,8 @@ class ThemeFunctions extends AbstractHelper
      * @link https://www.lightgalleryjs.com/demos/iframe/
      *
      * @return string Html code.
+     *
+     * @deprecated Integrated natively in Omeka S.
      */
     public function lightGallery(ItemRepresentation $item, array $options = []): string
     {
