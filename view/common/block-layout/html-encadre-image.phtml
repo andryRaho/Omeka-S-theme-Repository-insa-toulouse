@@ -8,7 +8,7 @@
 
 ?>
 
-<div class="page-block page-block-encadre-image<?= $divclass ? ' ' . $escapeAttr($divclass) : '' ?>">
+<div class="page-block page-block-encadre-image<?= empty($divclass) ? '' : ' ' . $this->escapeHtmlAttr($divclass) ?>">
     <?php if (!empty($heading)): ?>
     <h2><?= $this->escapeHtml($heading) ?></h2>
     <?php endif; ?>

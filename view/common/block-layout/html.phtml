@@ -7,9 +7,8 @@
  */
 
 $html ??= '';
-$divclass ??= '';
 ?>
-<div class="page-block block-html<?= $divclass ? ' ' . $this->escapeHtmlAttr($divclass) : '' ?>">
+<div class="page-block block-html<?= empty($divclass) ? '' : ' ' . $escapeAttr($divclass) ?>">
     <?php if (!empty($heading)): ?>
     <h2><?= $this->escapeHtml($heading) ?></h2>
     <?php endif; ?>

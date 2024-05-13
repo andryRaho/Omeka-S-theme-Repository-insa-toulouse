@@ -8,6 +8,8 @@
  * @var \Laminas\View\Helper\ViewModel $view
  */
 
+// TODO Utiliser les blocs de page et le layout de page en 4.1.
+
 // Gère le cas particulier des blocs "aside" et ajoute la classe "mainClass" si présente.
 
 $plugins = $this->getHelperPluginManager();
@@ -34,7 +36,11 @@ foreach ($page->blocks() as $block) {
         ($layout === 'html' && strpos((string) $block->dataValue('template'), 'aside'))
         || ($layout === 'block' && strpos((string) $block->dataValue('template'), 'aside'))
     ) {
-        $asides .= $blockLayout->render($block);
+        $renderedBlock = $blockLayout->render($block);
+        if ($layout === 'block') {
+            $renderedBlock = str_replace('class="block block-block"', 'class="block block-block block-aside"', $renderedBlock);
+        }
+        $asides .= $renderedBlock;
         ++$countAsides;
     } elseif ($layout === 'pageMetadata') {
         if ($blockMetadata && $mainClass = $blockMetadata('mainClass', $block)) {

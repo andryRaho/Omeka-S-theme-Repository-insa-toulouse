@@ -20,7 +20,7 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : null;
 ?>
 
-<aside class="aside-sommaire-page <?= $divclass ? $escapeAttr($divclass) : '' ?>">
+<aside class="aside-sommaire-page<?= empty($divclass) ? '' : ' ' . $escapeAttr($divclass) ?>">
     <div class="open-science-menu-header">
         <a class="items-list-close-page-menu" href=""></a>
         <a class="items-list-toggle-page-menu" href="">Menu</a>

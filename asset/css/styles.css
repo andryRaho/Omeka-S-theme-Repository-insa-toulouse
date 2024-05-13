@@ -1410,6 +1410,8 @@ p:empty {
         margin-top: 34px;
     }
 
+    main .block > .asides,
+    main .block > aside,
     main > .asides,
     main > aside {
         flex: 390px 0 0;
@@ -1422,6 +1424,7 @@ p:empty {
         position: relative;
     }
 
+    main.depot-content .block > aside,
     main.depot-content > aside {
         margin-top: 15px;
     }
@@ -1436,6 +1439,8 @@ p:empty {
         z-index: 2;
     }
 
+    main.depot-content .block > aside::before,
+    main .asides .block > aside::before,
     main aside.aside-document-parts::before,
     main .asides > aside::before,
     main.depot-content > aside::before {
@@ -1476,23 +1481,23 @@ p:empty {
         text-align: center;
     }
 
-    main aside.aside-exclamation::before {
+    aside.aside-exclamation::before {
         background: url(../img/information-rouge.svg) top center no-repeat;
     }
 
-    main aside.aside-interrogation::before {
+    aside.aside-interrogation::before {
         background: url(../img/aide-rouge.svg) top center no-repeat;
     }
 
-    main aside.aside-document-parts::before {
+    aside.aside-document-parts::before {
         background: url(../img/document-cercle.svg) top center no-repeat;
     }
 
-    main aside.aside-interrogation .aside-content {
+    aside.aside-interrogation .aside-content {
         background-color: #EAEFED;
     }
 
-    main aside.aside-interrogation .aside-content ul {
+    aside.aside-interrogation .aside-content ul {
         list-style-position: outside;
         list-style-type: disc;
         margin-left: 12px;
@@ -1620,6 +1625,8 @@ p:empty {
         transform: scale(1.15);
     }
 
+    main .block > .asides + .content,
+    main > .block-aside + .content,
     main > .asides + .content,
     main > aside + .content {
         flex: calc( 100% - 390px ) 0 0;
@@ -2521,6 +2528,7 @@ p:empty {
         flex: 300px 0 0;
     }
 
+    main.resources-list-and-filters > .block-aside + .content,
     main.resources-list-and-filters > aside + .content {
         flex: calc( 100% - 300px ) 0 0;
         padding-left: 48px;
@@ -3544,28 +3552,38 @@ p:empty {
         display: none;
     }
 
+    main.open-science-content .block > aside,
+    main.aside-page .block > aside,
     main.open-science-content > aside,
     main.aside-page > aside {
         flex: 300px 0 0;
         padding-top: 18px;
     }
 
+    main.open-science-content > .block-aside + .content,
+    main.aside-page > .block-aside + .content,
     main.open-science-content > aside + .content,
     main.aside-page > aside + .content {
         flex: calc(100% - 300px) 0 0;
     }
 
+    main.open-science-content .block > aside .open-science-menu-header,
+    main.aside-page .block > aside .open-science-menu-header,
     main.open-science-content > aside .open-science-menu-header,
     main.aside-page > aside .open-science-menu-header {
         display: none;
     }
 
+    main.open-science-content .block > aside > nav,
+    main.aside-page .block > aside > nav,
     main.open-science-content > aside > nav,
     main.aside-page > aside > nav {
         background-color: #EAEFED;
         padding: 15px 15px;
     }
 
+    main.open-science-content .block > aside > nav > .back-to-list,
+    main.aside-page .block > aside > nav > .back-to-list,
     main.open-science-content > aside > nav > .back-to-list,
     main.aside-page > aside > nav > .back-to-list {
         display: flex;
@@ -3576,6 +3594,8 @@ p:empty {
         margin-bottom: 8px;
     }
 
+    main.open-science-content .block > aside > nav > .back-to-list::before,
+    main.aside-page .block > aside > nav > .back-to-list::before,
     main.open-science-content > aside > nav > .back-to-list::before,
     main.aside-page > aside > nav > .back-to-list::before {
         content: '';
@@ -3585,11 +3605,15 @@ p:empty {
         height: 20px;
     }
 
+    main.open-science-content .block > aside > nav > .back-to-list:hover::before,
+    main.aside-page .block > aside > nav > .back-to-list:hover::before,
     main.open-science-content > aside > nav > .back-to-list:hover::before,
     main.aside-page > aside > nav > .back-to-list:hover::before {
         background-image: url(../img/mosaique-on.svg);
     }
 
+    main.open-science-content .block > aside > nav > .back-to-list > a,
+    main.aside-page .block > aside > nav > .back-to-list > a,
     main.open-science-content > aside > nav > .back-to-list > a,
     main.aside-page > aside > nav > .back-to-list > a {
         font-family: 'Lato', sans-serif;
@@ -3601,22 +3625,30 @@ p:empty {
         text-decoration: none;
     }
 
+    main.open-science-content .block > aside > nav > .back-to-list:hover > a,
+    main.aside-page .block > aside > nav > .back-to-list:hover > a,
     main.open-science-content > aside > nav > .back-to-list:hover > a,
     main.aside-page > aside > nav > .back-to-list:hover > a {
         color: #000000;
     }
 
+    main.open-science-content .block > aside > nav > ul,
+    main.aside-page .block > aside > nav > ul,
     main.open-science-content > aside > nav > ul,
     main.aside-page > aside > nav > ul {
         margin-top: 10px;
     }
 
+    main.open-science-content .block > aside > nav > ul > li,
+    main.aside-page .block > aside > nav > ul > li,
     main.open-science-content > aside > nav > ul > li,
     main.aside-page > aside > nav > ul > li {
         line-height: 19px;
         margin-top: 10px;
     }
 
+    main.open-science-content .block > aside > nav > ul > li > a,
+    main.aside-page .block > aside > nav > ul > li > a,
     main.open-science-content > aside > nav > ul > li > a,
     main.aside-page > aside > nav > ul > li > a {
         font-family: 'Lato', sans-serif;
@@ -3627,6 +3659,8 @@ p:empty {
         text-decoration: none;
     }
 
+    main.open-science-content .block > aside > nav > ul > li > ul,
+    main.aside-page .block > aside > nav > ul > li > ul,
     main.open-science-content > aside > nav > ul > li > ul,
     main.aside-page > aside > nav > ul > li > ul {
         list-style-position: outside;
@@ -3634,12 +3668,16 @@ p:empty {
         margin: 5px 0 15px 12px;
     }
 
+    main.open-science-content .block > aside > nav > ul > li > ul > li,
+    main.aside-page .block > aside > nav > ul > li > ul > li,
     main.open-science-content > aside > nav > ul > li > ul > li,
     main.aside-page > aside > nav > ul > li > ul > li {
         line-height: 16px;
         margin-bottom: 5px;
     }
 
+    main.open-science-content .block > aside > nav > ul > li > ul > li a,
+    main.aside-page .block > aside > nav > ul > li > ul > li a,
     main.open-science-content > aside > nav > ul > li > ul > li a,
     main.aside-page > aside > nav > ul > li > ul > li a {
         color: #313232;
@@ -3649,6 +3687,10 @@ p:empty {
         text-decoration: none;
     }
 
+    main.open-science-content .block > aside > nav > ul > li > a:hover,
+    main.open-science-content .block > aside > nav > ul > li > ul > li a:hover,
+    main.aside-page .block > aside > nav > ul > li > a:hover,
+    main.aside-page .block > aside > nav > ul > li > ul > li a:hover,
     main.open-science-content > aside > nav > ul > li > a:hover,
     main.open-science-content > aside > nav > ul > li > ul > li a:hover,
     main.aside-page > aside > nav > ul > li > a:hover,
@@ -3724,6 +3766,7 @@ p:empty {
         margin-top: 30px;
     }
 
+    .block-pageTitle + .block-html h2,
     .page-block.block-title + .page-block h2 {
         border: none;
         padding-top: 0;
@@ -3993,12 +4036,16 @@ p:empty {
     /* Accueil - dépôt */
     /* 1300 --> 390px - padding 72px */
     /* 1024 --> 300px - padding 12px */
+    main .block > .asides + .content,
+    main > .block-aside + .content,
     main > .asides + .content,
     main > aside + .content {
         flex: calc(100% - 32vw + 34px) 0 0;
         padding-left: calc(9.78vw - 55px);
     }
 
+    main .block > .asides,
+    main .block > aside,
     main > .asides,
     main > aside {
         flex: calc(32vw - 34px) 0 0;
@@ -4014,6 +4061,9 @@ p:empty {
         flex: calc(23vw - 2px) 0 0;
     }
 
+    main.open-science-content > .block-aside + .content,
+    main.resources-list-and-filters > .block-aside + .content,
+    main.aside-page > .block-aside + .content,
     main.open-science-content > aside + .content,
     main.resources-list-and-filters > aside + .content,
     main.aside-page > aside + .content {
@@ -4069,6 +4119,8 @@ p:empty {
     /* Accueil - dépôt */
     /* 1024 --> 300px - padding 12px */
 
+    main .block > .asides + .content,
+    main > .block-aside + .content,
     main > .asides + .content,
     main > aside + .content {
         flex: calc( 100% - 300px ) 0 0;
@@ -4076,6 +4128,8 @@ p:empty {
         padding-left: calc( 8.5vw - 62px );
     }
 
+    main .block > .asides,
+    main .block > aside,
     main > .asides,
     main > aside {
         flex: 300px 0 0;
@@ -4089,6 +4143,9 @@ p:empty {
         flex: 236px 0 0;
     }
 
+    main.open-science-content > .block-aside + .content,
+    main.resources-list-and-filters > .block-aside + .content,
+    main.aside-page > .block-aside + .content,
     main.open-science-content > aside + .content,
     main.resources-list-and-filters > aside + .content,
     main.aside-page > aside + .content {
@@ -4116,6 +4173,8 @@ p:empty {
         display: none;
     }
 
+    main .block > .asides + .content,
+    main > .block-aside + .content,
     main > .asides + .content,
     main > aside + .content {
         padding-left: 12px;
@@ -4155,17 +4214,21 @@ p:empty {
         padding-left: 0;
     }
 
+    main.depot-content .block > aside,
     main.depot-content > aside {
         margin-top: 0;
         margin-bottom: 25px;
     }
 
+    main.depot-content .block > aside,
+    main.depot-content > .block-aside + .content,
     main.depot-content > aside,
     main.depot-content > aside + .content {
         width: 100%;
         padding-left: 0;
     }
 
+    main.depot-content > .block-aside + .content,
     main.depot-content > aside + .content {
         padding: 0 45px;
     }
@@ -4485,6 +4548,8 @@ p:empty {
         margin-bottom: 15px;
     }
 
+    main .block > .asides + .content,
+    main > .block-aside + .content,
     main > .asides + .content,
     main > aside + .content {
         width: auto;
@@ -4567,6 +4632,7 @@ p:empty {
         padding-top: 25px;
     }
 
+    main.depot-content .block > aside,
     main.depot-content > aside {
         margin-bottom: 10px;
     }
@@ -4581,6 +4647,7 @@ p:empty {
         font-size: 11px;
     }
 
+    main.depot-content > .block-aside + .content,
     main.depot-content > aside + .content {
         padding: 0;
     }
@@ -4845,6 +4912,9 @@ p:empty {
         display: block;
     }
 
+    main.open-science-content > .block-aside + .content,
+    main.resources-list-and-filters > .block-aside + .content,
+    main.aside-page > .block-aside + .content,
     main.open-science-content > aside + .content,
     main.resources-list-and-filters > aside + .content,
     main.aside-page > aside + .content {
@@ -5052,6 +5122,8 @@ p:empty {
 
     /* Page Science ouverte */
 
+    main.open-science-content .block > aside .open-science-menu-header,
+    main.aside-page .block > aside .open-science-menu-header
     main.open-science-content > aside .open-science-menu-header,
     main.aside-page > aside .open-science-menu-header {
         display: block;
