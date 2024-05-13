@@ -10,31 +10,22 @@
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
-$setting = $plugins->get('setting');
 $escape = $plugins->get('escapeHtml');
-$assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
-$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
-
-$contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 
-$embedMedia = $siteSetting('item_media_embed', false);
 $medias = $themeFunctions->mediaItem($item);
 
 $filterLocale = (bool) $siteSetting('filter_locale_values');
 $siteLang = $plugins->get('lang')();
 $lang = $filterLocale ? $siteLang : null;
-$langValue = $filterLocale ? [$siteLang, ''] : null;
 $siteSlug = $site->slug();
 
 $searchingUrl = $plugins->has('searchingUrl') ? $plugins->get('searchingUrl')() : $url('site/resource', ['site-slug' => $siteSlug]);
-
-$resourceUrl = $resource->siteUrl($siteSlug);
 
 $resourceClass = $resource->resourceClass();
 $resourceClassTerm = $resourceClass ? $resourceClass->term() : null;

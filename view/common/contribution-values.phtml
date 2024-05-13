@@ -58,7 +58,7 @@ endif;
 
 if ($part === 'medias'):
 
-if (count($valuesMedias)): ?>
+    if (count($valuesMedias)): ?>
         <?php
         $varsBase['isSub'] = true;
         $varsForLoop = [];
@@ -84,6 +84,6 @@ if (count($valuesMedias)): ?>
             </a>
             <?php
         endforeach;
-endif;
+    endif;
 
 endif;

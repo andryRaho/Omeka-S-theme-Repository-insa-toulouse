@@ -36,7 +36,6 @@ $siteTitle = $site->title();
 
 $simpleRoute = $themeFunctions->simpleRoute();
 $isResource = in_array($simpleRoute['controller'], ['item', 'item-set', 'media']);
-$isItemShow = $isResource && $simpleRoute['controller'] === 'item' && $simpleRoute['action'] === 'show';
 $hasGuest = $plugins->has('guestWidget');
 $navMenu = $plugins->has('navMenu') ? $plugins->get('navMenu') : null;
 $contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;

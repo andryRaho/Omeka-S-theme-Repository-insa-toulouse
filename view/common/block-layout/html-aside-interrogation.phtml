@@ -11,7 +11,7 @@ $escape = $plugins->get('escapeHtml');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 ?>
 
-<aside class="aside-interrogation <?= $divclass ? $escapeAttr($divclass) : '' ?>">
+<aside class="aside-interrogation<?= $divclass ? ' ' . $escapeAttr($divclass) : '' ?>">
     <div class="aside-content">
         <?php if ($heading): ?>
         <h4><?= $escape($heading) ?></h4>

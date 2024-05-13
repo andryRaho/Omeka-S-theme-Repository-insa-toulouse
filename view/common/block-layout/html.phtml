@@ -9,22 +9,9 @@
 $html ??= '';
 $divclass ??= '';
 ?>
-<?php if (empty($divclass)): ?>
-
-<div class="page-block block-html">
+<div class="page-block block-html<?= $divclass ? ' ' . $this->escapeHtmlAttr($divclass) : '' ?>">
     <?php if (!empty($heading)): ?>
     <h2><?= $this->escapeHtml($heading) ?></h2>
     <?php endif; ?>
     <?= $html ?>
 </div>
-
-<?php else: ?>
-
-<div class="page-block block-html <?= $this->escapeHtmlAttr($divclass) ?>">
-    <?php if (!empty($heading)): ?>
-    <h2><?= $this->escapeHtml($heading) ?></h2>
-    <?php endif; ?>
-    <?= $html ?>
-</div>
-
-<?php endif; ?>
