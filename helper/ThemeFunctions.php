@@ -422,7 +422,8 @@ class ThemeFunctions extends AbstractHelper
     /**
      * Convertit une valeur en recherche pour les rebonds.
      *
-     * @deprecated Use a filter on value.
+     * @deprecated Use a filter on value. Integrated in module AdvancedResourceTemplate.
+     * @see \AdvancedResourceTemplate\Module
      */
     public function browseValueForTerm(ValueRepresentation $value, string $termOrField, $lang = null): array
     {

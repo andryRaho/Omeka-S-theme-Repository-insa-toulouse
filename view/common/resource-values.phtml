@@ -21,42 +21,6 @@ $filterLocale = (bool) $siteSetting('filter_locale_values');
 $lang = $plugins->get('lang')();
 $langHtml = $filterLocale ? $lang : null;
 
-$browseTerms = $themeSetting('resource_values_properties_browse', []);
-/*
-$browseTerms = [
-    'dcterms:creator',
-    'dcterms:subject',
-//    'curation:tag',
-    'curation:access',
-    'bibo:degree',
-];
-*/
-$notBrowseTerms = [
-    'dcterms:title',
-    'dcterms:abstract',
-    'dcterms:tableOfContents',
-    'dcterms:description',
-    'extracttext:extracted_text',
-    'bibo:content',
-    'dcterms:identifier',
-    'bibo:identifier',
-    'bibo:uri',
-    'dctems:available',
-    'dcterms:date',
-    'dcterms:created',
-    'dcterms:dateAccepted',
-    'dcterms:dateCopyrighted',
-    'dcterms:dateSubmitted',
-    'dcterms:issued',
-    'dcterms:modified',
-    'dcterms:valid',
-    'curation:end',
-    'curation:start',
-    'bibo:argued',
-    // Plus de rebond pour les mots-clés.
-    'curation:tag',
-];
-
 // TODO Déplacer cela dans le module via les événements.
 if ($resource) {
     $values = $themeFunctions->advancedTemplateValues($resource->resourceTemplate(), $values);
@@ -103,18 +67,7 @@ if ($resource) {
                     <?php if ($showLocale && $valueLang): ?>
                     <span class="language"><?= $valueLang ?></span>
                     <?php endif; ?>
-                    <?php if ($valueType === 'uri'):
-                        $val = $value->value();
-                    else:
-                        $val = $value->asHtml($langHtml);
-                    endif; ?>
-                    <?php // if ($term === 'dcterms:date' && preg_match('~\d\d\d\d~', $val)): ?>
-                    <?php // echo substr($val, 0, 4) ?>
-                    <?php // else: ?>
-                    <?= in_array($term, $browseTerms) || (!in_array($term, $notBrowseTerms) && mb_strlen(strip_tags($val)) < 50)
-                        ? $themeFunctions->browseValueForTerm($value, $term, $lang)['link']
-                        : $val ?>
-                    <?php // endif ?>
+                    <?= $value->asHtml($langHtml) ?>
                 </li>
             <?php endif; ?>
         <?php endforeach; ?>
