@@ -1107,6 +1107,7 @@ p:empty {
         background: url(../img/telecharger.svg) center left 18px / auto 16px no-repeat;
     }
 
+    .form-button.reset-button,
     .form-button.filter-button {
         padding: 7px 25px;
         font-size: 12px;
