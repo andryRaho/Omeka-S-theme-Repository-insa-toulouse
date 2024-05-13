@@ -34,9 +34,6 @@ $themeFunctions->appendVarsToRootView([
     'ariane' => $ariane,
     'mainClass' => 'user-account user-infos',
 ]);
-
-$author = $themeFunctions->userAuthor($user);
-$name = $themeFunctions->userName($user);
 ?>
 
 <div class="content">
@@ -49,20 +46,6 @@ $name = $themeFunctions->userName($user);
 
     <div class="user-content">
         <ul class="user-infos">
-            <?php if ($author): ?>
-            <li>
-                <label><?= $translate('Prénom') ?></label>
-                <span><?= $escape($author->value('foaf:givenName')) ?></span>
-            </li>
-            <li>
-                <label><?= $translate('Nom') ?></label>
-                <span><?= $escape($name) ?></span>
-            </li>
-            <li>
-                <label><?= $translate('Adresse du courriel') ?></label>
-                <span><?= $escape($author->value('foaf:mbox') ?: $user->getEmail()) ?></span>
-            </li>
-            <?php else: ?>
             <li>
                 <label><?= $translate('Nom') ?></label>
                 <span><?= $escape($user->getName()) ?></span>
@@ -71,7 +54,6 @@ $name = $themeFunctions->userName($user);
                 <label><?= $translate('Adresse du courriel') ?></label>
                 <span><?= $escape($user->getEmail()) ?></span>
             </li>
-            <?php endif; ?>
         </ul>
     </div>
     <div class="logout form-buttons">
