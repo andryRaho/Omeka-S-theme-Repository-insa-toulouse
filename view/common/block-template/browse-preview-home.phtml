@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
  * @var string $resourceType
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
  * @var string $heading
@@ -17,6 +17,7 @@ $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
+$site = $block->page()->site();
 $siteSlug = $site->slug();
 ?>
 

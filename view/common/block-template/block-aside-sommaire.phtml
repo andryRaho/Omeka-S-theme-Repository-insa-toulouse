@@ -2,7 +2,6 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
- * @var string $heading
  * @var string $params
  */
 
@@ -29,9 +28,6 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
         <div class="back-to-list">
             <a href="<?= $pageMetadata && ($p = $pageMetadata('subroot')) ? $p->siteUrl() : $url('site', [], true) ?>">Retour au sommaire</a>
         </div>
-        <?php if ($heading): ?>
-        <h4><?= $escape($heading) ?></h4>
-        <?php endif; ?>
         <?php
         // Un seul niveau et sous-niveau.
         // Si html est vide, c'est une liste simple pour la page en cours.
