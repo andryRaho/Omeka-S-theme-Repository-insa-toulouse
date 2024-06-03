@@ -114,31 +114,31 @@ $themeFunctions->appendVarsToRootView([
                 <?php else: ?>
                 <ul class="media-list">
                     <?php foreach ($medias as $media):
-                        $title = $mediaRes->displayTitle();
-                        $accessLevelMedia = $themeFunctions->accessLevel($mediaRes);
+                        $title = $media->displayTitle();
+                        $accessLevelMedia = $themeFunctions->accessLevel($media);
                         $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
-                        $originalUrl = $mediaRes->originalUrl();
+                        $originalUrl = $media->originalUrl();
                         if ($accessLevelMedia === 'reserved') {
                             $accessLabelMedia = $translate('Document en accès restreint');
                         }
                         if ($accessLevelMedia !== 'free') {
                             $embargo = null;
                             if ($accessStatus) {
-                                $accessStatusMedia = $accessStatus($mediaRes);
+                                $accessStatusMedia = $accessStatus($media);
                                 if ($accessStatusMedia) {
                                     if ($accessStatusMedia->isUnderEmbargo()) {
                                         $embargo = $accessStatusMedia->embargoEnd();
                                     }
                                 } else {
-                                    $embargo = $mediaRes->value('curation:end');
+                                    $embargo = $media->value('curation:end');
                                 }
                             } else {
-                                $embargo = $mediaRes->value('curation:end');
+                                $embargo = $media->value('curation:end');
                             }
                             if ($embargo) {
                                 $date = $embargo instanceof DateTime ? $embargo : DateTime::createFromFormat('Y-m-d', $embargo->value());
                                 if (!$date) {
-                                    $this->logger()->err('Date incorrecte dans curation:end du media #' . $mediaRes->id());
+                                    $this->logger()->err('Date incorrecte dans curation:end du media #' . $media->id());
                                 }
                                 $accessLabelMedia .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
                             }
