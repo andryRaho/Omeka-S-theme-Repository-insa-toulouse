@@ -49,6 +49,8 @@
  * @var bool $readonly
  */
 
+$themeFunctions = $plugins->get('ThemeFunctions');
+
 $original = $fieldContribution['original'];
 $proposed = $fieldContribution['proposed'];
 $isPrivate = $value ? !$value->isPublic() : (isset($templateProperty) ? $templateProperty->isPrivate() : false);
@@ -69,6 +71,9 @@ if ($isPrivate) {
 [$familyName, $givenName] = explode(',', $val . ',', 2);
 $familyName = trim((string) $familyName, ", \n\r\t");
 $givenName = trim((string) $givenName, ", \n\r\t");
+
+$labelFamilyName = $themeFunctions->templatePropertyThemeOption($templateProperty, 'label_family_name') ?: $translate('Nom');
+$labelGivenName = $themeFunctions->templatePropertyThemeOption($templateProperty, 'label_given_name') ?: $translate('Prénom');
 ?>
 
 <li class="<?= implode(' ', $class) ?>" role="group">
@@ -76,13 +81,13 @@ $givenName = trim((string) $givenName, ", \n\r\t");
     <div class="input-body">
         <div class="input">
             <label class="value input-container">
-                <?= $escape($translate('Nom')) ?>
+                <?= $escape($labelFamilyName) ?>
                 <input type="text" class="form-control input-value" data-input-part="family-name" name="<?= $baseName . '[1]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($familyName) ?>"/>
             </label>
         </div>
         <div class="input">
             <label class="value input-container">
-                <?= $escape($translate('Prénom')) ?>
+                <?= $escape($labelGivenName) ?>
                 <input type="text" class="form-control input-value" data-input-part="given-name" name="<?= $baseName . '[2]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($givenName) ?>"/>
             </label>
         </div>
