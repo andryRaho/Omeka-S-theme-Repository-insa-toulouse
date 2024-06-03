@@ -212,11 +212,17 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                     </div>
                     <div class="limited-access-form-parent">
                         <h1><?= $translate('Ce document est en accès restreint')?></h1>
-                        <p><?= $translate('Contacter l’auteur pour pouvoir consulter le document') ?></p>
                         <?php if ($contactUs): ?>
-                        <?= $this->contactUs(['resource' => $resource, 'contact' => 'author', 'template' => 'common/contact-us-author']) ?>
+                        <?php $html = $contactUs(['resource' => $resource, 'contact' => 'author', 'template' => 'common/contact-us-author']) ?>
+                        <?php if (trim($html)): ?>
+                        <p><?= $translate('Contacter l’auteur pour pouvoir consulter le document') ?></p>
+                        <?= $html ?>
                         <?php else: ?>
-                        <p><?= $escape($translate('Demander à l’adminstrateur du site pour plus d’information.')) ?></p>
+                        <p><?= $escape($translate('L’auteur ne peut pas être contacté directement.')) ?></p>
+                        <p><?= $escape($translate('Demander à l’administrateur du site pour plus d’information.')) ?></p>
+                        <?php endif; ?>
+                        <?php else: ?>
+                        <p><?= $escape($translate('Demander à l’administrateur du site pour plus d’information.')) ?></p>
                         <?php endif; ?>
                     </div>
                 </div>
