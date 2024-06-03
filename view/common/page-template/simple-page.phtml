@@ -1,0 +1,15 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\SitePageRepresentation $page
+ * @var string $pageBodyClass "page" and "site-page-" + page slug
+ * @var bool $displayNavigation Always true when called directly
+ */
+
+$plugins = $this->getHelperPluginManager();
+$themeFunctions = $plugins->get('ThemeFunctions');
+
+echo $this->partial('omeka/site/page/show');
+
+$themeFunctions->appendVarToRootView('mainClass', 'simple-page');

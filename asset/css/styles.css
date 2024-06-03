@@ -191,8 +191,8 @@ p:empty {
         height: 90px;
     }
 
-    main.depot-content .content > form input[type="text"],
-    main.depot-content .content > form textarea {
+    main.depot-content .page-layout-normal > form input[type="text"],
+    main.depot-content .page-layout-normal > form textarea {
         border: 1px solid #9CA19F;
         border-radius: 2px;
         padding: 3px 10px;
@@ -1405,12 +1405,19 @@ p:empty {
         display: flex;
     }
 
+    main > .page-layout-normal {
+        display: flex;
+    }
+
+    main.simple-page > .page-layout-normal {
+        display: initial;
+    }
 
     main.home-content {
         margin-top: 34px;
     }
 
-    main .block > .asides,
+    main .block.asides,
     main .block > aside,
     main > .asides,
     main > aside {
@@ -1439,6 +1446,8 @@ p:empty {
         z-index: 2;
     }
 
+    .aside-exclamation:before,
+    .aside-interrogation:before,
     main.depot-content .block > aside::before,
     main .asides .block > aside::before,
     main aside.aside-document-parts::before,
@@ -1625,14 +1634,17 @@ p:empty {
         transform: scale(1.15);
     }
 
-    main .block > .asides + .content,
+    main .block.asides + .content,
+    main .block.asides + .block,
     main > .block-aside + .content,
     main > .asides + .content,
+    main > .asides + .block,
     main > aside + .content {
         flex: calc( 100% - 390px ) 0 0;
         padding-left: 72px;
     }
 
+    main .page-layout-normal h1,
     main .content h1 {
         width: 100%;
         text-align: center;
@@ -3461,11 +3473,13 @@ p:empty {
     main.open-science-content .content,
     main.open-science-home-content .content,
     main.aside-page .content,
+    main.simple-page .page-layout-normal,
     main.simple-page .content {
         margin-top: 10px;
     }
 
     main.open-science-home-content .content,
+    main.simple-page .page-layout-normal,
     main.simple-page .content {
         width: 100%;
         padding: 0 15%;
@@ -3711,6 +3725,7 @@ p:empty {
         text-transform: none;
     }
 
+    main.simple-page .page-layout-normal .page-block h1,
     main.simple-page .content .page-block h1 {
         font-size: 31px;
         line-height: 36px;
@@ -4036,15 +4051,17 @@ p:empty {
     /* Accueil - dépôt */
     /* 1300 --> 390px - padding 72px */
     /* 1024 --> 300px - padding 12px */
-    main .block > .asides + .content,
+    main .block.asides + .content,
+    main .block.asides + .block,
     main > .block-aside + .content,
     main > .asides + .content,
+    main > .asides + .block,
     main > aside + .content {
         flex: calc(100% - 32vw + 34px) 0 0;
         padding-left: calc(9.78vw - 55px);
     }
 
-    main .block > .asides,
+    main .block.asides,
     main .block > aside,
     main > .asides,
     main > aside {
@@ -4119,16 +4136,18 @@ p:empty {
     /* Accueil - dépôt */
     /* 1024 --> 300px - padding 12px */
 
-    main .block > .asides + .content,
+    main .block.asides + .content,
+    main .block.asides + .block,
     main > .block-aside + .content,
     main > .asides + .content,
+    main > .asides + .block,
     main > aside + .content {
         flex: calc( 100% - 300px ) 0 0;
         width: calc( 100% - 300px );
         padding-left: calc( 8.5vw - 62px );
     }
 
-    main .block > .asides,
+    main .block.asides,
     main .block > aside,
     main > .asides,
     main > aside {
@@ -4173,9 +4192,11 @@ p:empty {
         display: none;
     }
 
-    main .block > .asides + .content,
+    main .block.asides + .content,
+    main .block.asides + .block,
     main > .block-aside + .content,
     main > .asides + .content,
+    main > .asides + .block,
     main > aside + .content {
         padding-left: 12px;
     }
@@ -4502,7 +4523,8 @@ p:empty {
 
     /* Colonnes Accueil */
 
-    main.home-content {
+    main.home-content,
+    main .page-layout-normal {
         flex-direction: column;
     }
 
@@ -4548,9 +4570,11 @@ p:empty {
         margin-bottom: 15px;
     }
 
-    main .block > .asides + .content,
+    main .block.asides + .content,
+    main .block.asides + .block,
     main > .block-aside + .content,
     main > .asides + .content,
+    main > .asides + .block,
     main > aside + .content {
         width: auto;
         padding-left: 0;
@@ -5105,6 +5129,7 @@ p:empty {
     }
 
     main.open-science-home-content .content,
+    main.simple-page .page-layout-normal,
     main.simple-page .content {
         padding: 0;
     }
