@@ -179,7 +179,7 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             </div>
             <div class="header-bottom">
                 <?= $site->publicNav()->menu()->renderMenu(null, [
-                    'maxDepth' => $themeSetting('nav_depth') - 1,
+                    'maxDepth' => $themeSetting('nav_depth', 1) - 1,
                     'ulClass' => 'content-with-margin',
                 ]) ?>
             </div>
