@@ -75,7 +75,7 @@ if ($part === 'medias'):
             $accessLabel = $fieldsMedia['curation:access']['contributions'][0]['proposed']['@value'] ?? 'Non consultable';
             $accessLevel = $themeFunctions->accessNormalize($accessLabel);
             ?>
-            <a class="document-preview" href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download">
+            <a class="document-preview" href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download" target="_self">
                 <label>Prévisualiser</label>
                 <div class="document-preview-filename"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value'] ?? '') ?></div>
                 <div class="document-type-and-access">

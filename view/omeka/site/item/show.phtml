@@ -154,7 +154,7 @@ $themeFunctions->appendVarsToRootView([
                             <ul class="form-buttons">
                                 <?php if ($originalUrl): ?>
                                 <li><a href="<?= $originalUrl ?>" class="form-button preview-button"><?= $translate('Visualiser') ?></a></li>
-                                <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="download"><?= $translate('Télécharger') ?></a></li>
+                                <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="download" target="_self"><?= $translate('Télécharger') ?></a></li>
                                 <?php else: ?>
                                 <li><a href="" class="form-button ask-copy-button"><?= $translate('Fichier manquant : demander une copie') ?></a></li>
                                 <?php endif; ?>
