@@ -2,6 +2,12 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Laminas\Form\Form $form
+ * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
+ *
+ * The simple form is similar to the standard search form and keeps only:
+ * - the main field ("q"),
+ * - the hidden elements,
+ * - the button submit.
  */
 
 // Recherche principale: affiche le premier champ (le principal) du formulaire et ses champs obligatoires ou cachés.
@@ -9,17 +15,33 @@
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 $formSearch = $plugins->get('formSearch');
-$themeSetting = $plugins->get('themeSetting');
-$themeFunctions = $plugins->get('ThemeFunctions');
+
+$params = $this->params()->fromQuery() ?: [];
+$form
+    ->setData($params)
+    ->prepare();
+
+// This check is useless when the form is called with option "variant" = "simple".
+// TODO This check and this template will be removed in a future version.
+
+foreach ($form->getElements() as $name => $element) {
+    if (in_array($name, ['q', 'submit'])
+        || $element instanceof \Laminas\Form\Element\Csrf
+        || $element instanceof \Laminas\Form\Element\Hidden
+    ) {
+        continue;
+    }
+    $form->remove($name);
+}
+
+foreach ($form->getFieldsets() as $name => $fieldset) {
+    $form->remove($name);
+}
 
 $form
     ->setAttribute('class', $form->getAttribute('class') . ' search-form');
 
 $mainElement = $form->get('q');
-
-// TODO Vérifier si le module Advanced Search est présent.
-
-$advancedSearchUrl = $themeSetting('search_advanced_page') ?: $this->searchingUrl();
 ?>
 
 <div class="search-form-parent">
@@ -36,7 +58,8 @@ $advancedSearchUrl = $themeSetting('search_advanced_page') ?: $this->searchingUr
             </div>
         </div>
     <?= $this->form()->closeTag() ?>
-    <a href="<?= $advancedSearchUrl ?>" class="advanced-search-link">
+    <?php // TODO Mettre un bouton?>
+    <a href="<?= $searchConfig->siteUrl() ?>" class="advanced-search-link">
         <?= $translate('Advanced search') ?>
     </a>
 </div>

@@ -318,36 +318,6 @@ $(document).ready(function () {
 
     /* */
 
-    const seeAllFacetsLimit = 6;
-    const seeMore = "+ Voir plus";
-    const seeLess = "- Voir moins";
-
-    const seeMoreHtml = '<span class="see-all-closed">' + seeMore + '</span><span class="see-all-opened">' + seeLess + '</span>';
-
-    let facetsParents = $('ul.search-facet-items');
-    facetsParents.each(function(no, item) {
-        const facetParent = $(item);
-        const facets = $('> li', facetParent);
-        if (facets.length > seeAllFacetsLimit) {
-            facetParent.addClass('with-toggle');
-            facetParent.append('<li class="see-all-facets"><a href="#">'+ seeMoreHtml +'</a></li>');
-            facets.each(function(no, item) {
-                if (no + 1 > seeAllFacetsLimit) {
-                    $(item).addClass('displayed-with-toggle')
-                }
-            });
-        }
-    });
-
-    facetsParents.on('click', function(event) {
-        const target = $(event.target);
-        if (target.closest('li').hasClass('see-all-facets')) {
-            event.preventDefault();
-            $(this).closest('.search-facet-items').toggleClass('facets-toggle-opened');
-        }
-    });
-
-
     /* Advanced Search popup */
 
     $('a.advanced-search-link').on('click', function(e) {
