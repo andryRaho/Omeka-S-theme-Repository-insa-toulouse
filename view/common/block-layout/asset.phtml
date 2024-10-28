@@ -6,44 +6,74 @@
  *   - page (PageRepresentation)
  *   - caption (string): the html is purified according to settings
  *   - alt_link_title (string)
- *   Specific to the module version:
- *   - class (string)
- *   - title (string): deprecated alias of "alt_link_title"
- *   - url (string): deprecated, will be removed. Use "page", "caption", alt title, or original asset alt value instead.
+ *
+ * The optional class, url and label may be set at start of caption like:
+ * ```
+ * url = https://example.org/
+ * class = xxx yyy
+ * label = Any zzz
+ * Next lines are the true caption, that may be raw text ot html.
+ * ```
+ *
+ * The string may be html.
+ * The url may be a local media file, for example `/files/original/xxx.pdf`.
+ * The label is used when there is no page, so no alt_link_title.
+ *
+ * @see \BlockPlus\View\Helper\AssetElement
+ * @uses \BlockPlus\View\Helper\CaptionClassAndUrl
  */
 
 $plugins = $this->getHelperPluginManager();
 $escape = $plugins->get('escapeHtml');
-$thumbnail = $plugins->get('thumbnail');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
-// Support assetElement when available, that may not be the case when the module is disabled.
-$thumbnail = $plugins->has('assetElement') ? $plugins->get('assetElement') : $plugins->get('thumbnail');
 
-$className ??= '';
-$alignment ??= '';
+// Manage minimal display when the module is disabled.
+$assetElement = $plugins->has('assetElement')
+    ? $plugins->get('assetElement')
+    : $plugins->get('thumbnail');
+$captionClassAndUrl = $plugins->get('captionClassAndUrl')
+    ? $plugins->get('captionClassAndUrl')
+    : fn($string) => [trim((string) $string), '', '', '', false, false, $string !== strip_tags($string)];
 ?>
 
 <div class="block block-asset assets">
-    <?php foreach ($attachments as $attachment):
-        $assetHtml = $attachment['asset'] ? $thumbnail($attachment['asset'], 'square') : '';
-    ?>
-    <div class="page-block page-block-image-with-caption <?= empty($attachment['class']) ? '' : ' ' . $escapeAttr($attachment['class']) ?>">
-        <?php if (isset($attachment['page'])): ?>
-        <a href="<?= $escape($attachment['page']->siteUrl()) ?>">
-             <?= $assetHtml ?>
-            <?php if ($attachment['caption'] !== ''): ?>
+    <?php
+    foreach ($attachments as $attachment):
+        $asset = $attachment['asset'];
+        $assetTag = $asset ? $assetElement($asset, 'square') : '';
+        $page = $attachment['page'] ?? null;
+        [$caption, $class, $url, $label, $isLocalUrl, $isMediaFile, $isHtmlCaption] = $captionClassAndUrl($attachment['caption'] ?? '');
+        $title = strlen($attachment['alt_link_title']) ? $attachment['alt_link_title'] : ($page ? $page->title() : ($label ?: $caption));
+        ?>
+    <div class="page-block page-block-image-with-caption <?= strlen($class) ? ' ' . $escapeAttr($class) : '' ?>">
+        <?php if ($page): ?>
+        <a href="<?= $escape($page->siteUrl()) ?>">
+             <?= $assetTag ?>
             <div class="caption image-caption">
-                <?= $attachment['alt_link_title'] === '' ? $escape($attachment['page']->title()) : $escape($attachment['alt_link_title']) ?>
+                <?= $escape($title) ?>
             </div>
-            <?php endif; ?>
-            <?php if ($attachment['caption'] !== ''): ?>
+        </a>
+        <?php elseif ($url): ?>
+        <a href="<?= $escapeAttr($url) ?>"<?php if (!$isLocalUrl || $isMediaFile): ?> target="_blank"<?php endif; ?><?php if (!$isLocalUrl): ?> rel="noopener"<?php endif; ?>>
+             <?= $assetTag ?>
+             <?php if (strlen($title)): ?>
             <div class="caption image-caption">
-                <?= $attachment['caption'] ?>
+                <?= $escape($title) ?>
             </div>
             <?php endif; ?>
         </a>
         <?php else: ?>
-             <?= $assetHtml ?>
+             <?= $assetTag ?>
+             <?php if (strlen($title)): ?>
+            <div class="caption image-caption">
+                <?= $escape($title) ?>
+            </div>
+            <?php endif; ?>
+        <?php endif; ?>
+        <?php if (strlen($caption)): ?>
+        <div class="caption image-caption">
+            <?= $isHtmlCaption ? $caption : $escape($caption) ?>
+        </div>
         <?php endif; ?>
     </div>
     <?php endforeach; ?>
