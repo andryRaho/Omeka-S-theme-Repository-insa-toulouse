@@ -68,7 +68,7 @@ if (!empty($itemSet)) {
         <?php $displayButtonReset = $displayReset === 'above' || $displayReset === 'both'; ?>
         <?php $displayButtonSubmit = $displayFacetButton && ($displaySubmit === 'above' || $displaySubmit === 'both'); ?>
         <?php if ($displayButtonReset || $displayButtonSubmit): ?>
-        <div class="facets-actions facets-actions-top apply-facets apply-facets-top form-buttons">
+        <div class="facets-actions facets-actions-top facets-apply facets-apply-top form-buttons">
             <?php if ($displayButtonSubmit): ?>
             <button id="facets-apply" class="facets-apply form-button filter-button" type="submit"><?= $escape($labelSubmit) ?></button>
             <?php endif; ?>
@@ -96,7 +96,7 @@ if (!empty($itemSet)) {
                 <?php endif; ?>
                 <div class="facet-elements <?= $hasState ? ' collapsible' : '' ?>"<?= $hasState && $facetParams['state'] === 'collapse' ? ' hidden="hidden"' : '' ?>>
                     <?= $facetElements($name, $facetValues, $facetParams) ?>
-                    <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox']) && count($facetValues) > (int) $facetParams['more']): ?>
+                    <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox', 'Link', 'Tree', 'TreeLink', 'Thesaurus', 'ThesaurusLink']) && count($facetValues) > (int) $facetParams['more']): ?>
                     <div class="facet-see-more">
                         <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-label-see-more="<?= $escapeAttr($translate('+ voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('- voir moins')) ?>"><?= $escape($translate('+ voir plus')) ?></button>
                     </div>
@@ -110,7 +110,7 @@ if (!empty($itemSet)) {
         <?php $displayButtonReset = $displayReset === 'below' || $displayReset === 'both'; ?>
         <?php $displayButtonSubmit = $displayFacetButton && ($displaySubmit === 'below' || $displaySubmit === 'both'); ?>
         <?php if ($displayButtonReset || $displayButtonSubmit): ?>
-        <div class="facets-actions facets-actions-bottom apply-facets apply-facets-bottom form-buttons">
+        <div class="facets-actions facets-actions-bottom facets-apply facets-apply-bottom form-buttons">
             <?php if ($displayButtonSubmit): ?>
             <button id="facets-apply" class="facets-apply form-button filter-button" type="submit"><?= $escape($labelSubmit) ?></button>
             <?php endif; ?>
