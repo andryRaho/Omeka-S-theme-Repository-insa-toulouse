@@ -448,9 +448,9 @@ class ThemeFunctions extends AbstractHelper
             /** @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig */
             if ($hasModuleSearchSolr) {
                 $searchConfig = $this->view->getSearchConfig();
-                $searchEngine = $searchConfig ? $searchConfig->engine() : null;
-                $searchAdapter = $searchEngine ? $searchEngine->adapter() : null;
-                $useSearchSolr = $searchAdapter && $searchAdapter instanceof \SearchSolr\Adapter\SolariumAdapter;
+                $searchEngine = $searchConfig ? $searchConfig->searchEngine() : null;
+                $engineAdapter = $searchEngine ? $searchEngine->engineAdapter() : null;
+                $useSearchSolr = $engineAdapter && $engineAdapter instanceof \SearchSolr\EngineAdapter\Solarium;
             } else {
                 $useSearchSolr = false;
             }
