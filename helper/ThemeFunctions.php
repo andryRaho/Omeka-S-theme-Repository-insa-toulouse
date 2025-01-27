@@ -1275,7 +1275,11 @@ SQL;
                 return false;
             }
             $api = $this->view->plugin('api');
-            $mapping = $api->search('mappings')->getTotalResults();
+            try {
+                $mapping = $api->search('mappings')->getTotalResults();
+            } catch (\Exception $e) {
+                return false;
+            }
             $isOldVersion = !$this->isModuleActive('Mapping', '2.0');
             $markers = $isOldVersion
                 ? $api->search('mapping_markers')->getTotalResults()
