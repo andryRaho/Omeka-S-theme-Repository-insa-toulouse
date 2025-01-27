@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function () {
 
     const body = $('body');
@@ -69,8 +71,16 @@ $(document).ready(function () {
                 event.preventDefault();
             }
         });
-        if (!hasAlert && !$('#edit-resource').find('.file.already-loaded').length && !$('#edit-resource').find('.file-uploading').length) {
-            alert('Vous devez ajouter au moins un fichier.');
+        const filesMin = $('.contribute-medias.etape-3').data('files-min');
+        const fileDefault = $('#edit-resource').find('.contribute-media').length;
+        const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
+        const fileUploading = $('#edit-resource').find('.file-uploading').length;
+        if (!hasAlert && !fileLoaded && !fileUploading && filesMin > 0) {
+            if (filesMin == 1) {
+                alert('Vous devez ajouter au moins 1 fichier.');
+            } else {
+                alert('Vous devez ajouter au moins ' + filesMin + ' fichiers.');
+            }
             event.preventDefault();
             return false;
         }
@@ -82,7 +92,13 @@ $(document).ready(function () {
 
     $('.submit-contribution').on('click submit', function(event) {
         if (!$('.document-preview').length) {
-            alert('Vous devez déposer au moins un fichier.');
+            const filesMin = $('.contribute-medias.etape-3').data('min-files');
+            const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
+            if (filesMin == 1 && fileLoaded < 1) {
+                alert('Vous devez ajouter au moins 1 fichier.');
+            } else if (filesMin > 1 && fileLoaded < filesMin) {
+                alert('Vous devez ajouter au moins ' + filesMin + ' fichiers.');
+            }
             e.stopPropagation();
             event.preventDefault();
             return false;
@@ -278,7 +294,6 @@ $(document).ready(function () {
             $item.closest('li').hide();
         }
     });
-
 
     /* */
 

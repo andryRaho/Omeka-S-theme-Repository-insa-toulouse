@@ -80,6 +80,14 @@ if ($isMainForm) {
 
 // To wrap the elements with a disabled fieldset makes the whole form disabled.
 $disabled = $mode === 'read' ? ' disabled="disabled"' : '';
+
+// Number maximum of files.
+if ($resourceTemplate && !empty($templateMedia)) {
+    $minFiles = $resourceTemplate->dataValue('media_templates_minimum');
+    $minFiles = $minFiles === null ? 1 : array_sum($minFiles);
+} else {
+    $minFiles = 1;
+}
 ?>
 
 <?php if ($isMainForm): ?>
@@ -336,7 +344,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 </fieldset>
 
     <?php if (!empty($templateMedia)): ?>
-<fieldset class="contribute-medias etape-3" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?>>
+<fieldset class="contribute-medias etape-3" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?> data-files-min="<?= $minFiles ?>">
     <?php // For end user, "media" means "files". ?>
     <h2><?= $escape($translate('3. Téléchargement')) ?></h2>
     <ul class="actions form-buttons">
