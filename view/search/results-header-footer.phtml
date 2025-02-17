@@ -160,7 +160,7 @@ $isBrowse = $query->isBrowse();
             $redirectItemSets = $this->siteSetting('advancedsearch_redirect_itemsets', ['default' => 'browse']);
             $redirectItemSet = $redirectItemSets[$itemSet->id()] ?? $redirectItemSets['default'] ?? 'browse';
             echo $redirectItemSet === 'all'
-                ? $this->paginationSearch('common/pagination', $response->getTotalResults(), $response->getCurrentPage(), $response->getPerPage())
+                ? $this->paginationSearch('common/pagination')
                 : $this->pagination('common/pagination');
         else:
             echo $this->pagination('common/pagination');
