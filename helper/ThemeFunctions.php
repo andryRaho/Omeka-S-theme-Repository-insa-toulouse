@@ -457,24 +457,24 @@ class ThemeFunctions extends AbstractHelper
             if ($useSearchSolr) {
                 $baseSearchUrl = $this->view->searchingUrl();
                 $baseSearchQuery = http_build_query(['filter' => [
-                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
+                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'val' => '__VALUE__'],
                 ]]);
                 $baseSearchQueryVr = $baseSearchQuery;
             } elseif ($hasModuleAdvancedSearch) {
                 $baseSearchUrl = $this->view->searchingUrl();
                 $baseSearchQuery = http_build_query(['filter' => [
-                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'value' => '__VALUE__'],
+                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'eq', 'val' => '__VALUE__'],
                 ]]);
                 $baseSearchQueryVr = http_build_query(['filter' => [
-                    ['join' => 'and', 'field' => '__FIELD__', 'type' => 'res', 'value' => '__VALUE__'],
+                    ['join' => 'or', 'field' => '__FIELD__', 'type' => 'res', 'val' => '__VALUE__'],
                 ]]);
             } else {
                 $baseSearchUrl = $url('site/resource', ['site-slug' => $siteSlug, 'controller' => 'item', 'action' => 'browse'], true);
-                $baseSearchQuery = http_build_query(['filter' => [
-                    ['join' => 'and', 'term' => '__FIELD__', 'type' => 'eq', 'text' => '__VALUE__'],
+                $baseSearchQuery = http_build_query(['property' => [
+                    ['join' => 'and', 'property' => '__FIELD__', 'type' => 'eq', 'text' => '__VALUE__'],
                 ]]);
                 $baseSearchQueryVr = http_build_query(['filter' => [
-                    ['join' => 'and', 'term' => '__FIELD__', 'type' => 'res', 'text' => '__VALUE__'],
+                    ['join' => 'or', 'property' => '__FIELD__', 'type' => 'res', 'text' => '__VALUE__'],
                 ]]);
             }
         }
