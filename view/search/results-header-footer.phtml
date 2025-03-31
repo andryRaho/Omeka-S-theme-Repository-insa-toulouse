@@ -5,7 +5,7 @@
  * @var \AdvancedSearch\Api\Representation\SearchConfigRepresentation $searchConfig
  * @var \AdvancedSearch\Query $query
  * @var \AdvancedSearch\Response $response
- * @var \Omeka\Api\Representation\ItemSetRepresentation $itemSet
+ * @var \Omeka\Api\Representation\ItemSetRepresentation|null $itemSet
  * @var string $resultPart "header" or "footer"
  */
 
@@ -155,17 +155,7 @@ $isBrowse = $query->isBrowse();
     <?php if (isset($displayParts['paginator'])): ?>
     <li>
         <div class="search-results-count <?= isset($displayParts['total_results']) ? 'no-total-results' : '' ?> <?= $isHeader ? 'resources-pagination-header' : 'resources-pagination-footer' ?>">
-        <?php
-        if ($itemSet && $site):
-            $redirectItemSets = $this->siteSetting('advancedsearch_redirect_itemsets', ['default' => 'browse']);
-            $redirectItemSet = $redirectItemSets[$itemSet->id()] ?? $redirectItemSets['default'] ?? 'browse';
-            echo $redirectItemSet === 'all'
-                ? $this->paginationSearch('common/pagination')
-                : $this->pagination('common/pagination');
-        else:
-            echo $this->pagination('common/pagination');
-        endif;
-        ?>
+            <?= $this->paginationSearch() ?>
         </div>
     </li>
     <?php endif; ?>
