@@ -11,13 +11,19 @@
 // l'élément en cours qui n'a pas de span et que les styles affichent mal.
 // De plus, ce fil d'Ariane utilise ul/li.
 
+$plugins = $this->getHelperPluginManager();
+$url = $plugins->get('url');
+$escape = $plugins->get('escapeHtml');
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
 $last = mb_strripos($ariane, '</a>');
 ?>
 
-<nav class="breadcrumbs content-with-margin" aria-label="<?= $this->translate('Breadcrumb')?>">
+<nav class="breadcrumbs content-with-margin" aria-label="<?= $translate('Breadcrumb') ?>">
     <ul>
         <?php if (!stripos($ariane, 'accueil')): ?>
-        <li><a href="<?= $this->url('site', ['site-slug' => $site->slug()]) . '">' . $this->escapeHtml($this->translate('Accueil')) ?></a></li>
+        <li><a href="<?= $escapeAttr($url('site', ['site-slug' => $site->slug()])) ?>"><?= $escape($translate('Accueil')) ?></a></li>
         <?php endif; ?>
         <?= $last
             ? str_replace(['<a ', '</a>'], ['<li><a ', "</a></li>\n"], mb_substr($ariane, 0, $last + 4))
