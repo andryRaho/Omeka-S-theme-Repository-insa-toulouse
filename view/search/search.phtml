@@ -48,11 +48,12 @@ if ($itemSet && $site) {
     $displayItemSet = false;
 }
 
+/* // Mis dans layout pour gérer dialog.
 $this->headLink()
     ->appendStylesheet($assetUrl('css/search.css', 'AdvancedSearch'));
 $this->headScript()
     ->appendFile($assetUrl('js/search.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
-
+*/
 
 $themeFunctions->appendVarToRootView('mainClass', 'resources-list-and-filters');
 

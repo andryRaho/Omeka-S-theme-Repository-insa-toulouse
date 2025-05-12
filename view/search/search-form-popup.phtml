@@ -8,18 +8,13 @@
 
 // TODO Ajouter le même formulaire pour la recherche standard avancée (cf. common/advanced-search-form).
 
+// TODO Inclures les attributs dans la configuration du formulaire, pas dans le code du thème.
+
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 // $themeFunctions = $plugins->get('ThemeFunctions');
 
-// $formRow = $plugins->get('formRow');
-$formLabel = $plugins->get('formLabel');
-$formSelect = $plugins->get('formSelect');
 $formButton = $plugins->get('formButton');
-$formHidden = $plugins->get('formHidden');
-$formSearch = $plugins->get('formSearch');
-$formElement = $plugins->get('formElement');
-$formCollection = $plugins->get('formCollection');
 
 // $site = $themeFunctions->currentSite();
 
@@ -28,19 +23,36 @@ $form
     ->setData($params)
     ->prepare();
 
-// N'utilise pas l'itérateur, seuls les éléments principaux sont modifiés.
-foreach ($form as $name => $element) switch ($name):
+$form->setAttribute('class', trim($form->getAttribute('class') . ' form-search advanced-search-form'));
+
+$elementReset = null;
+$elementSubmit = null;
+// Ne pas faire `foreach ($form as $name => $element)`, cela ne comprend pas le submit.
+foreach ($form->getElements() as $element) switch ($element->getName()) {
     case 'q':
         $element
             ->setAttribute('class', trim($element->getAttribute('class') . ' advanced-search-text-input'));
         break;
-    case 'submit':
+    case 'form-reset':
         $element
-            ->setLabel('Valider')
-            ->setAttribute('class', 'form-button submit-button')
-            ->setValue('Rechercher');
+            // The reset button is not used to clear this form.
+            ->setAttribute('class', 'form-button clear-button form-search')
+            ->setAttribute('form', $form->getAttribute('id'));
+        $elementReset = $element;
+        $form->remove($element->getName());
+        break;
+    case 'submit':
+    case 'form-submit':
+        $element
+            // ->setLabel('Rechercher')
+            ->setAttribute('class', 'form-button submit-button form-search')
+            ->setAttribute('form', $form->getAttribute('id'));
+        $elementSubmit = $element;
+        $form->remove($element->getName());
         break;
     case 'item_set':
+    case 'item_set_id':
+    case 'item_set_id_is':
         $element->get('id')
             ->setLabel('Rechercher par collection')
             ->setOption('empty_option', '')
@@ -48,6 +60,9 @@ foreach ($form as $name => $element) switch ($name):
             ->setAttribute('data-placeholder', $translate('Choisir les collections'));
         break;
     case 'class':
+    case 'resource_class':
+    case 'resource_class_id':
+    case 'resource_class_id_is':
         // value_options de resourceClass ne sont pas modifiables.
         // Les valeurs ajoutées vides ne servent pas avec chosen-select.
         // Le formulaire ne doit pas avoir été préparé (headroom?).
@@ -58,6 +73,9 @@ foreach ($form as $name => $element) switch ($name):
             ->setAttribute('data-placeholder', $translate('Choisir les types de document'));
         break;
     case 'template':
+    case 'resource_template':
+    case 'resource_template_id':
+    case 'resource_template_id_is':
         $element->get('id')
             ->setLabel('Rechercher par type de ressource')
             ->setOption('empty_option', '')
@@ -66,26 +84,15 @@ foreach ($form as $name => $element) switch ($name):
         break;
     default:
         break;
-endswitch;
+}
 
 // Prépare les labels et attributs spécifiques au thème.
 $form
     ->setAttribute('class', trim($form->getAttribute('class') . ' advanced-search-form'))
     ->prepare();
-
-// Implémentation rapide des filtres.
-$filtersReplace = [
-//     '<fieldset class="filter">' => '',
-    '</fieldset>' => '',
-    '<select ' => '<div class="select-parent"><select ',
-    '</select>' => '</select></div>',
-];
-$filtersReplacePreg = [
-    '~<fieldset class="filter"[^>]>~' => '',
-];
 ?>
 
-<div class="advanced-search-popup">
+<dialog id="advanced-search-popup" class="advanced-search-popup">
     <div class="popup-scroll-content">
         <div class="advanced-search-popup-content">
             <div class="advanced-search-close close-popup-btn">
@@ -93,77 +100,18 @@ $filtersReplacePreg = [
             </div>
             <div class="advanced-search-form-parent">
                 <h1><?= $translate('Recherche avancée') ?></h1>
+                <?php if ($elementReset || $elementSubmit): ?>
                 <ul class="form-buttons">
-                    <li><a href="" class="form-button clear-button"><?= $translate('Effacer la recherche') ?></a></li>
+                    <?php if ($elementReset): ?>
+                    <li><?= $formButton($elementReset) ?></li>
+	                <?php endif; ?>
+                    <?php if ($elementSubmit): ?>
+                    <li><?= $formButton($elementSubmit) ?></li>
+                    <?php endif; ?>
                 </ul>
-                <?= $this->form()->openTag($form->setAttribute('class', 'form-search advanced-search-form')) ?>
-
-                    <div class="field search-by-keyword">
-                        <?php $element = $form->get('q'); ?>
-                        <?= $formLabel($element) ?>
-                        <?= $formSearch($element) ?>
-                    </div>
-
-                    <?php if ($form->has('filter')): ?>
-                    <ul class="search-filters">
-                        <?php foreach ($form->get('filter') as $elements): ?>
-                            <li class="search-filter">
-                                <?= preg_replace(array_keys($filtersReplacePreg), array_values($filtersReplacePreg), str_replace(array_keys($filtersReplace), array_values($filtersReplace), $formCollection($elements))) ?>
-                                <a href="#" class="advanced-search-remove-filter"></a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <div class="more-filters">
-                        <ul class="search-filters">
-                        </ul>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if ($form->has('item_set')):
-                    $element = $form->get('item_set')->get('id'); ?>
-                    <div class="field select-multi">
-                        <?= $formLabel($element) ?>
-                        <div class="select-parent">
-                            <?= $element instanceof \Laminas\Form\Element\Select ? $formSelect($element) : $formElement($element) ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if ($form->has('class')):
-                    $element = $form->get('class')->get('id'); ?>
-                    <div class="field select-multi">
-                        <?= $formLabel($element) ?>
-                        <div class="select-parent">
-                            <?= $element instanceof \Laminas\Form\Element\Select ? $formSelect($element) : $formElement($element) ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if ($form->has('template')):
-                        $element = $form->get('template')->get('id'); ?>
-                    <div class="field select-multi">
-                        <?= $formLabel($element) ?>
-                        <div class="select-parent">
-                            <?= $element instanceof \Laminas\Form\Element\Select ? $formSelect($element) : $formElement($element) ?>
-                        </div>
-                    </div>
-                    <?php endif; ?>
-
-                    <?php if ($form->has('submit')): ?>
-                    <ul class="form-buttons">
-                        <li><?= $formButton($form->get('submit')) ?></li>
-                    </ul>
-                    <?php endif; ?>
-
-                <?php
-                foreach ($form->getElements() as $element):
-                    if ($element instanceof \Laminas\Form\Element\Csrf || $element instanceof \Laminas\Form\Element\Hidden):
-                        echo $formHidden($element);
-                    endif;
-                endforeach;
-                ?>
-                <?= $this->form()->closeTag() ?>
+                <?php endif; ?>
+                <?= $this->form($form) ?>
             </div>
         </div>
     </div>
-</div>
+</dialog>

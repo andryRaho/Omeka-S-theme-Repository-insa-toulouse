@@ -76,11 +76,11 @@ if ($searchConfig) {
     // }
 
     $headLink
-        // ->appendStylesheet($assetUrl('vendor/chosen-js/chosen.min.css', 'Omeka'))
-        // ->appendStylesheet($assetUrl('css/search.css', 'AdvancedSearch'))
+        ->appendStylesheet($assetUrl('vendor/chosen-js/chosen.min.css', 'Omeka'))
+        ->appendStylesheet($assetUrl('css/search.css', 'AdvancedSearch'))
     ;
     $headScript
-        // ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
+        ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
         ->appendFile($assetUrl('js/search.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
 }
 
@@ -160,7 +160,9 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                 </div>
                 <a href="<?= $value = $themeSetting('logo_url') ? $escapeAttr($value) : $site->url() ?>" class="site-title logo-header" title=<?= $escapeAttr($themeSetting('logo_title') ?: $siteTitle) ?>></a>
                 <div class="search-form-mask">
-                    <?= $searchConfig ? $searchConfig->renderForm(['template' => 'search/search-form-simple', 'variant' => 'simple']) : $partial('common/search-form-headroom') ?>
+                    <?= $searchConfig
+                        ? $searchConfig->renderForm(['template' => 'search/search-form-simple', 'variant' => 'simple'])
+                        : $partial('common/search-form-headroom') ?>
                 </div>
                 <div class="header-top-links">
                     <a href="" class="search-menu-toggle"><span><?= $translate('Menu recherche') ?></span></a>
@@ -202,7 +204,9 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             <a href="" class="cd-top footer-back-to-top"></a>
         </footer>
         <?php // Pop-ups en fonction des pages. ?>
-        <?= $searchConfig ? $searchConfig->renderForm(['template' => 'search/search-form-popup']) : $partial('common/search-form-popup') ?>
+        <?= $searchConfig
+            ? $searchConfig->renderForm(['template' => 'search/search-form-popup'])
+            : $partial('common/search-form-popup') ?>
         <?php if (!empty($resource)): // Informations sur les accès pour les pages ressources. ?>
         <div class="limited-access-popup">
             <div class="popup-scroll-content">
