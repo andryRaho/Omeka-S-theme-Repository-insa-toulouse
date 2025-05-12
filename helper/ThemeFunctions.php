@@ -1279,11 +1279,10 @@ SQL;
     public function hasMappingOrMarkers(?int $siteId = null): bool
     {
         static $hasMappingInAllSites;
-        static $isOldVersion;
         static $results = [];
 
         if (is_null($hasMappingInAllSites)) {
-            $hasMappingInAllSites = $this->isModuleActive('Mapping');
+            $hasMappingInAllSites = class_exists('Mapping\Module', false);
             if (!$hasMappingInAllSites) {
                 return false;
             }
@@ -1293,10 +1292,7 @@ SQL;
             } catch (\Exception $e) {
                 return false;
             }
-            $isOldVersion = !$this->isModuleActive('Mapping', '2.0');
-            $markers = $isOldVersion
-                ? $api->search('mapping_markers')->getTotalResults()
-                : $api->search('mapping_features')->getTotalResults();
+            $markers = $api->search('mapping_features')->getTotalResults();
             $hasMappingInAllSites = $results[$siteId] = ($mapping + $markers) > 0;
         }
 
@@ -1306,9 +1302,7 @@ SQL;
 
         if (!isset($results[$siteId])) {
             $mapping = $api->search('mappings', ['site_id' => $siteId])->getTotalResults();
-            $markers = $isOldVersion
-                ? $api->search('mapping_markers', ['site_id' => $siteId])->getTotalResults()
-                : $api->search('mapping_features', ['site_id' => $siteId])->getTotalResults();
+            $markers = $api->search('mapping_features', ['site_id' => $siteId])->getTotalResults();
             $results[$siteId] = ($mapping + $markers) > 0;
         }
 
@@ -1338,12 +1332,12 @@ SQL;
         if (!isset($results[$siteId][$resourceId])) {
             if ($resource instanceof \Omeka\Api\Representation\ItemRepresentation) {
                 $mapping = $api->search('mappings', ['site_id' => $siteId, 'item_id' => $resourceId, 'limit' => 1])->getTotalResults();
-                $markers = $api->search('mapping_markers', ['site_id' => $siteId, 'item_id' => $resourceId, 'limit' => 1])->getTotalResults();
-                $results[$siteId][$resourceId] = ($mapping + $markers) > 0;
+                $features = $api->search('mapping_features', ['site_id' => $siteId, 'item_id' => $resourceId, 'limit' => 1])->getTotalResults();
+                $results[$siteId][$resourceId] = ($mapping + $features) > 0;
             } elseif ($resource instanceof \Omeka\Api\Representation\MediaRepresentation) {
                 $itemId = $resource->item()->id();
-                $markers = $api->search('mapping_markers', ['site_id' => $siteId, 'item_id' => $itemId, 'media_id' => $resourceId, 'limit' => 1])->getTotalResults();
-                $results[$siteId][$resourceId] = $markers > 0;
+                $features = $api->search('mapping_features', ['site_id' => $siteId, 'item_id' => $itemId, 'media_id' => $resourceId, 'limit' => 1])->getTotalResults();
+                $results[$siteId][$resourceId] = $features > 0;
             } else {
                 $results[$siteId][$resourceId] = false;
                 return false;
