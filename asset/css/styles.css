@@ -1097,9 +1097,18 @@ p:empty {
         background: url(../img/oeil-rouge.svg) center left 18px no-repeat;
     }
 
-    .form-button.ask-copy-button  {
+    .form-button.ask-copy-button {
         padding-left: 45px;
         background: url(../img/mail_rouge.svg) center left 18px no-repeat;
+    }
+
+    .form-button.edit-button:hover,
+    .form-button.clear-button:hover,
+    .form-button.delete-button:hover,
+    .form-button.download-button:hover,
+    .form-button.preview-button:hover,
+    .form-button.ask-copy-button:hover {
+        text-decoration: underline;
     }
 
     .form-button.download-button  {
@@ -2055,9 +2064,10 @@ p:empty {
     }
 
     footer ul > li > a:visited,
+    footer ul > li > a:link,
     footer ul > li > a {
         display: inline-block;
-        font-family: 'Lato', sans-serif;
+        font-family: 'Open Sans', sans-serif;
         font-size: 13px;
         font-weight: 700;
         line-height: 15px;
@@ -2067,7 +2077,7 @@ p:empty {
     }
 
     footer ul > li > a:hover {
-        text-decoration: none;
+        text-decoration: underline !important;
         color: #BA0000;
     }
 
@@ -2580,6 +2590,7 @@ p:empty {
         margin-bottom: 10px;
     }
 
+    main.resources-list-and-filters aside .resources-filters > li > h4,
     main.resources-list-and-filters aside .resources-filters > li > .toggle {
         position: relative;
         display: block;
