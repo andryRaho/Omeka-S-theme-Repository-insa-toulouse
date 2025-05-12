@@ -75,7 +75,11 @@ class ThemeFunctions extends AbstractHelper
             return null;
         }
         $site = $this->currentSite();
-        return $this->view->page = $this->view->api()->searchOne('site_pages', ['site_id' => $site->id(), 'slug' => $pageSlug])->getContent();
+        try {
+            return $this->view->page = $this->view->api()->read('site_pages', ['site' => $site->id(), 'slug' => $pageSlug])->getContent();
+        } catch (\Exception $e) {
+            return $this->view->page = null;
+        }
     }
 
     /**
@@ -325,9 +329,18 @@ class ThemeFunctions extends AbstractHelper
                 && strpos($urlOrSlug, '/') === false
             ) {
                 if ($noLabel) {
-                    /** @var \Omeka\Api\Representation\SitePageRepresentation $page */
-                    $page = $api->searchOne('site_pages', ['site_slug' => $siteSlug, 'slug' => $urlOrSlug])->getContent();
-                    $label = $page ? $page->title() : $urlOrSlug;
+                    try {
+                        /**
+                         * @var \Omeka\Api\Representation\SiteRepresentation $site
+                         * @var \Omeka\Api\Representation\SitePageRepresentation $page
+                         */
+                        $site = $api->read('sites', ['slug' => $siteSlug])->getContent();
+                        $page = $api->read('site_pages', ['site' => $site->id(), 'slug' => $urlOrSlug])->getContent();
+                        $label = $page->title();
+                    } catch (\Exception $e) {
+                        $page = null;
+                        $label = $urlOrSlug;
+                    }
                 }
                 $urlOrSlug = $baseSiteUrl . 'page/' . $urlOrSlug;
             } elseif ($noLabel) {
