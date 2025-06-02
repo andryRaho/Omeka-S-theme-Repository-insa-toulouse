@@ -5,8 +5,9 @@ Dante (theme for Omeka S)
 > are available on [GitLab], which seems to respect users and privacy better
 > than the previous repository.__
 
-[Dante] is a theme for [Omeka S] designed for the digital repository of student
-works and thesis [dante] of [Université de Toulouse Jean-Jaurès].
+[Repository] is a theme for [Omeka S] designed for the digital repository of student
+works and thesis. It was initialy designed for [Dante] of [Université de Toulouse Jean-Jaurès]
+and is now used in many other places.
 
 
 Installation
@@ -17,7 +18,7 @@ and init the source.
 
 * From the zip
 
-Download the last release [Dante.zip] from the list of releases (the
+Download the last release [Repository.zip] from the list of releases (the
 master does not contain the dependency), and uncompress it in the `modules`
 directory.
 
@@ -33,6 +34,7 @@ See general end user documentation for [Installing a module].
 
 ### Optional dependencies
 
+- Module [Access] to manage access rights to thesis and other documents.
 - Module [Contribute] to manage submission of student works.
 - Module [Guest] to manage student account in public side.
 - Module [Block Plus] to manage pages.
@@ -105,11 +107,13 @@ See commits for full list of contributors and copyright of the libraries.
 * Copyright Flore Leclerc, Véronica Holguin, Denis Chiron, Daniel Berthereau for [Sempiternelia], 2021-2022 (see [Daniel-KM])
 
 
-[Dante]: https://gitlab.com/Daniel-KM/Omeka-S-theme-Dante
+[Repository]: https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository
 [Omeka S]: https://omeka.org/s
-[dante]: https://dante.univ-tlse2.fr
+[Dante]: https://dante.univ-tlse2.fr
 [Université de Toulouse Jean-Jaurès]: https://www.univ-tlse2.fr
 [Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
+[Repository.zip]: https://github.com/Daniel-KM/Omeka-S-theme-Repository/releases
+[Access]: https://gitlab.com/Daniel-KM/Omeka-S-module-AdvancedSearch
 [Advanced Search]: https://gitlab.com/Daniel-KM/Omeka-S-module-AdvancedSearch
 [Block Plus]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlockPlus
 [Contribute]: https://gitlab.com/Daniel-KM/Omeka-S-module-Contribute
