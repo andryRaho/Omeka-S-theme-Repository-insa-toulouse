@@ -2776,7 +2776,7 @@ p:empty {
         display: inline-block;
     }
 
-    ul.resources-list-selected-filters > li > a {
+    ul.resources-list-selected-filters > li a {
         display: inline-block;
         padding: 2px 24px 2px 10px;
         border: 1px solid #CCCCCC;
