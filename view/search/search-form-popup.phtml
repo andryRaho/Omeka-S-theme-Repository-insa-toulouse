@@ -25,6 +25,7 @@ $form
 
 $form->setAttribute('class', trim($form->getAttribute('class') . ' form-search advanced-search-form'));
 
+// TODO Vérifier si tout cela est toujours utile.
 $elementReset = null;
 $elementSubmit = null;
 // Ne pas faire `foreach ($form as $name => $element)`, cela ne comprend pas le submit.
@@ -53,7 +54,7 @@ foreach ($form->getElements() as $element) switch ($element->getName()) {
     case 'item_set':
     case 'item_set_id':
     case 'item_set_id_is':
-        $element->get('id')
+        $element
             ->setLabel('Rechercher par collection')
             ->setOption('empty_option', '')
             ->setOption('prepend_value_options', ['' => 'Toutes les collections'])
@@ -66,7 +67,7 @@ foreach ($form->getElements() as $element) switch ($element->getName()) {
         // value_options de resourceClass ne sont pas modifiables.
         // Les valeurs ajoutées vides ne servent pas avec chosen-select.
         // Le formulaire ne doit pas avoir été préparé (headroom?).
-        $element->get('id')
+        $element
             ->setLabel('Rechercher par type de document')
             ->setOption('empty_option', '')
             ->setOption('prepend_value_options', ['' => 'Tous les types de document'])
@@ -76,7 +77,7 @@ foreach ($form->getElements() as $element) switch ($element->getName()) {
     case 'resource_template':
     case 'resource_template_id':
     case 'resource_template_id_is':
-        $element->get('id')
+        $element
             ->setLabel('Rechercher par type de ressource')
             ->setOption('empty_option', '')
             ->setOption('prepend_value_options', ['' => 'Tous les types de ressource'])
