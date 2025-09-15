@@ -2,16 +2,12 @@
 
 namespace OmekaTheme\Helper;
 
-require_once __DIR__ . '/ThemeFunctionsDante.php';
-
 use Contribute\Api\Representation\ContributionRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 
 trait ThemeFunctionsSpecific
 {
-    use ThemeFunctionsDante;
-
     /**
      * Correspondance entre les valeurs et le nom dans le module Access.
      * Pas de différence entre "protected" et "forbidden" dans le module Access.
@@ -120,7 +116,7 @@ trait ThemeFunctionsSpecific
             $escape = $this->view->plugin('escapeHtml');
         }
 
-        $auteur = $this->formatAuthor($resource);
+        $auteur = $resource->value('dcterms:creator', ['default' => '[Inconnu']);
         $annee = $this->year($resource);
         $titre = $resource->displayTitle('sans titre');
 
@@ -131,7 +127,7 @@ trait ThemeFunctionsSpecific
             );
         }
 
-        $documentType = $this->documentType($resource);
+        $documentType = $resource->displayResourceTemplateLabel();
         return sprintf(
             '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
             $auteur, $escape($annee), $escape($titre), $escape($documentType)

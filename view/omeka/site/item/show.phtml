@@ -20,7 +20,7 @@ $isAllowedMediaContent = $plugins->has('isAllowedMediaContent') ? $plugins->get(
 
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 
-$medias = $themeFunctions->mediaItem($item);
+$medias = $item->media();
 
 $filterLocale = (bool) $siteSetting('filter_locale_values');
 $siteLang = $plugins->get('lang')();
@@ -29,12 +29,7 @@ $siteSlug = $site->slug();
 
 $searchingUrl = $plugins->has('searchingUrl') ? $plugins->get('searchingUrl')() : $url('site/resource', ['site-slug' => $siteSlug]);
 
-$resourceClass = $resource->resourceClass();
-$resourceClassTerm = $resourceClass ? $resourceClass->term() : null;
-$isThese = $resourceClassTerm === 'bibo:Thesis';
-// $isTravailEtudiant = !$isThese;
-
-$documentType = $themeFunctions->documentType($resource);
+$documentType = $resource->displayResourceTemplateLabel();
 
 $accessLevel = $themeFunctions->accessLevel($resource);
 $accessLabel = $themeFunctions->accessLabel($accessLevel);
@@ -64,7 +59,7 @@ $themeFunctions->appendVarsToRootView([
 
     <div class="item-content-header">
         <?= $this->pageTitle($resourceTitle, 1) ?>
-        <ul class="authors-and-date"><?= sprintf('%s (%s)', $themeFunctions->formatAuthor($resource), $themeFunctions->year($resource)) ?></ul>
+        <ul class="authors-and-date"><?= sprintf('%s (%s)', $resource->value('dcterms:creator', ['default' => '[Inconnu']), $themeFunctions->year($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
             <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
@@ -119,60 +114,44 @@ $themeFunctions->appendVarsToRootView([
                 </ul>
                 <?php else: ?>
                 <ul class="media-list">
-                    <?php /** @var \Omeka\Api\Representation\MediaRepresentation $media */ ?>
-                    <?php foreach ($medias as $mediaData):
-                        $media = $mediaData['resource'];
-                        if ($media) {
-                            $title = $media->displayTitle();
-                            $accessLevelMedia = $themeFunctions->accessLevel($media);
-                            $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
-                            $originalUrl = $media->originalUrl();
-                            // Attention : en cas d'accès restreint, le message est différent selon les documents et selon l'embargo.
-                            // Pour les travaux étudiants = accès restreint UT2
-                            // Pour les thèses = accès restreint communauté universitaire
-                            // Si embargo, ajouter : jusqu'au JJ/MM/AAAA
-                            if ($accessLevelMedia === 'reserved') {
-                                $accessLabelMedia = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
-                            }
-                            if ($accessLevelMedia !== 'free') {
-                                $embargo = null;
-                                if ($accessStatus) {
-                                    $accessStatusMedia = $accessStatus($media);
-                                    if ($accessStatusMedia) {
-                                        if ($accessStatusMedia->isUnderEmbargo()) {
-                                            $embargo = $accessStatusMedia->embargoEnd();
-                                        }
-                                    } else {
-                                        $embargo = $media->value('curation:end');
+                    <?php foreach ($medias as $media):
+                        $title = $media->displayTitle();
+                        $accessLevelMedia = $themeFunctions->accessLevel($media);
+                        $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
+                        $originalUrl = $media->originalUrl();
+                        if ($accessLevelMedia === 'reserved') {
+                            $accessLabelMedia = $translate('Document en accès restreint');
+                        }
+                        if ($accessLevelMedia !== 'free') {
+                            $embargo = null;
+                            if ($accessStatus) {
+                                $accessStatusMedia = $accessStatus($media);
+                                if ($accessStatusMedia) {
+                                    if ($accessStatusMedia->isUnderEmbargo()) {
+                                        $embargo = $accessStatusMedia->embargoEnd();
                                     }
                                 } else {
                                     $embargo = $media->value('curation:end');
                                 }
-                                if ($embargo) {
-                                    $date = $embargo instanceof DateTime ? $embargo : DateTime::createFromFormat('Y-m-d', $embargo->value());
-                                    if (!$date) {
-                                        $this->logger()->err('Date incorrecte dans curation:end du media #' . $media->id());
-                                    }
-                                }
+                            } else {
+                                $embargo = $media->value('curation:end');
                             }
-                        } else {
-                            $title = $mediaData['o:title'];
-                            $accessLevelMedia = 'forbidden';
-                            $accessLabelMedia = $translate('Non consultable');
-                            $embargo = null;
+                            if ($embargo) {
+                                $date = $embargo instanceof DateTime ? $embargo : DateTime::createFromFormat('Y-m-d', $embargo->value());
+                                if (!$date) {
+                                    $this->logger()->err('Date incorrecte dans curation:end du media #' . $media->id());
+                                }
+                                $accessLabelMedia .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
+                            }
                         }
                     ?>
                     <li class="document-parts">
                         <span class="document-part-name"><?= $title ?></span>
-                        <?php if ($isThese): ?>
-                        <div class="document-part-name document-version">Version : <span class="dante-version"><?= $escape($mediaData['dante:version'] ?: '[indéfini]') ?></span></div>
-                        <?php endif; ?>
                         <div class="document-access access-<?= $accessLevelMedia ?>"><?= $accessLabelMedia ?></div>
                         <div class="document-edition">
 
                             <?php if ($accessLevelMedia === 'free'
                                 || ($isAllowedMediaContent && $isAllowedMediaContent($media))
-                                || (!$isAllowedMediaContent && $media && $themeFunctions->accessMedia($media))
                             ): ?>
 
                             <ul class="form-buttons">
