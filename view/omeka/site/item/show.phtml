@@ -15,6 +15,7 @@ $translate = $plugins->get('translate');
 $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $accessStatus = $plugins->has('accessStatus') ? $plugins->get('accessStatus') : null;
+$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 $isAllowedMediaContent = $plugins->has('isAllowedMediaContent') ? $plugins->get('isAllowedMediaContent') : null;
 
@@ -62,7 +63,9 @@ $themeFunctions->appendVarsToRootView([
         <ul class="authors-and-date"><?= sprintf('%s (%s)', $resource->value('dcterms:creator', ['default' => '[Inconnu']), $themeFunctions->year($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
+            <?php if ($accessLevel !== 'free' && !$themeSetting('access_display_item_hide_heading')): ?>
             <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
+            <?php endif; ?>
         </div>
     </div>
 
