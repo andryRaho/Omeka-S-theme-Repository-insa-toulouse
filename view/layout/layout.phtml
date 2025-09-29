@@ -115,8 +115,11 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
         <?= $this->headTitle() ?>
         <meta name="theme-color" content="#000"/>
         <meta name="apple-mobile-web-app-status-bar-style" content="#000"/>
-        <link rel="icon shortcut" type="image/png" href="<?= $baseAssetUrl ?>img/logo/favicon.png"/>
+        <link rel="icon shortcut" type="image/jpeg" href="<?= $baseAssetUrl ?>img/logo/favicon.jpg"/>
+        <link rel="icon" type="image/jpeg" sizes="32x32" href="<?= $baseAssetUrl ?>img/logo/favicon-32x32.jpg"/>
+        <link rel="icon apple-touch-icon" type="image/jpeg" sizes="192x192" href="<?= $baseAssetUrl ?>img/logo/favicon-192x192.jpg"/>
         <?php /*
+        <link rel="icon shortcut" type="image/png" href="<?= $baseAssetUrl ?>img/logo/favicon.png"/>
         <link rel="icon shortcut" type="image/svg+xml" href="<?= $baseAssetUrl ?>img/logo/favicon.svg"/>
         <link rel="icon" type="image/png" sizes="16x16" href="<?= $baseAssetUrl ?>img/logo/favicon-16x16.png"/>
         <link rel="icon" type="image/png" sizes="32x32" href="<?= $baseAssetUrl ?>img/logo/favicon-32x32.png"/>
