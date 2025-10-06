@@ -110,7 +110,7 @@ if (!empty($itemSet)) {
                     <?= $facetElements($name, $facetValues, $facetParams) ?>
                     <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox', 'Link', 'Tree', 'TreeLink', 'Thesaurus', 'ThesaurusLink']) && count($facetValues) > (int) $facetParams['more']): ?>
                     <div class="facet-see-more">
-                        <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-label-see-more="<?= $escapeAttr($translate('+ voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('- voir moins')) ?>"><?= $escape($translate('+ voir plus')) ?></button>
+                        <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-label-see-more="<?= $escapeAttr($translate('Voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('Voir moins')) ?>"><?= $escape($translate('Voir plus')) ?></button>
                     </div>
                     <?php endif; ?>
                 </div>

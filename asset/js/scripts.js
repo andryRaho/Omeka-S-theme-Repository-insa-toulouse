@@ -6,13 +6,17 @@ $(document).ready(function () {
 
     const body = $('body');
 
+    const burgerIcon = $('.c-hamburger');
     const burgerBtn = $('.open-header-menu');
     const headerBottomMenu = $('.header-bottom');
 
     const headerSearchBtn = $('.search-menu-toggle');
     const headerTopMenu = $('.header-top .search-form-parent');
 
-    const documentListFilterToggle = $('.content a.resources-list-toggle-filters');
+    const $searchResultsWrapper = $('.search-results-wrapper');
+    $searchResultsWrapper.prepend("<button class='mobile-facets-toggle resources-list-toggle-filters'>Facettes</button>");
+
+    const documentListFilterToggle = $('.content .resources-list-toggle-filters');
     const documentListFilterMenu = $('main.resources-list-and-filters aside');
     const documentListCloseFilterMenu = $('main.resources-list-and-filters aside .resources-list-close-filters');
     const documentListFilterCheckboxes = $('main.resources-list-and-filters aside input[type=checkbox]');
@@ -150,6 +154,7 @@ $(document).ready(function () {
     burgerBtn.on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
+        burgerIcon.toggleClass('active');
         headerBottomMenu.toggleClass('opened');
         headerTopMenu.removeClass('opened');
     });
@@ -159,10 +164,12 @@ $(document).ready(function () {
         e.stopPropagation();
         headerTopMenu.toggleClass('opened');
         headerBottomMenu.removeClass('opened');
+        burgerIcon.removeClass('active');
     });
 
     body.on('click', function(e) {
         headerBottomMenu.removeClass('opened');
+        burgerIcon.removeClass('active');
         headerTopMenu.removeClass('opened');
         documentListFilterMenu.removeClass('opened');
         openSciencePageMenu.removeClass('opened');
