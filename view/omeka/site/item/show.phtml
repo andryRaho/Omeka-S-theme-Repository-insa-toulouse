@@ -52,6 +52,16 @@ $themeFunctions->appendVarsToRootView([
     'ariane' => $ariane,
     'mainClass' => 'item-content',
 ]);
+
+$user = $this->identity();
+
+if ($user) {
+    $msgMissing = $themeSetting('access_msg_missing_file_user') ?: $translate('Fichier manquant : contacter le service');
+    $msgRestricted = $themeSetting('access_msg_request_copy_user') ?: $translate('Document non accessible');
+} else {
+    $msgMissing = $themeSetting('access_msg_missing_file') ?: $translate('Fichier manquant : contacter le service');
+    $msgRestricted = $themeSetting('access_msg_request_copy') ?: $translate('Connectez-vous');
+}
 ?>
 
 <div class="content">
@@ -162,20 +172,20 @@ $themeFunctions->appendVarsToRootView([
                                 <li><a href="<?= $originalUrl ?>" class="form-button preview-button"><?= $translate('Visualiser') ?></a></li>
                                 <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="<?= $escapeAttr($media->source() ?: 'download') ?>" target="_self"><?= $translate('Télécharger') ?></a></li>
                                 <?php else: ?>
-                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Fichier manquant : demander une copie') ?></a></li>
+                                <li><a href="" class="form-button ask-copy-button"><?= $escape($msgMissing) ?></a></li>
                                 <?php endif; ?>
                             </ul>
 
                             <?php elseif ($accessLevelMedia === 'reserved'): ?>
 
                             <ul class="form-buttons">
-                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
+                                <li><a href="" class="form-button ask-copy-button"><?= $escape($msgRestricted) ?></a></li>
                             </ul>
 
                             <?php elseif ($accessLevelMedia === 'forbidden'): ?>
 
                             <ul class="form-buttons">
-                                <li><a href="" class="form-button ask-copy-button"><?= $translate('Demander une copie') ?></a></li>
+                                <li><a href="" class="form-button ask-copy-button"><?= $escape($msgRestricted) ?></a></li>
                             </ul>
 
                             <?php endif; ?>
