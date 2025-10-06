@@ -354,6 +354,11 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
         <li><button class="form-button" type="submit" name="next" value="edit-fichiers" form="<?= $form->getAttribute('id') ?>"><span><?= $escape($translate('Valider')) ?></span></button></li>
         <?php endif; ?>
     </ul>
+    <?php if ($msg = $themeSetting('contribution_message_medias')): ?>
+    <div class="message-step-3 message-medias ">
+        <?= $msg ?>
+    </div>
+    <?php endif; ?>
     <div class="sub-forms">
         <?php
         $vars->offsetSet('isMainForm', false);
