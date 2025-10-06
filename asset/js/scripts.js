@@ -21,13 +21,18 @@ $(document).ready(function () {
     const documentListCloseFilterMenu = $('main.resources-list-and-filters aside .resources-list-close-filters');
     const documentListFilterCheckboxes = $('main.resources-list-and-filters aside input[type=checkbox]');
 
-    const openSciencePageToggle = $('.content a.resources-list-toggle-page-menu');
-    const openSciencePageMenu = $('main.open-science-content aside');
-    const openScienceCloseMenu = $('main.open-science-content aside .resources-list-close-page-menu');
+    const $asidePageMainBlocksInner = $('main.aside-page .block-breadcrumbs');
+    $asidePageMainBlocksInner.after("<button class='mobile-aside-menu-toggle toggle-aside-page-menu'>Menu</button>");
+
+    const openSciencePageToggle = $('.toggle-aside-page-menu');
+    const openSciencePageMenu = $('main.aside-page .aside-sommaire-page');
+    const openScienceCloseMenu = $('main.aside-page .items-list-toggle-page-menu');
 
     const advancedSearchForm = $('.advanced-search-form');
     const advancedSearchTemplate = $('.advanced-search-form > .search-filters > li:first-child');
     const advancedSearchTemplateTarget = $('.advanced-search-form > .more-filters > .search-filters');
+
+    $('.facet.search-facet.toggle-parent').prepend('<a href="#" class="toggle"></a>')
 
     const exportSelect = $('.export-select select[name=format]');
     const exportButton = $('.export-button');
@@ -359,7 +364,7 @@ $(document).ready(function () {
 
     $('.toggle').on('click', function(e) {
         e.preventDefault();
-        $(this).closest('.toggle-parent').toggleClass('opened');
+        $(this).closest('.toggle-parent').toggleClass('closed');
     });
 
     /* */

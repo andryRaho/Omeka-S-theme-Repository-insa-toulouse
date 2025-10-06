@@ -13,6 +13,7 @@ html {
     --primary-link-color: #E42618;
     --secondary-color: #353535;
     --header-bottom-border-color: #E42618;
+    --menu-pages-hover-color: #D32B29;
     --title-color: #fff;
     --bg-color: #F8F0EC;
     --body-bg-color: #fbfbfb;
@@ -167,7 +168,6 @@ p:empty {
     main ul.navigation button:hover,
     main a:hover {
         text-decoration: underline;
-        text-decoration-style: dashed;
         text-underline-offset: 2px;
     }
 
@@ -640,7 +640,9 @@ p:empty {
 
     .header-top a:hover.support-link:before {
 
-        background-color: var(--bg-color);
+        transform: scale(1.1);
+
+        /* background-color: var(--bg-color); */
 
         display: flex;
         flex-direction: column;
@@ -1429,11 +1431,6 @@ p:empty {
         content: ' : ';
     }
 
-	h4 {
-	    font-size: 1.25em;
-	    padding: 10px 20px 10px 10px;
-	}
-
     .remove-value {
         background-color: transparent;
     }
@@ -2141,13 +2138,11 @@ p:empty {
     }
 
     /* Fix required select hidden with chosen. https://stackoverflow.com/questions/25717842/how-i-can-highlight-as-required-field-with-chosen-plugin/52978520 */
-    /* Don't use display flex on a select with chrome, but required. So force height and width too. */
     select.chosen-select:invalid {
+        height: 0 !important;
         opacity: 0 !important;
         position: absolute !important;
         display: flex !important;
-        height: 36px !important;
-        width: 320px !important;
     }
     select.chosen-select:invalid[multiple] {
         margin-top: 15px !important;
@@ -2162,7 +2157,7 @@ p:empty {
 
     main.user-account .content ul.user-tabs {
         display: flex;
-        border-bottom: 4px #cddad5 solid;
+        border-bottom: 4px #F5ADAA solid;
         margin-top: 32px;
     }
 
@@ -2186,7 +2181,7 @@ p:empty {
     }
 
     main.user-account .content ul.user-tabs > li.active {
-        background-color: #CDDAD5;
+        background-color: #F5ADAA;
     }
 
     main.user-account .content ul.user-infos {
@@ -2203,6 +2198,7 @@ p:empty {
         font-size: 13px;
         line-height: 20px;
         text-align: justify;
+        margin-top: 10px;
     }
 
     main.user-account .content ul.user-infos li {
@@ -2230,6 +2226,13 @@ p:empty {
         padding: initial;
         position: initial;
         width: initial;
+    }
+
+    main.user-account.user-infos .form-buttons {
+        margin-top: 20px;
+        padding-top: 22px;
+        border-top: 4px solid #EAEFED;
+        justify-content: center;
     }
 
     /* Footer */
@@ -2806,13 +2809,20 @@ p:empty {
         height: auto;
     }
 
+    main.resources-list-and-filters aside .facets-refine input.search-refine {
+        margin-bottom: 0;
+    }
+
+    main.resources-list-and-filters aside .facets-refine,
     main.resources-list-and-filters aside .resources-filters > li {
+        position: relative;
         border-radius: 1px;
         background-color: var(--bg-color);
         padding: 12px 14px;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
+    main.resources-list-and-filters aside .facets-refine > h4,
     main.resources-list-and-filters aside .resources-filters > li > h4,
     main.resources-list-and-filters aside .resources-filters > li > .toggle {
         position: relative;
@@ -2831,8 +2841,13 @@ p:empty {
         margin-bottom: 10px;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li.opened > .toggle::after {
-        transform: rotate(0deg);
+    main.resources-list-and-filters aside .resources-filters > li > a.toggle {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 2;
+        padding: 5px 0;
+        margin-bottom: 0;
     }
 
     main.resources-list-and-filters aside .resources-filters > li > .toggle::after {
@@ -2841,12 +2856,21 @@ p:empty {
         width: 22px;
         height: 11px;
         background: url(../img/chevron_bas.svg) right center no-repeat;
-        position: absolute;
-        right: 2px;
-        top: 2px;
         transform-origin: 72% 50%;
         transition: transform ease-in-out 0.1s;
         transform: rotate(180deg);
+    }
+
+    main.resources-list-and-filters aside .resources-filters > li.closed > .toggle::after {
+        transform: rotate(0deg);
+    }
+
+    main.resources-list-and-filters aside .resources-filters > li.closed > .facet-elements {
+        display: none;
+    }
+
+    main.resources-list-and-filters aside .resources-filters > li.closed > h4 {
+        margin-bottom: 0;
     }
 
     main.resources-list-and-filters aside .resources-filters > li > .collapse + .collapsible {
@@ -2930,9 +2954,15 @@ p:empty {
 
     main.resources-list-and-filters aside .form-buttons {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         margin: 20px 0;
-        gap: 25px;
+        gap: 10px;
+    }
+
+    main.resources-list-and-filters aside .form-buttons button {
+        display: block;
+        width: 100%;
     }
 
     a.resources-list-toggle-page-menu {
@@ -3106,7 +3136,8 @@ p:empty {
         display: none;
     }
 
-    .search-results-wrapper .mobile-facets-toggle {
+    .search-results-wrapper .mobile-facets-toggle,
+    main.aside-page .mobile-aside-menu-toggle {
         display: none;
     }
 
@@ -3777,13 +3808,12 @@ p:empty {
     ul.resource-metadata > li > ul > li > a,
     ul.resource-metadata .property a {
         color:#000;
-        font-weight: 700;
         text-decoration: underline;
     }
 
     ul.resource-metadata > li > ul > li > a:hover,
     ul.resource-metadata .property a:hover {
-        color:#000;
+        color: var(--primary-link-color);
     }
 
     ul.resource-metadata > li > ul > li,
@@ -3933,7 +3963,12 @@ p:empty {
         font-weight: 900;
         line-height: 22px;
         color: var(--secondary-color);
-        text-decoration: underline;
+        text-decoration: none;
+    }
+
+    .open-science-item-card a:hover {
+        color: var(--primary-color);
+        text-decoration: none;
     }
 
     .open-science-item-cards .card-image-parent {
@@ -4032,11 +4067,11 @@ p:empty {
         line-height: 20px;
         color: #000000;
         text-transform: uppercase;
-        text-decoration: underline;
+        text-decoration: none;
     }
 
     main aside > nav > .back-to-list:hover > a {
-        color: var(--primary-color);
+        color: var(--menu-pages-hover-color);
     }
 
     main.open-science-content .block > aside > nav > ul,
@@ -4063,7 +4098,7 @@ p:empty {
         font-weight: 900;
         color: #000000;
         text-transform: uppercase;
-        text-decoration: underline;
+        text-decoration: none;
     }
 
     main.open-science-content .block > aside > nav > ul > li > ul,
@@ -4091,7 +4126,7 @@ p:empty {
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
         font-weight: normal;
-        text-decoration: underline;
+        text-decoration: none;
     }
 
     main.open-science-content .block > aside > nav > ul > li > a:hover,
@@ -4103,7 +4138,8 @@ p:empty {
     main.open-science-content > aside > nav > ul > li > ul > li a:hover,
     main.aside-page > aside > nav > ul > li > a:hover,
     main.aside-page > aside > nav > ul > li > ul > li a:hover {
-        color: var(--primary-link-color);
+        color: var(--menu-pages-hover-color);
+        text-decoration: none;
     }
 
 
@@ -4187,7 +4223,6 @@ p:empty {
     }
 
     .page-block a {
-        font-weight: 700;
         color: #000000;
         text-decoration: underline;
     }
@@ -4504,7 +4539,7 @@ p:empty {
     }
 
     main.user-account .content .user-content {
-        border-bottom: 4px solid #CDDAD5;
+        /* border-bottom: 4px solid #CDDAD5; */
     }
 
     ul.resources-list > li:last-child .document-details {
@@ -4558,8 +4593,8 @@ p:empty {
         padding-left: 15px;
     }
 
-    form.search-form {
-        width: auto;
+    .search-form-parent form.search-form {
+        width: 80%;
     }
 
     /* Accueil - dépôt */
@@ -5372,7 +5407,7 @@ p:empty {
     main.resources-list-and-filters aside,
     main.aside-page .aside,
     main.aside-page aside {
-    position: fixed;
+        position: fixed;
         top: 0;
         left: 0;
 
@@ -5381,10 +5416,14 @@ p:empty {
         overflow-y: auto;
         overflow-x: hidden;
         padding: 78px 12px 12px 12px;
-        background-color: #CDDAD5;
+        background-color: var(--bg-color);
 
         transform: translateX(-100%);
         transition: transform ease-in-out 0.35s;
+    }
+
+    main.resources-list-and-filters aside {
+        background-color: #CDDAD5;
     }
 
     main.open-science-content .aside.opened,
@@ -5429,7 +5468,11 @@ p:empty {
         line-height: 18px;
     }
 
-    .search-results-wrapper .mobile-facets-toggle {
+    main.aside-page .items-list-toggle-page-menu,
+    .search-results-wrapper .mobile-facets-toggle,
+    main.aside-page .mobile-aside-menu-toggle {
+        align-self: flex-start;
+
         display: inline-block;
         width: auto;
         padding: 7px 7px 7px 30px;
@@ -5441,8 +5484,22 @@ p:empty {
         text-decoration: none;
         text-transform: uppercase;
         border-radius: 2px;
-        background: #F2F5F4 url(../img/filtres.svg) left 6px center / 18px auto no-repeat;
         margin: 10px 0 12px;
+    }
+
+    .search-results-wrapper .mobile-facets-toggle {
+        background: #F2F5F4 url(../img/filtres.svg) left 6px center / 18px auto no-repeat;
+    }
+
+    main.aside-page .mobile-aside-menu-toggle {
+        background: #F2F5F4 url(../img/menu-so.svg) left 6px center / auto 14px no-repeat;
+    }
+
+    main.aside-page .items-list-toggle-page-menu {
+        padding-left: 33px;
+        font-weight: 600;
+        text-transform: uppercase;
+        background: url(../img/menu-so.svg) left 6px center / auto 14px no-repeat;
     }
 
     /* */
@@ -5686,6 +5743,16 @@ p:empty {
     .content-form-parent > div:first-child > p {
         font-size: 16px;
         line-height: 20px;
+    }
+
+    /* Login */
+
+    .login main .content h1 {
+        margin-top: 30px;
+    }
+
+    .login main .content > .page-block:last-child {
+        padding: 20px 12%;
     }
 
 }
