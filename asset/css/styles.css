@@ -2136,11 +2136,13 @@ p:empty {
     }
 
     /* Fix required select hidden with chosen. https://stackoverflow.com/questions/25717842/how-i-can-highlight-as-required-field-with-chosen-plugin/52978520 */
+    /* Don't use display flex on a select with chrome, but required. So force height and width too. */
     select.chosen-select:invalid {
-        height: 0 !important;
         opacity: 0 !important;
         position: absolute !important;
         display: flex !important;
+        height: 36px !important;
+        width: 320px !important;
     }
     select.chosen-select:invalid[multiple] {
         margin-top: 15px !important;
