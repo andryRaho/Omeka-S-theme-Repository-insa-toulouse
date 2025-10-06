@@ -38,11 +38,11 @@ else:
             $escape = $plugins->get('escapeHtml');
             $translate = $plugins->get('translate');
             $ariane = '<nav class="breadcrumbs content-with-margin">
-    <ul>
-        <li><a href="' . $url('site', ['site-slug' => $site->slug()]) . '">' . $escape($translate('Accueil')) . '</a></li>
-        <li><span>' . $escape($page->title()) . '</span></li>
-    </ul>
-</nav>';
+                <ul>
+                    <li><a href="' . $url('site', ['site-slug' => $site->slug()]) . '">' . $escape($translate('Accueil')) . '</a></li>
+                    <li><span>' . $escape($page->title()) . '</span></li>
+                </ul>
+            </nav>';
             $themeFunctions->appendVarsToRootView(['ariane' => $ariane]);
         endif;
     endif;
