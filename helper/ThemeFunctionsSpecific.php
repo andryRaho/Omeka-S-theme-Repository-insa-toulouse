@@ -5,6 +5,7 @@ namespace OmekaTheme\Helper;
 use Contribute\Api\Representation\ContributionRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
+use Omeka\Api\Representation\ResourceTemplateRepresentation;
 
 trait ThemeFunctionsSpecific
 {
@@ -300,6 +301,24 @@ trait ThemeFunctionsSpecific
             $html = mb_substr($html, 5, -7);
         }
         return $html;
+    }
+
+    public function templateToHelp(?ResourceTemplateRepresentation $template): string
+    {
+        if (!$template) {
+            return '';
+        }
+
+        $value = strtolower($template->label());
+        if (strpos($value, 'mémoire') !== false) {
+            return 'memoire';
+        } elseif (strpos($value, 'excercice') !== false) {
+            return 'these_exercice';
+        } elseif (strpos($value, 'thèse') !== false) {
+            return 'these';
+        } else {
+            return '';
+        }
     }
 
     /**

@@ -56,10 +56,14 @@ $themeFunctions->appendVarsToRootView([
 ]);
 
 $template = $contribution ? $contribution->resourceTemplate() : null;
-$asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these' : '';
+
+$specificHelp = $themeFunctions->templateToHelp($template);
+$specificHelp = $specificHelp ? '_' . $specificHelp : '';
 ?>
 
-<?= $themeSetting('contribution_help_aside_' . $steps['step'] . $asideThese) ?: $this->partial('contribute/site/contribution/aside') ?>
+<?= $themeSetting('contribution_help_aside_' . $steps['step'] . $specificHelp)
+    ?: ($specificHelp ? $themeSetting('contribution_help_aside_' . $steps['step']) : null)
+    ?: $this->partial('contribute/site/contribution/aside') ?>
 
 <div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
