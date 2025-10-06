@@ -117,21 +117,27 @@ trait ThemeFunctionsSpecific
             $escape = $this->view->plugin('escapeHtml');
         }
 
-        $auteur = $resource->value('dcterms:creator', ['default' => '[Inconnu']);
+        $auteurs = $resource->value('dcterms:creator', ['all' => true]);
         $annee = $this->year($resource);
         $titre = $resource->displayTitle('sans titre');
+
+        if ($auteurs) {
+            $auteurs = implode(' ; ', $auteurs);
+        } else {
+            $auteurs = '[Inconnu]';
+        }
 
         if ($short) {
             return sprintf(
                 '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span>',
-                $auteur, $escape($annee), $escape($titre)
+                $auteurs, $escape($annee), $escape($titre)
             );
         }
 
         $documentType = $resource->displayResourceTemplateLabel();
         return sprintf(
             '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
-            $auteur, $escape($annee), $escape($titre), $escape($documentType)
+            $auteurs, $escape($annee), $escape($titre), $escape($documentType)
         );
     }
 

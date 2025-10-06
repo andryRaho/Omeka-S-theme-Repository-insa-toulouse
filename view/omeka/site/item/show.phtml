@@ -70,7 +70,8 @@ if ($user) {
 
     <div class="item-content-header">
         <?= $this->pageTitle($resourceTitle, 1) ?>
-        <ul class="authors-and-date"><?= sprintf('%s (%s)', $resource->value('dcterms:creator', ['default' => '[Inconnu']), $themeFunctions->year($resource)) ?></ul>
+        <?php $auteurs = $resource->value('dcterms:creator', ['all' => true]); ?>
+        <ul class="authors-and-date"><?= sprintf('%s (%s)', $auteurs ? implode(' ; ', $auteurs) : '[Inconnu]', $themeFunctions->year($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
             <?php if ($accessLevel !== 'free' && !$themeSetting('access_display_item_hide_heading')): ?>
