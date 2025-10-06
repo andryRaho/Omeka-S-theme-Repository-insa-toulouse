@@ -59,6 +59,7 @@ endif;
 if ($part === 'medias'):
 
     if (count($valuesMedias)): ?>
+        <h4><?= $translate('Fichiers téléversés') ?></h4>
         <?php
         $varsBase['isSub'] = true;
         $varsForLoop = [];
@@ -76,11 +77,13 @@ if ($part === 'medias'):
             $accessLevel = $themeFunctions->accessNormalize($accessLabel);
             ?>
             <a class="document-preview" href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" download="download" target="_self">
-                <label>Prévisualiser</label>
                 <div class="document-preview-filename"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value'] ?? '') ?></div>
+                <label><?= $translate('Download') ?></label>
+                <?php /* // Trompeur pour l'utilisateur tant que pas validé : le statut est toujours non consultable quand pas encore validé.
                 <div class="document-type-and-access">
                     <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
                 </div>
+                */ ?>
             </a>
             <?php
         endforeach;
