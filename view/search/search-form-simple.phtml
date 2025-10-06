@@ -25,6 +25,8 @@ $form
     ->setAttribute('class', $form->getAttribute('class') . ' search-form');
 
 $mainElement = $form->get('q');
+// Pour l'autosuggestion, il faut une valeur vide.
+$mainElement->setValue('');
 ?>
 
 <div class="search-form-parent">
