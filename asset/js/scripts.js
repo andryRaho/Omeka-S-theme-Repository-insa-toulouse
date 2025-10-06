@@ -360,6 +360,11 @@ $(document).ready(function () {
         childrenCheckboxes.prop('checked', liInput.is(':checked'));
     });
 
+    $('main .warn-acceptation').on('click', function(e) {
+        const checkboxes = $(this).find('input[type=checkbox]');
+        checkboxes.prop('checked', !checkboxes.is(':checked'));
+    });
+
     /* */
 
     $('.toggle').on('click', function(e) {

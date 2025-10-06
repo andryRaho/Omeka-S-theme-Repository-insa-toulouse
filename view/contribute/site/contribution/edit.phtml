@@ -24,6 +24,7 @@ $partial = $plugins->get('partial');
 $setting = $plugins->get('setting');
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
+$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 $contributionForm = $plugins->get('contributionForm');
 
@@ -58,7 +59,7 @@ $template = $contribution ? $contribution->resourceTemplate() : null;
 $asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these' : '';
 ?>
 
-<?= $this->themeSetting('contribution_help_aside_' . $steps['step'] . $asideThese) ?: $this->partial('contribute/site/contribution/aside') ?>
+<?= $themeSetting('contribution_help_aside_' . $steps['step'] . $asideThese) ?: $this->partial('contribute/site/contribution/aside') ?>
 
 <div class="container content etape-courante-<?= $steps['stepNumber'] ?>">
     <div class="messages">
@@ -114,6 +115,11 @@ $asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these
                 </li>
                 <?php endforeach; ?>
             </ul>
+            <?php if ($msg = $themeSetting('contribution_message_acceptation')): ?>
+            <div class="warn-acceptation">
+                <?= $msg ?>
+            </div>
+            <?php endif; ?>
         </fieldset>
         <?= $formElement($form->get('step')) ?>
         <?= $formElement($form->get('next')) ?>
