@@ -80,6 +80,24 @@ if ($user) {
         </div>
     </div>
 
+    <?php if ($medias && $themeSetting('item_display_viewer')): ?>
+    <?php // TODO Utiliser fonctions pour gérer tous les cas de visionneuses. ?>
+    <div class="block block-media">
+        <?php
+           $media = reset($medias);
+           $mediaType = $media->mediaType();
+           $mainMediaType = strtok((string) $mediaType, '/');
+           if (in_array($mainMediaType, ['image', 'video', 'audio'])): ?>
+           <?= $plugins->has('mirador') ? $plugins->get('mirador')($item) : $this->thumbnail($media, 'medium') ?>
+       </div>
+        <?php elseif ($mediaType === 'application/pdf'): ?>
+           <?= $media->render() ?>
+        <?php else: ?>
+           <?= $this->thumbnail($media, 'medium') ?>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
     <div class="resource-metadata-and-document-parts">
         <ul class="resource-metadata">
             <?= $resource->displayValues(['resource' => $resource]) ?>
