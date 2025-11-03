@@ -16,6 +16,7 @@ html {
     --menu-pages-hover-color: #D32B29;
     --title-color: #fff;
     --bg-color: #F8F0EC;
+    --mobile-facets-bg-color: #F5ADAA;
     --body-bg-color: #fbfbfb;
     --border-color: #9CA19F;
 }
@@ -2195,8 +2196,8 @@ p:empty {
 
         color: #000000;
         font-family: 'Open Sans', sans-serif;
-        font-size: 13px;
-        line-height: 20px;
+        font-size: 14px;
+        line-height: 21px;
         text-align: justify;
         margin-top: 10px;
     }
@@ -2705,6 +2706,8 @@ p:empty {
         margin-right: 5px;
         padding: 4px 10px;
         align-self: flex-start;
+        min-height: 16px;
+        min-width: 50px;
 
         color: #474948;
         font-family: 'Lato', sans-serif;
@@ -2827,6 +2830,7 @@ p:empty {
     main.resources-list-and-filters aside .resources-filters > li > .toggle {
         position: relative;
         display: block;
+        padding-right: 20px;
         color: #333333;
         font-family: 'Open Sans', sans-serif;
         font-size: 13px;
@@ -3834,8 +3838,8 @@ p:empty {
     /* Force une nouvelle ligne quand deux dd à la suite ont une langue différente (titre, résumé, etc.). */
     /* Supprime également la virgule/le point-virgule ajouté. */
     /* Ne fonctionne pas quand les langues sont mélangées. */
-    ul.resource-metadata > li > ul > li[lang=en] + l:not(i[lang=en])::before,
-    ul.resource-metadata > li > ul > li[lang=fr] + l:not(i[lang=fr])::before,
+    ul.resource-metadata > li > ul > li[lang=en] + li:not(i[lang=en])::before,
+    ul.resource-metadata > li > ul > li[lang=fr] + li:not(i[lang=fr])::before,
     ul.resource-metadata > li > ul > li[lang=eng] + li:not([lang=eng])::before,
     ul.resource-metadata > li > ul > li[lang=fra] + li:not([lang=fra])::before,
     ul.resource-metadata > li > ul > li[lang=und] + li:not([lang=und])::before,
@@ -5423,7 +5427,7 @@ p:empty {
     }
 
     main.resources-list-and-filters aside {
-        background-color: #CDDAD5;
+        background-color: var(--mobile-facets-bg-color);
     }
 
     main.open-science-content .aside.opened,
@@ -5721,6 +5725,20 @@ p:empty {
 
     .page-block-encadre-image {
         flex-direction: column;
+    }
+
+    .open-science-menu-header {
+        position: relative;
+    }
+
+    .open-science-menu-header a.items-list-close-page-menu {
+        position: absolute;
+        top: 18px;
+        right: 2px;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background: url(../img/fermer_noir.svg) left center / 18px auto no-repeat;
     }
 
     /* Contact */

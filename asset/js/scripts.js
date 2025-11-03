@@ -26,7 +26,7 @@ $(document).ready(function () {
 
     const openSciencePageToggle = $('.toggle-aside-page-menu');
     const openSciencePageMenu = $('main.aside-page .aside-sommaire-page');
-    const openScienceCloseMenu = $('main.aside-page .items-list-toggle-page-menu');
+    const openScienceCloseMenu = $('main.aside-page .items-list-toggle-page-menu, main.aside-page .items-list-close-page-menu');
 
     const advancedSearchForm = $('.advanced-search-form');
     const advancedSearchTemplate = $('.advanced-search-form > .search-filters > li:first-child');
@@ -358,11 +358,6 @@ $(document).ready(function () {
         const liParent = $(e.target).closest('li');
         const childrenCheckboxes = liParent.children('ul').find('input[type=checkbox]');
         childrenCheckboxes.prop('checked', liInput.is(':checked'));
-    });
-
-    $('main .warn-acceptation').on('click', function(e) {
-        const checkboxes = $(this).find('input[type=checkbox]');
-        checkboxes.prop('checked', !checkboxes.is(':checked'));
     });
 
     /* */
