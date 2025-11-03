@@ -46,8 +46,8 @@ $(document).ready(function () {
     const navigationDepotSuivant = $('.depot-precedent-suivant li:last-child a');
     const navigationDepotPrecedent = $('.depot-precedent-suivant li:first-child a');
 
-    // Liens externes
-    $('a[href^="http"]').attr('target', function() {
+    // Liens externes: dans un nouvel onglet s'il n'est pas déjà défini.
+    $('a[href^="http"]:not([target])').attr('target', function() {
         if (this.host === location.host) return '_self'
         else return '_blank'
     });
