@@ -46,9 +46,24 @@ $this->htmlElement('html')
     ->setAttribute('lang', $this->lang());
 $this->htmlElement('body')
     ->appendAttribute('class', 'body-inner');
-$this->headMeta()
+$headMeta = $this->headMeta()
     ->setCharset('utf-8')
     ->appendName('viewport', 'width=device-width, initial-scale=1');
+
+$metaCopyright = $themeSetting('meta_copyright', '');
+if ($metaCopyright) {
+    $headMeta->appendName('copyright', $metaCopyright);
+}
+
+$metaOwner = $themeSetting('meta_owner', '');
+if ($metaOwner) {
+    $headMeta->appendName('owner', $metaOwner);
+}
+
+$metaKeywords = $themeSetting('meta_keywords', '');
+if ($metaKeywords) {
+    $headMeta->appendName('keywords', $metaKeywords);
+}
 
 $this->headTitle($siteTitle)
     ->setSeparator(' · ')
