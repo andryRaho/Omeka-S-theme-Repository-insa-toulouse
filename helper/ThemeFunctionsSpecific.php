@@ -318,7 +318,7 @@ trait ThemeFunctionsSpecific
         $value = strtolower($template->label());
         if (strpos($value, 'mémoire') !== false) {
             return 'memoire';
-        } elseif (strpos($value, 'excercice') !== false) {
+        } elseif (strpos($value, 'exercice') !== false) {
             return 'these_exercice';
         } elseif (strpos($value, 'thèse') !== false) {
             return 'these';
