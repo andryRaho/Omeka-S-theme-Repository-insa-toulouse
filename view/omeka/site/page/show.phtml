@@ -12,6 +12,8 @@ $plugins = $this->getHelperPluginManager();
 $siteSetting = $plugins->get('siteSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
+$hasBreadcrumbs = $plugins->has('breadcrumbs');
+
 $showPagePagination = $siteSetting('show_page_pagination', true);
 
 // $this->headLink()->appendStylesheet($assetUrl('css/page-blocks.css', 'Omeka'));
@@ -28,11 +30,13 @@ if ($isHomePage):
     $themeFunctions->appendVarToRootView('mainClass', 'home-content');
 else:
 
-    if ($activePage):
-        if ($activePage['depth'] !== 0):
+    // Fil d'Ariane.
+if ($hasBreadcrumbs) {
+    if ($activePage) {
+        if ($activePage['depth'] !== 0) {
             $this->vars()->offsetSet('ariane', trim($nav->breadcrumbs()->setSeparator('')));
             $themeFunctions->appendVarToRootView('ariane', $this->partial('common/breadcrumbs-fix'));
-        else:
+        } else {
             // On affiche le fil pour la page de niveau 0 en ajoutant Accueil.
             $url = $plugins->get('url');
             $escape = $plugins->get('escapeHtml');
@@ -44,9 +48,9 @@ else:
                 </ul>
             </nav>';
             $themeFunctions->appendVarsToRootView(['ariane' => $ariane]);
-        endif;
-    endif;
-
+        }
+    }
+}
     /* // TODO On ne gère qu'un seul niveau de menu pour l'instant. ?>
     <?php if ($activePage && $displayNavigation && $activePage['page']->hasPages()): ?>
     <nav class="sub-menu"><?= $nav->menu()->renderSubMenu() ?></nav>
