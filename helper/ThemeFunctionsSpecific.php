@@ -94,13 +94,18 @@ trait ThemeFunctionsSpecific
     {
         if (!$property) {
             $themeSetting = $this->view->plugin('themeSetting');
-            $property = $themeSetting('item_date_main') ?: 'dcterms:created';
+            $property = $themeSetting('item_date_main') ?: 'dcterms:dateAccepted';
         }
 
-        $value = $resource->value($property);
+        $value = $resource->value($property)
+            ?: $resource->value('dcterms:dateAccepted')
+            ?: $resource->value('dcterms:created')
+            ?: $resource->value('dcterms:date');
+
         if (!$value) {
             return 'sans date';
         }
+
         return $value->type() === 'numeric:timestamp'
             ? (string) (\NumericDataTypes\DataType\Interval::getDateTimeFromValue((string) $value)['year'] ?? '')
             : substr((string) $value->value(), 0, 4);
