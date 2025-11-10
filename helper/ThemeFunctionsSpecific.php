@@ -117,7 +117,10 @@ trait ThemeFunctionsSpecific
             $escape = $this->view->plugin('escapeHtml');
         }
 
-        $auteurs = $resource->value('dcterms:creator', ['all' => true]);
+        $auteurs = $resource->value('tef:auteur', ['all' => true]);
+        $auteursProperty = $auteurs ? 'tef:auteur' : 'dcterms:creator';
+        $auteurs = $auteurs ?: $resource->value('dcterms:creator', ['all' => true]);
+
         $annee = $this->year($resource);
         $titre = $resource->displayTitle('sans titre');
 
@@ -129,14 +132,14 @@ trait ThemeFunctionsSpecific
 
         if ($short) {
             return sprintf(
-                '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span>',
+                '<span class="' . $auteursProperty . '">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span>',
                 $auteurs, $escape($annee), $escape($titre)
             );
         }
 
         $documentType = $resource->displayResourceTemplateLabel();
         return sprintf(
-            '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
+            '<span class="' . $auteursProperty . '">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
             $auteurs, $escape($annee), $escape($titre), $escape($documentType)
         );
     }

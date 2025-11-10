@@ -70,7 +70,7 @@ if ($user) {
 
     <div class="item-content-header">
         <?= $this->pageTitle($resourceTitle, 1) ?>
-        <?php $auteurs = $resource->value('dcterms:creator', ['all' => true]); ?>
+        <?php $auteurs = $resource->value('tef:auteur', ['all' => true]) ?: $resource->value('dcterms:creator', ['all' => true]); ?>
         <ul class="authors-and-date"><?= sprintf('%s (%s)', $auteurs ? implode(' ; ', $auteurs) : '[Inconnu]', $themeFunctions->year($resource)) ?></ul>
         <div class="document-type-and-access">
             <div class="document-type"><?= $escape($translate($documentType)) ?></div>
