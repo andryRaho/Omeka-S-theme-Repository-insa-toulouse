@@ -25,7 +25,7 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
     </div>
     <nav>
         <div class="back-to-list">
-            <a href="<?= $pageMetadata && ($p = $pageMetadata('subroot')) ? $p->siteUrl() : $url('site', [], true) ?>">Retour au sommaire</a>
+            <a href="<?= $pageMetadata && ($p = $pageMetadata('root')) ? $p->siteUrl() : $url('site', [], true) ?>">Retour au sommaire</a>
         </div>
         <?php
         // Un seul niveau et sous-niveau.
@@ -44,7 +44,11 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
                 // Pas les "footnotes" non plus.
                 if (strpos($current['#id'], '#footnotes') !== false) continue;
 
-                $href = $currentPageSlug === $current['page_slug'] ? $current['#id'] : $current['page_url#id'];
+                // Fragment sur les sous-parties seulement.
+                $href = ($currentPageSlug === $current['page_slug'])
+                    ? ($current['level'] > 1 ? $current['#id'] : '')
+                    : ($current['level'] > 1 ? $current['page_url#id'] : $current['page_url']);
+
                 // Fermer les ul/li précédents quand on revient à un niveau supérieur.
                 if ($prevLevel > $current['level']) {
                     $deep += $current['level'] - $prevLevel;
