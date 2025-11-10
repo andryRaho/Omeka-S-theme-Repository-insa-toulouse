@@ -4883,11 +4883,11 @@ p:empty {
     }
 
     .header-top a.contact-link {
-        display: none;
-        margin: 0 5px;
+        margin: 0 8px 0 2px;
     }
 
     .header-top a.support-link {
+        display: none;
         margin: 0 5px;
         background-position: center;
         background-size: 20px auto;
