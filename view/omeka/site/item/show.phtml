@@ -189,7 +189,7 @@ if ($user) {
                             <ul class="form-buttons">
                                 <?php if ($originalUrl): ?>
                                 <li><a href="<?= $originalUrl ?>" class="form-button preview-button" target="_blank"><?= $translate('Visualiser') ?></a></li>
-                                <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="<?= $escapeAttr($media->source() ?: 'download') ?>" target="_blank"><?= $translate('Télécharger') ?></a></li>
+                                <li><a href="<?= $originalUrl ?>?download=1" class="form-button download-button" download="<?= $escapeAttr($media->source() ?: 'download') ?>" target="_self"><?= $translate('Télécharger') ?></a></li>
                                 <?php else: ?>
                                 <li><a href="" class="form-button ask-copy-button"><?= $escape($msgMissing) ?></a></li>
                                 <?php endif; ?>
