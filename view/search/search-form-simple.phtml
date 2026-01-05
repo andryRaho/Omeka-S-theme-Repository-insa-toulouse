@@ -15,6 +15,7 @@
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
 $formSearch = $plugins->get('formSearch');
+$formElement = $plugins->get('formElement');
 
 $params = $this->params()->fromQuery() ?: [];
 $form
@@ -27,10 +28,15 @@ $form
 $mainElement = $form->get('q');
 // Pour l'autosuggestion, il faut une valeur vide.
 $mainElement->setValue('');
+
+// Quick filter is part of the simple form variant.
+$quickFilterField = $searchConfig->subSetting('form', 'quick_filter');
+$quickFilterElement = $quickFilterField && $form->has($quickFilterField) ? $form->get($quickFilterField) : null;
 ?>
 
-<div class="search-form-parent">
+<div class="search-form-parent<?= $quickFilterElement ? ' form-with-quick-filters' : '' ?>">
     <?= $this->form()->openTag($form) ?>
+        <?= $quickFilterElement ? $formElement($quickFilterElement) : '' ?>
         <div class="form-input-and-buttons">
             <?= $formSearch($mainElement->setAttribute('class', $mainElement->getAttribute('class') . ' search-text')->setAttribute('placeholder', $translate('Search'))->setAttribute('aria-label', $translate('Search'))) ?>
             <div class="form-buttons">
