@@ -64,6 +64,7 @@ if ($user) {
 }
 
 $displayViewer = $themeSetting('item_display_viewer');
+$displayPermalink = $themeSetting('item_display_permalink');
 ?>
 
 <div class="content">
@@ -226,6 +227,11 @@ $displayViewer = $themeSetting('item_display_viewer');
     </div>
 
     <div class="item-reference">
+        <?php if ($displayPermalink): ?>
+        <?php $permalink = $resource->siteUrl($site->slug(), true); ?>
+        <h3><?= $translate('Permalink') ?></h3>
+        <p><a href="<?= $escapeAttr($permalink) ?>" class="resource-link permalink"><?= $escape($permalink) ?></p>
+        <?php endif; ?>
         <h3><?= $translate('Citation bibliographique') ?></h3>
         <p><?= $citation ?></p>
     </div>
