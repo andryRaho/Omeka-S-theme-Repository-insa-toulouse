@@ -14,11 +14,33 @@
 
 $plugins = $this->getHelperPluginManager();
 $escape = $plugins->get('escapeHtml');
+$assetUrl = $plugins->get('assetUrl');
 $translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$thumbnail = $plugins->get('thumbnail');
+$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
 $site = $block->page()->site();
 $siteSlug = $site->slug();
+
+$components = $components ?? [];
+$allThumbnail = in_array('thumbnail', $components);
+if ($allThumbnail) {
+    $thumbnailDisplay = $themeSetting('item_thumbnail_display') ?: 'auto';
+    $thumbnailMode = 'all';
+    $noThumbnail = false;
+    $allThumbnail = true;
+    $thumbnailType = in_array($thumbnailDisplay, ['none', 'auto']) ? 'medium' : $thumbnailDisplay;
+    $defaultThumbnail = sprintf('<img loading="lazy" src="%1$s" title="%2$s"/>', $assetUrl('thumbnails/default.png'), $translate('No media'));
+} else {
+    $thumbnailDisplay = 'none';
+    $thumbnailMode = 'none';
+    $noThumbnail = true;
+    $allThumbnail = false;
+    $thumbnailType = 'medium';
+    $defaultThumbnail = '';
+}
 ?>
 
 <div class="content block preview-block">
@@ -41,12 +63,22 @@ $siteSlug = $site->slug();
         <li class="resource <?= $resourceType ?>">
             <div class="document-index"><?= $index ?>.</div>
             <div class="document-details">
-                <div class="document-type-and-access">
-                    <div class="document-type"><?= $escape($translate($documentType)) ?></div>
-                    <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
+                <?php if (!$noThumbnail): ?>
+                <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType); ?>
+                <div class="resource-thumbnail<?= $resourceThumbnail ? '' : ($allThumbnail ? ' default-thumbnail' : '') ?>">
+                    <?php if ($resourceThumbnail || $allThumbnail): ?>
+                    <?= $hyperlink->raw($resourceThumbnail ?: $defaultThumbnail, $resourceUrl, ['class' => 'resource-link']) ?>
+                    <?php endif; ?>
                 </div>
-                <div class="document-link">
-                    <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
+                <?php endif; ?>
+	            <div class="document-type-and-link">
+                    <div class="document-type-and-access">
+                        <div class="document-type"><?= $escape($translate($documentType)) ?></div>
+                        <div class="document-access access-<?= $accessLevel ?>"><?= $accessLabel ?></div>
+                    </div>
+                    <div class="document-link">
+                        <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
+                    </div>
                 </div>
             </div>
         </li>
