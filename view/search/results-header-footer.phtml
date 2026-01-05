@@ -154,7 +154,7 @@ $isBrowse = $query->isBrowse();
 
     <?php if (isset($displayParts['paginator'])): ?>
     <li>
-        <div class="search-results-count <?= isset($displayParts['total_results']) ? 'no-total-results' : '' ?> <?= $isHeader ? 'resources-pagination-header' : 'resources-pagination-footer' ?>">
+        <div class="search-results-count <?= isset($displayParts['total_results']) ? '' : 'no-total-results' ?> <?= $isHeader ? 'resources-pagination-header' : 'resources-pagination-footer' ?>">
             <?= $this->paginationSearch() ?>
         </div>
     </li>

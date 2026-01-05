@@ -78,7 +78,7 @@ $documentTypes = [
 $next = true;
 ?>
 
-<ul class="resource-list resources-list search-result-list<?= $gridListMode === 'list_only' ? ' list' : ($gridListMode === 'grid_only' ? ' grid' : '') ?>">
+<ul class="resource-list resources-list search-result-list<?= $gridListMode === 'list_only' ? ' list only-mode' : ($gridListMode === 'grid_only' ? ' grid only-mode' : '') ?>">
     <?php /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
     $index = 0;
     foreach ($resources as $resource):
