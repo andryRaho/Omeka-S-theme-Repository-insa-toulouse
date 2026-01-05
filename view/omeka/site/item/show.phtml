@@ -91,7 +91,6 @@ $displayViewer = $themeSetting('item_display_viewer');
            $mainMediaType = strtok((string) $mediaType, '/');
            if (in_array($mainMediaType, ['image', 'video', 'audio'])): ?>
            <?= $plugins->has('mirador') ? $plugins->get('mirador')($item) : $this->thumbnail($media, 'medium') ?>
-       </div>
         <?php elseif ($mediaType === 'application/pdf'): ?>
            <?= $media->render() ?>
         <?php else: ?>
