@@ -62,6 +62,8 @@ if ($user) {
     $msgMissing = $themeSetting('access_msg_missing_file') ?: $translate('Fichier manquant : contacter le service');
     $msgRestricted = $themeSetting('access_msg_request_copy') ?: $translate('Connectez-vous');
 }
+
+$displayViewer = $themeSetting('item_display_viewer');
 ?>
 
 <div class="content">
@@ -80,7 +82,7 @@ if ($user) {
         </div>
     </div>
 
-    <?php if ($medias && $themeSetting('item_display_viewer')): ?>
+    <?php if ($medias && $displayViewer): ?>
     <?php // TODO Utiliser fonctions pour gérer tous les cas de visionneuses. ?>
     <div class="block block-media">
         <?php
@@ -146,7 +148,9 @@ if ($user) {
                 </ul>
                 <?php else: ?>
                 <ul class="media-list">
-                    <?php foreach ($medias as $media):
+                    <?php
+                    $first = true;
+                    foreach ($medias as $media):
                         $title = $media->displayTitle();
                         $accessLevelMedia = $themeFunctions->accessLevel($media);
                         $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
@@ -188,7 +192,10 @@ if ($user) {
 
                             <ul class="form-buttons">
                                 <?php if ($originalUrl): ?>
+                                <?php // Le bouton de prévisualisation fait redondance avec la visionneuse pour le premier media. ?>
+                                <?php if (!$first || !$displayViewer): ?>
                                 <li><a href="<?= $originalUrl ?>" class="form-button preview-button" target="_blank"><?= $translate('Visualiser') ?></a></li>
+                                <?php endif; ?>
                                 <li><a href="<?= $originalUrl ?>?download=1" class="form-button download-button" download="<?= $escapeAttr($media->source() ?: 'download') ?>" target="_self"><?= $translate('Télécharger') ?></a></li>
                                 <?php else: ?>
                                 <li><a href="" class="form-button ask-copy-button"><?= $escape($msgMissing) ?></a></li>
@@ -211,6 +218,7 @@ if ($user) {
 
                         </div>
                     </li>
+                    <?php $first = false; ?>
                     <?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
