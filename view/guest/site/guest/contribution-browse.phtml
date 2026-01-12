@@ -122,11 +122,13 @@ $themeFunctions->appendVarsToRootView([
                             <li class="document-edition-status"><?= $translate($contribution->isValidated() ? 'Document validé' : 'Document en cours de validation') ?></li>
                             <li class="document-edition-date">Dernière modification le <?= $escape($i18n->dateFormat($contributionResource->modified() ?: $contributionResource->created(), 'medium', 'none')) ?></li>
                         </ul>
+<?php /*
                         <?php elseif ($contribution->isUndertaken()): ?>
                         <ul class="document-status-infos">
                             <li class="document-edition-status"><?= $translate('Document pris en charge pour validation') ?></li>
                             <li class="document-edition-date">Dernière modification le <?= $escape($i18n->dateFormat($contribution->modified() ?: $contribution->created(), 'medium', 'none')) ?></li>
                         </ul>
+*/ ?>
                         <?php elseif ($contribution->isSubmitted()): ?>
                         <ul class="document-status-infos">
                             <li class="document-edition-status"><?= $translate('Document déposé') ?></li>
