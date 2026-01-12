@@ -5249,8 +5249,11 @@ p:empty {
     }
 
     .header-top a.contact-link {
-        display: none; /* 2026-2 */
         margin: 0 8px 0 2px;
+    }
+
+    .header-top a.contact-link span {
+        display: none;
     }
 
     .header-top a.support-link {
