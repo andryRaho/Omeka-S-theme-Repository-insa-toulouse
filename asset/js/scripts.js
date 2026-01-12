@@ -13,6 +13,12 @@ $(document).ready(function () {
     const headerSearchBtn = $('.search-menu-toggle');
     const headerTopMenu = $('.header-top .search-form-parent');
 
+    // Clone de contact pour le menu mobile
+    const headerBottomMenuItemsParent = $(".header-bottom > ul");
+    headerBottomMenuItemsParent.append("<li class='contact'>");
+    const contactLinkClone = $('header .contact-link').clone();
+    $('li.contact', headerBottomMenuItemsParent).append(contactLinkClone);
+
     const $searchResultsWrapper = $('.search-results-wrapper');
     $searchResultsWrapper.prepend("<button class='mobile-facets-toggle resources-list-toggle-filters'>Facettes</button>");
 
@@ -47,12 +53,12 @@ $(document).ready(function () {
     const navigationDepotPrecedent = $('.depot-precedent-suivant li:first-child a');
 
     // Liens externes: dans un nouvel onglet s'il n'est pas déjà défini.
-    $('a[href^="http"]:not([target])').attr('target', function() {
+    $('a[href^="http"]:not([target])').attr('target', function () {
         if (this.host === location.host) return '_self'
         else return '_blank'
     });
 
-    $('#edit-resource').on('change', '.contribute-media [data-term=file]', function(e) {
+    $('#edit-resource').on('change', '.contribute-media [data-term=file]', function (e) {
         const fileInput = $(this).find('input[type=file]');
         if (fileInput.length) {
             const fileToUpload = fileInput[0].files;
@@ -68,7 +74,7 @@ $(document).ready(function () {
 
     function checkFiles(event) {
         let hasAlert = false;
-        $('#edit-resource').find('.contribute-media input[type=file]').each(function() {
+        $('#edit-resource').find('.contribute-media input[type=file]').each(function () {
             const fileInput = $(this);
             const fileToUpload = fileInput[0].files;
             if (!fileToUpload || !fileToUpload.length) {
@@ -101,7 +107,7 @@ $(document).ready(function () {
 
     $('.etape-courante-3 #edit-resource').on('click', '[type=submit]', checkFiles);
 
-    $('.submit-contribution').on('click submit', function(event) {
+    $('.submit-contribution').on('click submit', function (event) {
         if (!$('.document-preview').length) {
             const filesMin = $('.contribute-medias.etape-3').data('min-files');
             const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
@@ -116,23 +122,23 @@ $(document).ready(function () {
         }
     });
 
-    depotContentEtape1.on('click', function(e) {
+    depotContentEtape1.on('click', function (e) {
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-1');
     });
 
-    depotContentEtape2.on('click', function(e) {
+    depotContentEtape2.on('click', function (e) {
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-2');
     });
 
-    depotContentEtape3.on('click', function(e) {
+    depotContentEtape3.on('click', function (e) {
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-3');
     });
 
-    depotContentEtape4.on('click', function(e) {
+    depotContentEtape4.on('click', function (e) {
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-4');
     });
 
-    navigationDepotSuivant.on('click', function(e) {
+    navigationDepotSuivant.on('click', function (e) {
         e.preventDefault();
         if (depotContent.hasClass('depot-form-1')) {
             // TODO Charger le bon formulaire.
@@ -144,7 +150,7 @@ $(document).ready(function () {
         }
     });
 
-    navigationDepotPrecedent.on('click', function(e) {
+    navigationDepotPrecedent.on('click', function (e) {
         e.preventDefault();
         if (depotContent.hasClass('depot-form-2')) {
             // TODO Alerte sur le chargement de formulaire.
@@ -156,7 +162,7 @@ $(document).ready(function () {
         }
     });
 
-    burgerBtn.on('click', function(e) {
+    burgerBtn.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         burgerIcon.toggleClass('active');
@@ -164,7 +170,7 @@ $(document).ready(function () {
         headerTopMenu.removeClass('opened');
     });
 
-    headerSearchBtn.on('click', function(e) {
+    headerSearchBtn.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         headerTopMenu.toggleClass('opened');
@@ -172,19 +178,19 @@ $(document).ready(function () {
         burgerIcon.removeClass('active');
     });
 
-    body.on('click', function(e) {
+    body.on('click', function (e) {
         headerBottomMenu.removeClass('opened');
-        burgerIcon.removeClass('active');
         headerTopMenu.removeClass('opened');
         documentListFilterMenu.removeClass('opened');
         openSciencePageMenu.removeClass('opened');
+        burgerIcon.removeClass('active');
     });
 
-    headerBottomMenu.on('click', function(e) {
+    headerBottomMenu.on('click', function (e) {
         e.stopPropagation();
     });
 
-    headerTopMenu.on('click', function(e) {
+    headerTopMenu.on('click', function (e) {
         e.stopPropagation();
     });
 
@@ -192,7 +198,7 @@ $(document).ready(function () {
 
     const seeAllDocumentsLimit = 10;
 
-    let documentsParents = $('ul.resources-list > li');
+    let documentsParents = $('.home-content ul.resources-list > li');
     documentsParents.each(function(no, item) {
         const documentItem = $(item);
         if (!documentItem.hasClass('resources-list-more-link')) {
@@ -202,7 +208,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.resources-list-more-link a').on('click', function(e) {
+    $('.home-content .resources-list-more-link a').on('click', function(e) {
         e.preventDefault();
         $(this).closest('ul').toggleClass('opened');
     });
@@ -222,16 +228,16 @@ $(document).ready(function () {
     }
     addClassToFormTextareas();
 
-    $('.add-value').on('click', function() {
+    $('.add-value').on('click', function () {
         setTimeout(addClassToFormTextareas, 20);
     });
 
-    $('.group-input-part').each(function(no, item) {
-       const inputBody = $(this).find('.input-body');
+    $('.group-input-part').each(function (no, item) {
+        const inputBody = $(this).find('.input-body');
         inputBody.addClass('with-' + inputBody.children().length + '-children');
     });
 
-    if ( $('body.edit .edit-button').length ) {
+    if ($('body.edit .edit-button').length) {
         $('body.edit').addClass('without-delete-button');
     }
 
@@ -281,50 +287,50 @@ $(document).ready(function () {
     });
 */
     /* Document-part : duplique les champs du fichier uploadé */
-/*
-    addDocumentToDepotBtn.on('click', function(e) {
-        e.preventDefault();
+    /*
+        addDocumentToDepotBtn.on('click', function(e) {
+            e.preventDefault();
 
-        const divParent = $(this).closest('form').find('.document-parts-forms');
-        const newPartIndex = divParent.children().length;
+            const divParent = $(this).closest('form').find('.document-parts-forms');
+            const newPartIndex = divParent.children().length;
 
-        console.log('newPartIndex = ', newPartIndex);
+            console.log('newPartIndex = ', newPartIndex);
 
-        const cloned = divParent.find('.document-part-template').clone();
-        cloned.removeClass('document-part-template');
+            const cloned = divParent.find('.document-part-template').clone();
+            cloned.removeClass('document-part-template');
 
-        $('input', cloned).val('');
-        $('input', cloned).each(function(no, item) {
-            const $item = $(item);
-            const attrName = $item.attr('name');
-            if (attrName.length) {
-                $item.attr('name', attrName.split('[0]').join('['+ newPartIndex +']'))
-            }
+            $('input', cloned).val('');
+            $('input', cloned).each(function(no, item) {
+                const $item = $(item);
+                const attrName = $item.attr('name');
+                if (attrName.length) {
+                    $item.attr('name', attrName.split('[0]').join('['+ newPartIndex +']'))
+                }
+            });
+
+            divParent.append(cloned)
         });
-
-        divParent.append(cloned)
-    });
-*/
+    */
     /* */
 
-    openSciencePageToggle.on('click', function(e) {
+    openSciencePageToggle.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         openSciencePageMenu.toggleClass('opened');
     });
 
-    openScienceCloseMenu.on('click', function(e) {
+    openScienceCloseMenu.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         openSciencePageMenu.removeClass('opened');
     });
 
-    openSciencePageMenu.on('click', function(e) {
+    openSciencePageMenu.on('click', function (e) {
         e.stopPropagation();
     });
 
     // On cache les liens vides du menu Science ouverte
-    $('aside nav ul > li > a').each(function(no, item) {
+    $('aside nav ul > li > a').each(function (no, item) {
         const $item = $(item);
         if ($item.text().length === 0) {
             $item.closest('li').hide();
@@ -333,23 +339,23 @@ $(document).ready(function () {
 
     /* */
 
-    documentListFilterToggle.on('click', function(e) {
+    documentListFilterToggle.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         documentListFilterMenu.toggleClass('opened');
     });
 
-    documentListCloseFilterMenu.on('click', function(e) {
+    documentListCloseFilterMenu.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         documentListFilterMenu.removeClass('opened');
     });
 
-    documentListFilterMenu.on('click', function(e) {
+    documentListFilterMenu.on('click', function (e) {
         e.stopPropagation();
     });
 
-    documentListFilterCheckboxes.on('change', function(e) {
+    documentListFilterCheckboxes.on('change', function (e) {
         // Checkbox principal :
         const labelParent = $(e.target).closest('label');
         const liInput = labelParent.children('input[type=checkbox]');
@@ -362,7 +368,7 @@ $(document).ready(function () {
 
     /* */
 
-    $('.toggle').on('click', function(e) {
+    $('.toggle').on('click', function (e) {
         e.preventDefault();
         $(this).closest('.toggle-parent').toggleClass('closed');
     });
@@ -371,13 +377,13 @@ $(document).ready(function () {
 
     /* Advanced Search popup */
 
-    $('a.advanced-search-link').on('click', function(e) {
+    $('a.advanced-search-link').on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         body.addClass('advanced-search-popup-opened');
     });
 
-    $('.advanced-search-close a').on('click', function(e) {
+    $('.advanced-search-close a').on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         body.removeClass('advanced-search-popup-opened');
@@ -386,15 +392,15 @@ $(document).ready(function () {
     /**
      * Do not use this method for form of module AdvancedSearch.
      */
-    $('a.clear-button:not(.form-search)').on('click', function(e) {
+    $('a.clear-button:not(.form-search)').on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         $('.advanced-search-popup form input').val('');
-        $('.advanced-search-popup form select').each(function(no, select) {
+        $('.advanced-search-popup form select').each(function (no, select) {
             let val = $(select).find('option').first().val();
             $(select).val(val === 'eq' ? 'in' : val);
         });
-        $('li', advancedSearchTemplateTarget).each(function(no, item) {
+        $('li', advancedSearchTemplateTarget).each(function (no, item) {
             // On laisse le premier
             if (no > 0) {
                 $(item).remove();
@@ -415,13 +421,13 @@ $(document).ready(function () {
     });
     */
 
-    exportSelect.on('change', function(e) {
+    exportSelect.on('change', function (e) {
         const select = $(this);
         const button = select.closest('.search-results-part').find('.export-button');
         button.prop('href', select.find('option:selected').data('url'));
     });
 
-    exportButton.on('click', function(e) {
+    exportButton.on('click', function (e) {
         const select = $(this).closest('.search-results-part').find('.export-select select');
         const format = select.val();
         if (!format.length) {
@@ -432,13 +438,13 @@ $(document).ready(function () {
 
     /* Limited access popup */
 
-    $('.ask-copy-button').on('click', function(e) {
+    $('.ask-copy-button').on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         body.addClass('limited-access-popup-opened');
     });
 
-    $('.limited-access-close a').on('click', function(e) {
+    $('.limited-access-close a').on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         body.removeClass('limited-access-popup-opened');
