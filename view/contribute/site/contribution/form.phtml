@@ -29,6 +29,11 @@
 
 // See common/resource-values.
 
+// Pour avoir des titres différents au même champ en fonction de la langue,
+// utiliser le paramètre spécifique de la propriété dans le modèle de ressource,
+// par exemple :
+// multilang = fra = Titre en français | eng = Titre en anglais | und = Titre dans une autre langue
+
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
 $partial = $plugins->get('partial');
@@ -40,6 +45,7 @@ $vars = $this->vars();
 $labelInfo = $this->siteSetting('property_label_information') ?? $this->setting('property_label_information');
 
 // Prepare variables one time for the form and all sub-forms.
+// TODO Remove this process, useless because there are not so many fields.
 if ($isMainForm) {
     $disableIdref = (bool) $plugins->get('themeSetting')('contribution_valuesuggest_idref_disable');
 
