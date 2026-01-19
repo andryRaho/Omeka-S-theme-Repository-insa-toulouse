@@ -39,7 +39,11 @@ $url = $plugins->get('url');
 $partial = $plugins->get('partial');
 $hyperlink = $plugins->get('hyperlink');
 $formElement = $plugins->get('formElement');
+$themeSetting = $plugins->get('themeSetting');
 $themeFunctions = $plugins->get('ThemeFunctions');
+
+$disableIdref = (bool) $themeSetting('contribution_valuesuggest_idref_disable');
+$propertiesPeople = $themeSetting('contribution_property_people', []);
 
 $vars = $this->vars();
 $labelInfo = $this->siteSetting('property_label_information') ?? $this->setting('property_label_information');
@@ -47,8 +51,6 @@ $labelInfo = $this->siteSetting('property_label_information') ?? $this->setting(
 // Prepare variables one time for the form and all sub-forms.
 // TODO Remove this process, useless because there are not so many fields.
 if ($isMainForm) {
-    $disableIdref = (bool) $plugins->get('themeSetting')('contribution_valuesuggest_idref_disable');
-
     // No echo: only includes variables, css, and js.
     $partial('contribute/site/contribution/form-include');
     /**
@@ -265,7 +267,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
                         // Check special cases first in a switch.
                         // Gère le champ spécifique pour les personnes, qui sont des doubles champs noms prénoms.
                         // TODO Ajouter un champ spécial dans omeka (champ double ou triple avec mail) ou gérer les ressources liées (création et maj).
-                        case in_array($term, ['dcterms:creator', 'dante:directeur', 'dante:codirecteur']):
+                        case in_array($term, $propertiesPeople):
                             echo $partial('contribute/site/contribution/form-input-literal-person');
                             break;
                         case $typeColon === 'customvocab':
@@ -313,7 +315,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
         <?php // Add a button to add a new value for fillable properties. ?>
         <?php // The button is always added to manage value removing. ?>
         <?php // Spécial pour les personnes avec le champ spécifique. ?>
-        <?php if (in_array($term, ['dcterms:creator', 'dante:directeur', 'dante:codirecteur'])): ?>
+        <?php if (in_array($term, $propertiesPeople)): ?>
         <?php $addForMedia = $isMainForm ? '' : ' add-value-media'; ?>
         <div class="inputs">
             <div class="add-values default-selector" data-next-index="<?= $indexFieldInput ?>" data-next-term="<?= $term ?>">
