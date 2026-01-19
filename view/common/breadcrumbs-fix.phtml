@@ -14,7 +14,7 @@
 $last = mb_strripos($ariane, '</a>');
 ?>
 
-<nav class="breadcrumbs content-with-margin">
+<nav class="breadcrumbs content-with-margin" aria-label="<?= $this->translate('Breadcrumb')?>">
     <ul>
         <?php if (!stripos($ariane, 'accueil')): ?>
         <li><a href="<?= $this->url('site', ['site-slug' => $site->slug()]) . '">' . $this->escapeHtml($this->translate('Accueil')) ?></a></li>
