@@ -93,8 +93,13 @@ trait ThemeFunctionsSpecific
     /**
      * Extrait l'année d'une date.
      */
-    public function year(AbstractResourceEntityRepresentation $resource, string $property = 'dcterms:date'): string
+    public function year(AbstractResourceEntityRepresentation $resource, ?string $property = null): string
     {
+        if (!$property) {
+            $themeSetting = $this->view->plugin('themeSetting');
+            $property = $themeSetting('item_date_main') ?: 'dcterms:created';
+        }
+
         $value = $resource->value($property);
         if (!$value) {
             return 'sans date';
