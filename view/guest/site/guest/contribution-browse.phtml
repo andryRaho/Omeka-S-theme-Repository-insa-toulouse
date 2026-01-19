@@ -35,10 +35,12 @@ $themeFunctions->appendVarsToRootView([
     'ariane' => $ariane,
     'mainClass' => 'user-account',
 ]);
+
+$name = $themeFunctions->userName($user);
 ?>
 
 <div class="content">
-    <?= $pageTitle('Mes dépôts', 1) ?>
+    <?= $pageTitle($name, 1) ?>
 
     <?= $this->messages() ?>
 
@@ -69,7 +71,7 @@ $themeFunctions->appendVarsToRootView([
                 if ($contributionResource) {
                     $resourceType = $contributionResource->resourceName();
                     $resourceUrl = $contributionResource->siteUrl($siteSlug);
-                    $documentType = $contributionResource->displayResourceTemplateLabel();
+                    $documentType = $themeFunctions->documentType($contributionResource);
                     $accessLevel = $themeFunctions->accessLevel($contributionResource);
                     $citation = $themeFunctions->citation($contributionResource, true);
                     $medias = $contributionResource->media();

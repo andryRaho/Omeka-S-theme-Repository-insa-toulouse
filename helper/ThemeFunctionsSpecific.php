@@ -115,7 +115,7 @@ trait ThemeFunctionsSpecific
             $escape = $this->view->plugin('escapeHtml');
         }
 
-        $auteur = $resource->value('dcterms:creator', ['default' => '[Inconnu']);
+        $auteur = $this->formatAuthor($resource);
         $annee = $this->year($resource);
         $titre = $resource->displayTitle('sans titre');
 
@@ -126,7 +126,7 @@ trait ThemeFunctionsSpecific
             );
         }
 
-        $documentType = $resource->displayResourceTemplateLabel();
+        $documentType = $this->documentType($resource);
         return sprintf(
             '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
             $auteur, $escape($annee), $escape($titre), $escape($documentType)

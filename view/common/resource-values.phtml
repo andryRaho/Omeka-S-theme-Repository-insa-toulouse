@@ -20,6 +20,11 @@ $showLocale = (bool) $siteSetting('show_locale_label', true);
 $filterLocale = (bool) $siteSetting('filter_locale_values');
 $lang = $plugins->get('lang')();
 $langHtml = $filterLocale ? $lang : null;
+
+// TODO Déplacer cela dans le module via les événements.
+if ($resource) {
+    $values = $themeFunctions->advancedTemplateValues($resource->resourceTemplate(), $values);
+}
 ?>
 
 <?php foreach ($values as $term => $propertyData):
@@ -41,6 +46,8 @@ $langHtml = $filterLocale ? $lang : null;
         <ul>
         <?php foreach ($propertyData['values'] as $value): ?>
             <?php
+            // TODO A supprimer après réimport des données sans notice utilisateur.
+            if ($term === 'dcterms:creator' && count($propertyData['values']) > 1 && strpos($value->value(), '@')) continue;
             $valueType = $value->type();
             $valueLang = $value->lang();
             $class = ['value'];

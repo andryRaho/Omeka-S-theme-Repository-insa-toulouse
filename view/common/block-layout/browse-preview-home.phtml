@@ -32,7 +32,7 @@ $siteSlug = $site->slug();
     foreach ($resources as $resource):
         ++$index;
         $resourceUrl = $resource->siteUrl($siteSlug);
-        $documentType = $resource->displayResourceTemplateLabel();
+        $documentType = $themeFunctions->documentType($resource);
         $accessLevel = $themeFunctions->accessLevel($resource);
         $accessLabel = $themeFunctions->accessLabel($accessLevel);
         $citation = $themeFunctions->citation($resource, true);

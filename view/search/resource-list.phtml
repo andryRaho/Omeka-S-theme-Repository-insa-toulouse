@@ -53,7 +53,7 @@ $documentTypes = [
         $resourceType = $resource->resourceName();
         $resourceUrl = $resource->siteUrl($siteSlug);
         if ($resourceType === 'items') {
-            $documentType = $resource->displayResourceTemplateLabel();
+            $documentType = $themeFunctions->documentType($resource);
             $accessLevel = $themeFunctions->accessLevel($resource);
             $citation = $themeFunctions->citation($resource, true);
         } else {
