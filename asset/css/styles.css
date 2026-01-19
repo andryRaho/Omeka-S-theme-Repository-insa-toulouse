@@ -1417,9 +1417,9 @@ p:empty {
         margin-top: 34px;
     }
 
-    main .block.asides,
+    main .block.aside,
     main .block > aside,
-    main > .asides,
+    main > .aside,
     main > aside {
         flex: 390px 0 0;
         align-self: flex-start;
@@ -1449,9 +1449,9 @@ p:empty {
     .aside-exclamation:before,
     .aside-interrogation:before,
     main.depot-content .block > aside::before,
-    main .asides .block > aside::before,
+    main .block.aside > aside::before,
     main aside.aside-document-parts::before,
-    main .asides > aside::before,
+    main .aside > aside::before,
     main.depot-content > aside::before {
         content: '';
     }
@@ -1634,11 +1634,8 @@ p:empty {
         transform: scale(1.15);
     }
 
-    main .block.asides + .content,
-    main .block.asides + .block,
-    main > .block-aside + .content,
-    main > .asides + .content,
-    main > .asides + .block,
+    main .block.aside + .content,
+    main .block.aside + .block,
     main > aside + .content {
         flex: calc( 100% - 390px ) 0 0;
         padding-left: 72px;
@@ -2540,7 +2537,7 @@ p:empty {
         flex: 300px 0 0;
     }
 
-    main.resources-list-and-filters > .block-aside + .content,
+    main.resources-list-and-filters > .block.aside + .content,
     main.resources-list-and-filters > aside + .content {
         flex: calc( 100% - 300px ) 0 0;
         padding-left: 48px;
@@ -3561,44 +3558,50 @@ p:empty {
         padding-bottom: 40px;
     }
 
+    main.open-science-content .aside::before,
     main.open-science-content aside::before,
+    main.aside-page .aside::before,
     main.aside-page aside::before {
         display: none;
     }
 
-    main.open-science-content .block > aside,
-    main.aside-page .block > aside,
+    main.open-science-content .block.aside,
     main.open-science-content > aside,
+    main.aside-page .block.aside,
     main.aside-page > aside {
         flex: 300px 0 0;
         padding-top: 18px;
     }
 
-    main.open-science-content > .block-aside + .content,
-    main.aside-page > .block-aside + .content,
+    main.open-science-content .block.aside + .content,
     main.open-science-content > aside + .content,
+    main.aside-page .block.aside + .content,
     main.aside-page > aside + .content {
         flex: calc(100% - 300px) 0 0;
     }
 
-    main.open-science-content .block > aside .open-science-menu-header,
-    main.aside-page .block > aside .open-science-menu-header,
+    main.open-science-content .block.aside .open-science-menu-header,
     main.open-science-content > aside .open-science-menu-header,
+    main.aside-page .block.aside .open-science-menu-header,
     main.aside-page > aside .open-science-menu-header {
         display: none;
     }
 
+    main.open-science-content .block.aside > nav,
     main.open-science-content .block > aside > nav,
-    main.aside-page .block > aside > nav,
     main.open-science-content > aside > nav,
+    main.aside-page .block.aside > nav,
+    main.aside-page .block > aside > nav,
     main.aside-page > aside > nav {
         background-color: #EAEFED;
         padding: 15px 15px;
     }
 
+    main.open-science-content .block.aside > nav > .back-to-list,
     main.open-science-content .block > aside > nav > .back-to-list,
-    main.aside-page .block > aside > nav > .back-to-list,
     main.open-science-content > aside > nav > .back-to-list,
+    main.aside-page .block.aside > nav > .back-to-list,
+    main.aside-page .block > aside > nav > .back-to-list,
     main.aside-page > aside > nav > .back-to-list {
         display: flex;
         align-items: center;
@@ -3608,9 +3611,10 @@ p:empty {
         margin-bottom: 8px;
     }
 
+    main.open-science-content .block.aside > nav > .back-to-list::before,
     main.open-science-content .block > aside > nav > .back-to-list::before,
-    main.aside-page .block > aside > nav > .back-to-list::before,
     main.open-science-content > aside > nav > .back-to-list::before,
+    main.aside-page .block > aside > nav > .back-to-list::before,
     main.aside-page > aside > nav > .back-to-list::before {
         content: '';
         display: inline-block;
@@ -4051,19 +4055,16 @@ p:empty {
     /* Accueil - dépôt */
     /* 1300 --> 390px - padding 72px */
     /* 1024 --> 300px - padding 12px */
-    main .block.asides + .content,
-    main .block.asides + .block,
-    main > .block-aside + .content,
-    main > .asides + .content,
-    main > .asides + .block,
+    main .block.aside + .content,
+    main .block.aside + .block,
     main > aside + .content {
         flex: calc(100% - 32vw + 34px) 0 0;
         padding-left: calc(9.78vw - 55px);
     }
 
-    main .block.asides,
+    main .block.aside,
     main .block > aside,
-    main > .asides,
+    main > .aside,
     main > aside {
         flex: calc(32vw - 34px) 0 0;
         align-self: flex-start;
@@ -4072,17 +4073,20 @@ p:empty {
     /* Consulter - recherche + science ouverte */
     /* 1300 --> 300px - padding 45px */
     /* 1024 --> 236px - padding 12px */
+    main.open-science-content .aside,
     main.open-science-content aside,
+    main.resources-list-and-filters .aside,
     main.resources-list-and-filters aside,
+    main.aside-page .aside,
     main.aside-page aside {
         flex: calc(23vw - 2px) 0 0;
     }
 
-    main.open-science-content > .block-aside + .content,
-    main.resources-list-and-filters > .block-aside + .content,
-    main.aside-page > .block-aside + .content,
+    main.open-science-content .block.aside + .content,
     main.open-science-content > aside + .content,
+    main.resources-list-and-filters .block.aside + .content,
     main.resources-list-and-filters > aside + .content,
+    main.aside-page .block.aside + .content,
     main.aside-page > aside + .content {
         flex: calc(100% - 23vw + 2px) 0 0;
         padding-left: calc(12vw - 110px);
@@ -4136,37 +4140,37 @@ p:empty {
     /* Accueil - dépôt */
     /* 1024 --> 300px - padding 12px */
 
-    main .block.asides + .content,
-    main .block.asides + .block,
-    main > .block-aside + .content,
-    main > .asides + .content,
-    main > .asides + .block,
+    main .block.aside + .content,
+    main .block.aside + .block,
     main > aside + .content {
         flex: calc( 100% - 300px ) 0 0;
         width: calc( 100% - 300px );
         padding-left: calc( 8.5vw - 62px );
     }
 
-    main .block.asides,
+    main .block.aside,
     main .block > aside,
-    main > .asides,
+    main > .aside,
     main > aside {
         flex: 300px 0 0;
     }
 
     /* Consulter - recherche + science ouverte */
     /* 1024 --> 236px - padding 12px */
+    main.open-science-content .aside,
     main.open-science-content aside,
+    main.resources-list-and-filters .aside,
     main.resources-list-and-filters aside,
+    main.aside-page .aside,
     main.aside-page aside {
         flex: 236px 0 0;
     }
 
-    main.open-science-content > .block-aside + .content,
-    main.resources-list-and-filters > .block-aside + .content,
-    main.aside-page > .block-aside + .content,
+    main.open-science-content .block.aside + .content,
     main.open-science-content > aside + .content,
+    main.resources-list-and-filters .block.aside + .content,
     main.resources-list-and-filters > aside + .content,
+    main.aside-page .block.aside + .content,
     main.aside-page > aside + .content {
         flex: calc( 100% - 236px ) 0 0;
         padding-left: 12px;
@@ -4192,11 +4196,8 @@ p:empty {
         display: none;
     }
 
-    main .block.asides + .content,
-    main .block.asides + .block,
-    main > .block-aside + .content,
-    main > .asides + .content,
-    main > .asides + .block,
+    main .block.aside + .content,
+    main .block.aside + .block,
     main > aside + .content {
         padding-left: 12px;
     }
@@ -4241,15 +4242,16 @@ p:empty {
         margin-bottom: 25px;
     }
 
+    main.depot-content .block.aside,
     main.depot-content .block > aside,
-    main.depot-content > .block-aside + .content,
+    main.depot-content .block.aside + .content,
     main.depot-content > aside,
     main.depot-content > aside + .content {
         width: 100%;
         padding-left: 0;
     }
 
-    main.depot-content > .block-aside + .content,
+    main.depot-content .block.aside + .content,
     main.depot-content > aside + .content {
         padding: 0 45px;
     }
@@ -4570,11 +4572,8 @@ p:empty {
         margin-bottom: 15px;
     }
 
-    main .block.asides + .content,
-    main .block.asides + .block,
-    main > .block-aside + .content,
-    main > .asides + .content,
-    main > .asides + .block,
+    main .block.aside + .content,
+    main .block.aside + .block,
     main > aside + .content {
         width: auto;
         padding-left: 0;
@@ -4671,7 +4670,7 @@ p:empty {
         font-size: 11px;
     }
 
-    main.depot-content > .block-aside + .content,
+    main.depot-content .block.aside + .content,
     main.depot-content > aside + .content {
         padding: 0;
     }
@@ -4906,10 +4905,13 @@ p:empty {
         margin-top: 72px;
     }
 
+    main.open-science-content .aside,
     main.open-science-content aside,
+    main.resources-list-and-filters .aside,
     main.resources-list-and-filters aside,
+    main.aside-page .aside,
     main.aside-page aside {
-        position: fixed;
+    position: fixed;
         top: 0;
         left: 0;
 
@@ -4924,23 +4926,29 @@ p:empty {
         transition: transform ease-in-out 0.35s;
     }
 
+    main.open-science-content .aside.opened,
     main.open-science-content aside.opened,
+    main.resources-list-and-filters .aside.opened,
     main.resources-list-and-filters aside.opened,
+    main.aside-page .aside.opened,
     main.aside-page aside.opened {
         transform: translateX(0%);
     }
 
+    main.open-science-content .aside ul,
     main.open-science-content aside ul,
+    main.resources-list-and-filters .aside ul,
     main.resources-list-and-filters aside ul,
+    main.aside-page .aside ul,
     main.aside-page aside ul {
         display: block;
     }
 
-    main.open-science-content > .block-aside + .content,
-    main.resources-list-and-filters > .block-aside + .content,
-    main.aside-page > .block-aside + .content,
+    main.open-science-content .block.aside + .content,
     main.open-science-content > aside + .content,
+    main.resources-list-and-filters .block.aside + .content,
     main.resources-list-and-filters > aside + .content,
+    main.aside-page .block.aside + .content,
     main.aside-page > aside + .content {
         padding-left: 0;
     }
