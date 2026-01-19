@@ -2,12 +2,16 @@
 
 namespace OmekaTheme\Helper;
 
+require_once __DIR__ . '/ThemeFunctionsDante.php';
+
 use Contribute\Api\Representation\ContributionRepresentation;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 
 trait ThemeFunctionsSpecific
 {
+    use ThemeFunctionsDante;
+
     /**
      * Correspondance entre les valeurs et le nom dans le module Access.
      * Pas de différence entre "protected" et "forbidden" dans le module Access.
