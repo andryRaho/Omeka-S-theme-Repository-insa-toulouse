@@ -61,6 +61,9 @@ $baseName = $isMainForm
 $val = $proposed['@uri'] ?? $original['@uri'] ?? '';
 $label = $proposed['@label'] ?? $original['@label'] ?? '';
 
+// Ne pas afficher la description native de la propriété en public, mais uniquement la description alternative si présente.
+$help = empty($templateProperty) ? null : $templateProperty->alternateComment();
+
 $class = ['value'];
 $class[] = 'uri';
 if ($isPrivate) {
@@ -70,6 +73,11 @@ $language = isset($proposed['@value']) ? null : (isset($original['value']) ? $or
 ?>
 
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>" data-data-type="uri" role="group">
+    <?php if ($help): ?>
+    <div class="quick-help">
+        <p><?= $escape($help) ?></p>
+    </div>
+    <?php endif; ?>
     <div class="input-body">
         <div class="input">
             <label class="value input-container">

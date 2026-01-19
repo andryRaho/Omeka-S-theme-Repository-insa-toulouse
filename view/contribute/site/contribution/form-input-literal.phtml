@@ -65,6 +65,9 @@ $baseName = $isMainForm
 
 $val = $proposed['@value'] ?? $original['@value'] ?? '';
 
+// Ne pas afficher la description native de la propriété en public, mais uniquement la description alternative si présente.
+$help = empty($templateProperty) ? null : $templateProperty->alternateComment();
+
 $class = ['value'];
 if ($isPrivate) {
     $class[] = 'private';
@@ -80,6 +83,11 @@ $hasLanguage = !empty($fieldContribution['@language']);
     <?php if ($hasLanguage): ?>
     <label<?= $isRequired ? ' class="required"' : '' ?>><?= $escape($fieldContribution['langLabel']) ?></label>
     <input type="hidden" name="<?= $baseName ?>[@language]" value="<?= $escapeAttr($fieldContribution['@language']) ?>"/>
+    <?php endif; ?>
+    <?php if ($help): ?>
+    <div class="quick-help">
+        <p><?= $escape($help) ?></p>
+    </div>
     <?php endif; ?>
     <textarea maxlength="4000" class="form-control input-value" data-value-key="@value" name="<?= $baseName ?>[@value]" aria-labelledby="property-<?= $property ? $property->id() : '__PROPERTYID__' ?>-label"<?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?>><?= $escape($val) ?></textarea>
     <?php if (!$hasLanguage): ?>

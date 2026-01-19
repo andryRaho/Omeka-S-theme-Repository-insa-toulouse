@@ -60,6 +60,9 @@ $name = $isMainForm
 
 $val = $proposed['@resource'] ?? $original['@resource'] ?? '';
 
+// Ne pas afficher la description native de la propriété en public, mais uniquement la description alternative si présente.
+$help = empty($templateProperty) ? null : $templateProperty->alternateComment();
+
 $class = ['value'];
 if ($isPrivate) {
     $class[] = 'private';
@@ -68,6 +71,11 @@ $language = isset($proposed['@value']) ? null : (isset($original['value']) ? $or
 ?>
 
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>">
+    <?php if ($help): ?>
+    <div class="quick-help">
+        <p><?= $escape($help) ?></p>
+    </div>
+    <?php endif; ?>
     <div class="value resource<?= $isPrivate ? ' private' : '' ?>">
         <?php if ($isPrivate): ?>
         <span class="private fa fa-eye-slash" aria-hidden="false" title="<?= $translate('private') ?>"></span>

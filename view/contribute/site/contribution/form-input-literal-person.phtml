@@ -63,6 +63,9 @@ $baseName = $isMainForm
 
 $val = $proposed['@value'] ?? $original['@value'] ?? '';
 
+// Ne pas afficher la description native de la propriété en public, mais uniquement la description alternative si présente.
+$help = empty($templateProperty) ? null : $templateProperty->alternateComment();
+
 $class = ['value', 'group-input-part'];
 if ($isPrivate) {
     $class[] = 'private';
@@ -78,6 +81,11 @@ $labelGivenName = $themeFunctions->templatePropertyThemeOption($templateProperty
 
 <li class="<?= implode(' ', $class) ?>" role="group">
     <input style="display:none;" type="text" data-input-part="main" data-value-key="@value" data-separator=", " name="<?= $baseName . '[@value]' ?>" aria-labelledby="property-<?= $propertyId ?>-label" <?= empty($readonly) ? '' : ' readonly="readonly"' ?> value="<?= $escapeAttr($val) ?>" />
+    <?php if ($help): ?>
+    <div class="quick-help">
+        <p><?= $escape($help) ?></p>
+    </div>
+    <?php endif; ?>
     <div class="input-body">
         <div class="input">
             <label class="value input-container">

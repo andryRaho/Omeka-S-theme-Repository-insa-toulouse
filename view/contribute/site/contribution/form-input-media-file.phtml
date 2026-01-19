@@ -60,6 +60,9 @@ $name = $isMainForm
 
 $val = $proposed['@media'] ?? $original['@media'] ?? '';
 
+// Ne pas afficher la description native de la propriété en public, mais uniquement la description alternative si présente.
+$help = empty($templateProperty) ? null : $templateProperty->alternateComment();
+
 $class = ['value'];
 $class[] = 'uri';
 if ($isPrivate) {
@@ -68,6 +71,11 @@ if ($isPrivate) {
 ?>
 
 <li class="<?= implode(' ', $class) ?>">
+    <?php if ($help): ?>
+    <div class="quick-help">
+        <p><?= $escape($help) ?></p>
+    </div>
+    <?php endif; ?>
     <input type="file" class="form-control input-value" data-value-key="@value" name="<?= $name ?> " value="<?= $escapeAttr($val) ?>"<?= $isRequired ? ' required="required"' : '' ?><?= empty($readonly) ? '' : ' readonly="readonly"' ?>/>
     <ul class="actions resource-edit-remove-value">
         <li><button type="button" class="o-icon-delete remove-value" title="<?= $escapeAttr($translate('Remove value')) ?>" href="#" aria-label="<?= $escapeAttr($translate('Remove value')) ?>"></button></li>

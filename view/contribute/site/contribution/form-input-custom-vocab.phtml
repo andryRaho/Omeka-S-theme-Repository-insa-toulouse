@@ -109,6 +109,9 @@ $replace = [
 
 $val = $proposed['@' . $typeName] ?? $original['@' . $typeName] ?? '';
 
+// Ne pas afficher la description native de la propriété en public, mais uniquement la description alternative si présente.
+$help = empty($templateProperty) ? null : $templateProperty->alternateComment();
+
 if (strlen((string) $val)) {
     $escapedVal = $escapeAttr($val);
     $replace['<option value="' . $escapedVal . '"'] = '<option value="' . $escapedVal . '" selected="selected"';
@@ -125,6 +128,11 @@ if ($disableds) {
 <li class="<?= implode(' ', $class) ?>" lang="<?= $escape($language) ?>" data-basetype="<?= $customVocabType ?>">
     <?php if (!empty($fieldContribution['@language'])): // Dans ce thème, le libellé multilang est affiché avec le champ. ?>
     <label><?= $escape($escapeAttr($fieldContribution['langLabel'])) ?></label>
+    <?php if ($help): ?>
+    <div class="quick-help">
+        <p><?= $escape($help) ?></p>
+    </div>
+    <?php endif; ?>
     <input type="hidden" name="<?= strtr($name, ['@value' => '@language', '@resource' => '@language', '@uri' => '@language']) ?>" value="<?= $escapeAttr($fieldContribution['@language']) ?>"/>
     <?php endif; ?>
     <?= strtr($selectHtml, $replace) ?>
