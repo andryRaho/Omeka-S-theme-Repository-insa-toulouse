@@ -11,10 +11,13 @@
 
 $plugins = $this->getHelperPluginManager();
 $translate = $plugins->get('translate');
+$themeSetting = $plugins->get('themeSetting');
 $translatePlural = $plugins->get('translatePlural');
 
 $feedResources = $plugins->has('feedResources') ? $plugins->get('feedResources'): null;
-$exporters = $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : [];
+
+$prependExportersSearch = (bool) $themeSetting('search_exporters_prepend', true);
+$exporters = $prependExportersSearch && $plugins->has('bulkExporters') ? $plugins->get('bulkExporters')() : [];
 
 // Default values of the module.
 $displayParts = [
