@@ -2591,6 +2591,7 @@ p:empty {
         text-transform: uppercase;
         text-decoration: none;
         border: none;
+        margin-bottom: 10px;
     }
 
     main.resources-list-and-filters aside .resources-filters > li.opened > .toggle {
@@ -2622,6 +2623,10 @@ p:empty {
 
     li.facet-item [type="checkbox"] + label span {
         display: contents;
+    }
+
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li {
+        margin-bottom: 5px;
     }
 
     main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent label {
@@ -3713,7 +3718,8 @@ p:empty {
 
     /* Page blocks */
 
-    main .content .page-block h1 {
+    main .content .page-block h1,
+    main .content .block-heading h1 {
         color: #EA3535;
         font-family: 'Lato', sans-serif;
         font-size: 25px;
@@ -3723,8 +3729,10 @@ p:empty {
         text-transform: none;
     }
 
+    main.simple-page .content .page-block h1,
+    main.simple-page .content .block-heading h1,
     main.simple-page .page-layout-normal .page-block h1,
-    main.simple-page .content .page-block h1 {
+    main.simple-page .page-layout-normal .block-heading h1 {
         font-size: 31px;
         line-height: 36px;
         font-weight: 900;
@@ -3732,7 +3740,8 @@ p:empty {
         text-transform: uppercase;
     }
 
-    main .content .page-block h2 {
+    main .content .page-block h2,
+    main .content .block-heading h2 {
         color: #000000;
         font-family: 'Lato', sans-serif;
         font-size: 18px;
@@ -3741,12 +3750,14 @@ p:empty {
         margin-bottom: 12px;
     }
 
-    main .content .page-block h2 img {
+    main .content .page-block h2 img,
+    main .content .block-heading h2 img {
         margin-right: 30px;
         padding-bottom: 10px;
     }
 
-    main .content .page-block h3 {
+    main .content .page-block h3,
+    main .content .block-heading h3 {
         font-size: 13px;
         font-weight: 700;
         line-height: 20px;
@@ -3773,14 +3784,16 @@ p:empty {
         margin-left: 22px;
     }
 
-    .page-block h2 {
-        border-top: 4px solid #EAEFED;
+    .page-block h2,
+    .block-heading h2 {
+       border-top: 4px solid #EAEFED;
         padding-top: 25px;
         margin-top: 30px;
     }
 
     .block-pageTitle + .block-html h2,
-    .page-block.block-title + .page-block h2 {
+    .page-block.block-title + .page-block h2,
+    .page-block.block-title + .block-heading h2 {
         border: none;
         padding-top: 0;
         padding-bottom: 10px;
