@@ -512,7 +512,7 @@ class ThemeFunctions extends AbstractHelper
         // In most of the cases, the terms to search are indexed as multiple
         // strings ("_ss" in default config of Solr).
         if ($useSearchSolr && strpos($termOrField, ':')) {
-            $termOrField = str_replace(':', '_', $termOrField) . '_ss';
+            $termOrField = strtr($termOrField, ':', '_') . '_ss';
         }
 
         if ($vr = $value->valueResource()) {
@@ -520,22 +520,22 @@ class ThemeFunctions extends AbstractHelper
             $val['value'] = $vr->displayTitle(null, $lang);
             if ($useSearchSolr) {
                 $val['url'] = $baseSearchUrl . '?'
-                    . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode((string) $val['value'])], $baseSearchQueryVr);
+                    . strtr($baseSearchQueryVr, ['__FIELD__' => rawurlencode($termOrField), '__VALUE__' => rawurlencode((string) $val['value'])]);
             } else {
                 $val['url'] = $baseSearchUrl . '?'
-                    . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode((string) $vr->id())], $baseSearchQueryVr);
+                    . strtr($baseSearchQueryVr, ['__FIELD__' => rawurlencode($termOrField), '__VALUE__' => rawurlencode((string) $vr->id())]);
             }
         } elseif ($uri = $value->uri()) {
             $val['class'] .= ' uri';
             $val['value'] = (string) $value->value() ?: $uri;
             $val['url'] = $baseSearchUrl . '?'
-                . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($uri)], $baseSearchQuery);
+                . strtr($baseSearchQuery, ['__FIELD__' => rawurlencode($termOrField), '__VALUE__' => rawurlencode($uri)]);
         } else {
             $val['class'] .= ' literal';
             // $val['value'] = $value->asHtml(null, $lang);
             $val['value'] = (string) $value->value();
             $val['url'] = $baseSearchUrl . '?'
-                . str_replace(['__FIELD__', '__VALUE__'], [rawurlencode($termOrField), rawurlencode($val['value'])], $baseSearchQuery);
+                . strtr($baseSearchQuery, ['__FIELD__' => rawurlencode($termOrField), '__VALUE__' => rawurlencode($val['value'])]);
         }
         $val['link'] = $hyperlink($val['value'], $val['url'], ['class' => $val['class']]);
 
@@ -660,7 +660,7 @@ class ThemeFunctions extends AbstractHelper
                     }
                 } else {
                     // Normally cleaned on save.
-                    $output = str_replace(["\n\r", "\r\n", "\r"], ["\n", "\n", "\n"], $text);
+                    $output = strtr($text, ["\n\r" => "\n", "\r\n" => "\n", "\r" => "\n"], $text);
                     $pos = mb_strpos($output, "\n\n");
                     if ($pos) {
                         $more = mb_substr($output, $pos + 1);
