@@ -107,7 +107,7 @@ if ($template) {
             <?php if ($missingMedias <= 0): ?>
         <li><a class="button submit-button submit-contribution form-button" href="<?= $escapeAttr($contribution->url('submit')) ?>"><?= $escape($translate('Confirmer le dépôt')) ?></a></li>
             <?php else: ?>
-        <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>?next=edit-fichiers"><?= $escape($missingMedias === 1 ? $translate('Fichier manquant') : sprintf($translate('%d fichiers manquants', $missingMedias))) ?></a></li>
+        <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>?next=edit-fichiers"><?= $escape($missingMedias === 1 ? $translate('Fichier manquant') : sprintf($translate('%d fichiers manquants'), $missingMedias)) ?></a></li>
             <?php endif; ?>
         <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>"><?= $escape($translate('Éditer')) ?></a></li>
         <?php endif; ?>

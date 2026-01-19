@@ -49,14 +49,14 @@ $(document).ready(function () {
                 const firstFilename = fileToUpload[0].name;
                 fileInput.closest('label').find('.file-to-upload').remove();
                 fileInput.closest('label').append('<span class="file-to-upload file-uploading"></span>');
-                span = fileInput.closest('label').find('.file-to-upload');
+                const span = fileInput.closest('label').find('.file-to-upload');
                 span.text(firstFilename);
             }
         }
     });
 
     function checkFiles(event) {
-        var hasAlert = false;
+        let hasAlert = false;
         $('#edit-resource').find('.contribute-media input[type=file]').each(function() {
             const fileInput = $(this);
             const fileToUpload = fileInput[0].files;
