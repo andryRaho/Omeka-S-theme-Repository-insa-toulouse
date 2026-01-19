@@ -8,7 +8,7 @@
  * @var \Contribute\Api\Representation\ContributionRepresentation|null $contribution
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation|null $resource
  * @var array $fields
- * @var \Omeka\Api\Representation\ResourceTemplateRepresentation $templateMedia A sub template for media may have no fields.
+ * @var \Omeka\Api\Representation\ResourceTemplateRepresentation|null $templateMedia A sub template for media may have no fields.
  * @var array $fieldsByMedia
  * @var array $fieldsMediaBase
  * @var string $action "add" or "edit" or "show"
@@ -80,6 +80,14 @@ if ($isMainForm) {
 
 // To wrap the elements with a disabled fieldset makes the whole form disabled.
 $disabled = $mode === 'read' ? ' disabled="disabled"' : '';
+
+// Number maximum of files.
+if ($resourceTemplate && !empty($templateMedia)) {
+    $minFiles = $resourceTemplate->dataValue('media_templates_minimum');
+    $minFiles = $minFiles === null ? 1 : array_sum($minFiles);
+} else {
+    $minFiles = 1;
+}
 ?>
 
 <?php if ($isMainForm): ?>
@@ -99,7 +107,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 
 <?= $this->form()->openTag($form->setAttribute('class', $form->getAttribute('class') . ' etape-' . $steps['stepNumber'])) ?>
 <?php // Afficher l'étape permet de la cacher via le css. ?>
-<fieldset class="etape-2"<?= $disabled ?> data-resource-template-id="<?= $templateMedia->id() ?>" data-resource-class-id="<?= $templateMedia->resourceClass() ? $templateMedia->resourceClass()->id() : '' ?>">
+<fieldset class="etape-2"<?= $disabled ?> data-resource-template-id="<?= $templateMedia ? $templateMedia->id() : '' ?>" data-resource-class-id="<?= $templateMedia && $templateMedia->resourceClass() ? $templateMedia->resourceClass()->id() : '' ?>">
     <h2><?= $escape($translate('2. Détails')) ?></h2>
     <?php // Le même en bas et dans la sous-forme pour les fichiers. ?>
     <ul id="page-actions" class="form-buttons">
@@ -131,9 +139,9 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
         ?>
     <div class="property form-content" data-term="file">
         <?php if ($file): ?>
-        <p><span class="file already-loaded"<?= $escape($translate('Fichier déjà téléchargé')) ?></p>
+        <p><span class="file already-loaded"><?= $escape($translate('Fichier déjà téléchargé')) ?></span></p>
         <div>
-            <label class="file-upload-button"><a href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" class="file-to-upload" download="download"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?></a></label>
+            <label class="file-upload-button"><a href="<?= $escapeAttr($baseUrlFiles . '/contribution/' . $file) ?>" class="file-to-upload" download="download" target="_self"><?= $escape($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?></a></label>
             <input type="hidden"  name="media[<?= $indexMedia ?>][file][0][store]" value="<?= $escapeAttr($file) ?>"/>
             <input type="hidden"  name="media[<?= $indexMedia ?>][file][0][@value]" value="<?= $escapeAttr($fieldsMedia['file']['contributions'][0]['proposed']['@value']) ?>"/>
         </div>
@@ -336,7 +344,7 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 </fieldset>
 
     <?php if (!empty($templateMedia)): ?>
-<fieldset class="contribute-medias etape-3" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?>>
+<fieldset class="contribute-medias etape-3" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?> data-files-min="<?= $minFiles ?>">
     <?php // For end user, "media" means "files". ?>
     <h2><?= $escape($translate('3. Téléchargement')) ?></h2>
     <ul class="actions form-buttons">

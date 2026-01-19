@@ -30,7 +30,7 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 $themeSettingAssetUrl = $plugins->get('themeSettingAssetUrl');
 
 // $languageSwitcher = $plugins->has('languageSwitcher') ? $plugins->get('languageSwitcher') : null;
-$searchingForm = $plugins->has('searchingForm') ? $plugins->get('searchingForm') : null;
+$searchConfig = $plugins->has('getSearchConfig') ? $plugins->get('getSearchConfig')() : null;
 
 $siteTitle = $site->title();
 
@@ -69,7 +69,7 @@ $headScript = $this->headScript()
     ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
 ;
 
-if ($searchingForm):
+if ($searchConfig) {
     // if ($searchPage->subSetting('autosuggest', 'enable')) {
     $headScript
         ->appendFile($assetUrl('vendor/jquery-autocomplete/jquery.autocomplete.min.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
@@ -82,7 +82,7 @@ if ($searchingForm):
     $headScript
         // ->appendFile($assetUrl('vendor/chosen-js/chosen.jquery.min.js', 'Omeka'), 'text/javascript', ['defer' => 'defer'])
         ->appendFile($assetUrl('js/search.js', 'AdvancedSearch'), 'text/javascript', ['defer' => 'defer']);
-endif;
+}
 
 // $this->jsTranslate();
 
@@ -160,7 +160,7 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                 </div>
                 <a href="<?= $value = $themeSetting('logo_url') ? $escapeAttr($value) : $site->url() ?>" class="site-title logo-header" title=<?= $escapeAttr($themeSetting('logo_title') ?: $siteTitle) ?>></a>
                 <div class="search-form-mask">
-                    <?= $searchingForm ? $searchingForm('search/search-form-headroom') : $partial('common/search-form-headroom') ?>
+                    <?= $searchConfig ? $searchConfig->renderForm(['template' => 'search/search-form-simple', 'variant' => 'simple']) : $partial('common/search-form-headroom') ?>
                 </div>
                 <div class="header-top-links">
                     <a href="" class="search-menu-toggle"><span><?= $translate('Menu recherche') ?></span></a>
@@ -179,7 +179,7 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             </div>
             <div class="header-bottom">
                 <?= $site->publicNav()->menu()->renderMenu(null, [
-                    'maxDepth' => $themeSetting('nav_depth') - 1,
+                    'maxDepth' => $themeSetting('nav_depth', 1) - 1,
                     'ulClass' => 'content-with-margin',
                 ]) ?>
             </div>
@@ -202,8 +202,8 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             <a href="" class="cd-top footer-back-to-top"></a>
         </footer>
         <?php // Pop-ups en fonction des pages. ?>
-        <?= $searchingForm ? $searchingForm('search/search-form-popup') : $partial('common/search-form-popup') ?>
-        <?php if (!empty($resource)): // Pour les pages ressources. ?>
+        <?= $searchConfig ? $searchConfig->renderForm(['template' => 'search/search-form-popup']) : $partial('common/search-form-popup') ?>
+        <?php if (!empty($resource)): // Informations sur les accès pour les pages ressources. ?>
         <div class="limited-access-popup">
             <div class="popup-scroll-content">
                 <div class="limited-access-popup-content">

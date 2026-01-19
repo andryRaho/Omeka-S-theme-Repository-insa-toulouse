@@ -2566,7 +2566,7 @@ p:empty {
     }
 
     main.resources-list-and-filters aside {
-        padding-top: 0;
+        padding: 0;
     }
 
     main.resources-list-and-filters aside form {
@@ -2580,7 +2580,7 @@ p:empty {
         margin-bottom: 10px;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > a.toggle {
+    main.resources-list-and-filters aside .resources-filters > li > .toggle {
         position: relative;
         display: block;
         color: #333333;
@@ -2590,17 +2590,18 @@ p:empty {
         line-height: 16px;
         text-transform: uppercase;
         text-decoration: none;
+        border: none;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li.opened > a.toggle {
+    main.resources-list-and-filters aside .resources-filters > li.opened > .toggle {
         margin-bottom: 10px;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li.opened > a.toggle::after {
+    main.resources-list-and-filters aside .resources-filters > li.opened > .toggle::after {
         transform: rotate(0deg);
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > a.toggle::after {
+    main.resources-list-and-filters aside .resources-filters > li > .toggle::after {
         content: '';
         display: block;
         width: 22px;
@@ -2614,25 +2615,30 @@ p:empty {
         transform: rotate(180deg);
     }
 
-    li.search-facet-item [type="checkbox"] + label span {
+    li.facet-item [type="checkbox"] + label {
+        font-size: 12px;
+        line-height: 18px;
+    }
+
+    li.facet-item [type="checkbox"] + label span {
         display: contents;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent label {
         position: relative;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label .search__label {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent label .search__label {
         width: 100%;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent label a {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent label a {
         display: block;
         text-decoration: none;
         font-weight: 700;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent > label::after {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent > label::after {
         content: '';
         display: block;
         width: 22px;
@@ -2647,34 +2653,34 @@ p:empty {
         pointer-events: none;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent.opened > label::after {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent.opened > label::after {
         transform: rotate(0deg);
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li.toggle-parent:not(.opened) > ul {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li.toggle-parent:not(.opened) > ul {
         display: none;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items li:not(.see-all-facets) {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items li:not(.facet-see-more) {
         margin-bottom: 5px;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items {
         display: none;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li.opened > .search-facet-items {
+    main.resources-list-and-filters aside .resources-filters > li.opened > .facet-items {
         display: block;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items > li label {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items > li label {
         color: #313232;
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
         line-height: 18px;
     }
 
-    main.resources-list-and-filters aside .resources-filters > li > .search-facet-items > li > .search-facet-items {
+    main.resources-list-and-filters aside .resources-filters > li > .facet-items > li > .facet-items {
         margin: 10px 20px;
     }
 
@@ -2765,37 +2771,21 @@ p:empty {
         text-decoration: none;
     }
 
-    .search-facet-items > li > a.toggle {
+    .facet-items > li > .toggle {
         font-weight: 700;
         text-decoration: none;
     }
 
-    .search-facet-items li.see-all-facets a {
+    .facet-items li.facet-see-more a,
+    .facet-elements .facet-see-more button {
         display: block;
+        width: 100%;
         color: #BA0000;
         font-family: 'Open Sans', sans-serif;
         font-size: 12px;
         font-weight: 600;
         line-height: 18px;
         text-align: right;
-    }
-
-    .search-facet-items.facets-toggle-opened li a span.see-all-closed,
-    .search-facet-items li a span.see-all-opened {
-        display: none;
-    }
-
-    .search-facet-items.facets-toggle-opened li a span.see-all-opened,
-    .search-facet-items li a span.see-all-closed {
-        display: inline-block;
-    }
-
-    .search-facet-items li.displayed-with-toggle {
-        display: none;
-    }
-
-    .search-facet-items.facets-toggle-opened li.displayed-with-toggle {
-        display: list-item;
     }
 
     /* */
@@ -2864,6 +2854,10 @@ p:empty {
     .search-results-tools .syndication-select {
         background: url(../img/rss.svg) left center / 20px auto no-repeat;
         padding-left: 10px;
+    }
+
+    .search-results-wrapper {
+        display: block;
     }
 
     .search-results-wrapper h3,

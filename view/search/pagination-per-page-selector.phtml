@@ -10,6 +10,9 @@
 if (count($options) <= 1) return;
 ?>
 
-<div class="search-pagination-per-page<?= $asUrl ? ' as-url' : '' ?>  select-parent pagination-count-select">
+<div class="search-pagination-per-page<?= $asUrl ? ' as-url' : '' ?> select-parent pagination-count-select">
+    <?php /*
+    <?= $this->formLabel($select) ?>
+    */ ?>
     <?= $this->formSelect($select) ?>
 </div>

@@ -96,7 +96,7 @@ $filtersReplacePreg = [
                 <ul class="form-buttons">
                     <li><a href="" class="form-button clear-button"><?= $translate('Effacer la recherche') ?></a></li>
                 </ul>
-                <?= $this->form()->openTag($form) ?>
+                <?= $this->form()->openTag($form->setAttribute('class', 'form-search advanced-search-form')) ?>
 
                     <div class="field search-by-keyword">
                         <?php $element = $form->get('q'); ?>

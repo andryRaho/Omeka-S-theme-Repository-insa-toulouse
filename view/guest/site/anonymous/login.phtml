@@ -2,18 +2,28 @@
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
  * @var \Omeka\Api\Representation\SiteRepresentation $site
- * @var \Omeka\Form\LoginForm $form
+ * @var \Omeka\Form\LoginForm|null $form
+ * @var \Omeka\Form\UserForm|null $formRegister
  */
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
+$trigger = $plugins->get('trigger');
+$setting = $plugins->get('setting');
 $escape = $plugins->get('escapeHtml');
 $translate = $plugins->get('translate');
+$hyperlink = $plugins->get('hyperlink');
+$pageTitle = $plugins->get('pageTitle');
+$siteSetting = $plugins->get('siteSetting');
+$htmlElement = $plugins->get('htmlElement');
 $themeFunctions = $plugins->get('ThemeFunctions');
 
-$siteSlug = $site->slug();
+$htmlElement('body')->appendAttribute('class', 'guest login');
 
-$this->htmlElement('body')->appendAttribute('class', 'guest login');
+if ($form) $form->prepare();
+if ($formRegister) $formRegister->prepare();
+
+$siteSlug = $site->slug();
 
 $ariane = '<nav class="breadcrumbs content-with-margin">
     <ul>
@@ -26,7 +36,6 @@ $themeFunctions->appendVarsToRootView([
     'ariane' => $ariane,
     'mainClass' => 'user-account user-infos',
 ]);
-
 ?>
 
 <div class="content">
@@ -41,20 +50,39 @@ $themeFunctions->appendVarsToRootView([
     </div>
     <?php endif; ?>
 
-    <div class="page-block">
-        <?php if (empty($form)): ?>
-        <p>
-            <?= $translate('Your account seems to have an error. Contact your administrator to login.') ?>
-        </p>
-        <?php else: ?>
-        <?= $this->form($form) ?>
-        <?php endif; ?>
+    <?= $this->messages() ?>
 
+    <div class="page-block">
+        <?php if ($form): ?>
+        <?= $this->form($form) ?>
         <p class="forgot-password">
             <?= $this->hyperlink($translate('Forgot password?'), $url('site/guest/anonymous', ['action' => 'forgot-password'], true)) ?>
         </p>
+        <?php endif; ?>
 
         <?php $this->trigger('view.login.after'); ?>
     </div>
+
+    <?php if ($formRegister): ?>
+   <div class="guest-anonymous guest-register page-block">
+
+        <?= $this->messages() ?>
+
+        <div>
+            <?= $siteSetting('guest_capabilities') ?: $setting('guest_capabilities') ?>
+        </div>
+
+        <?= $this->form()->openTag($formRegister) ?>
+            <?= $this->formCollection($formRegister, false) ?>
+            <?php $trigger('view.add.form.after'); ?>
+            <div id="page-actions">
+                <button type="submit"><?= $translate('Register') ?></button>
+            </div>
+        <?= $this->form()->closeTag() ?>
+
+        <?php $trigger('view.add.after'); ?>
+
+    </div>
+    <?php endif; ?>
 
 </div>

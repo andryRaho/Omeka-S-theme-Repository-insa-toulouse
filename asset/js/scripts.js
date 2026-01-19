@@ -1,3 +1,5 @@
+'use strict';
+
 $(document).ready(function () {
 
     const body = $('body');
@@ -69,8 +71,16 @@ $(document).ready(function () {
                 event.preventDefault();
             }
         });
-        if (!hasAlert && !$('#edit-resource').find('.file.already-loaded').length && !$('#edit-resource').find('.file-uploading').length) {
-            alert('Vous devez ajouter au moins un fichier.');
+        const filesMin = $('.contribute-medias.etape-3').data('files-min');
+        const fileDefault = $('#edit-resource').find('.contribute-media').length;
+        const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
+        const fileUploading = $('#edit-resource').find('.file-uploading').length;
+        if (!hasAlert && !fileLoaded && !fileUploading && filesMin > 0) {
+            if (filesMin == 1) {
+                alert('Vous devez ajouter au moins 1 fichier.');
+            } else {
+                alert('Vous devez ajouter au moins ' + filesMin + ' fichiers.');
+            }
             event.preventDefault();
             return false;
         }
@@ -82,7 +92,13 @@ $(document).ready(function () {
 
     $('.submit-contribution').on('click submit', function(event) {
         if (!$('.document-preview').length) {
-            alert('Vous devez déposer au moins un fichier.');
+            const filesMin = $('.contribute-medias.etape-3').data('min-files');
+            const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
+            if (filesMin == 1 && fileLoaded < 1) {
+                alert('Vous devez ajouter au moins 1 fichier.');
+            } else if (filesMin > 1 && fileLoaded < filesMin) {
+                alert('Vous devez ajouter au moins ' + filesMin + ' fichiers.');
+            }
             e.stopPropagation();
             event.preventDefault();
             return false;
@@ -279,7 +295,6 @@ $(document).ready(function () {
         }
     });
 
-
     /* */
 
     documentListFilterToggle.on('click', function(e) {
@@ -317,36 +332,6 @@ $(document).ready(function () {
     });
 
     /* */
-
-    const seeAllFacetsLimit = 6;
-    const seeMore = "+ Voir plus";
-    const seeLess = "- Voir moins";
-
-    const seeMoreHtml = '<span class="see-all-closed">' + seeMore + '</span><span class="see-all-opened">' + seeLess + '</span>';
-
-    let facetsParents = $('ul.search-facet-items');
-    facetsParents.each(function(no, item) {
-        const facetParent = $(item);
-        const facets = $('> li', facetParent);
-        if (facets.length > seeAllFacetsLimit) {
-            facetParent.addClass('with-toggle');
-            facetParent.append('<li class="see-all-facets"><a href="#">'+ seeMoreHtml +'</a></li>');
-            facets.each(function(no, item) {
-                if (no + 1 > seeAllFacetsLimit) {
-                    $(item).addClass('displayed-with-toggle')
-                }
-            });
-        }
-    });
-
-    facetsParents.on('click', function(event) {
-        const target = $(event.target);
-        if (target.closest('li').hasClass('see-all-facets')) {
-            event.preventDefault();
-            $(this).closest('.search-facet-items').toggleClass('facets-toggle-opened');
-        }
-    });
-
 
     /* Advanced Search popup */
 

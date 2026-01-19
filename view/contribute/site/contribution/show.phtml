@@ -78,6 +78,13 @@ unset($contributeVars);
 
 $template = $contribution ? $contribution->resourceTemplate() : null;
 $asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these' : '';
+
+if ($template) {
+    $minFiles = $template->dataValue('media_templates_minimum');
+    $minFiles = $minFiles === null ? 1 : array_sum($minFiles);
+} else {
+    $minFiles = 1;
+}
 ?>
 
 <?= $themeSetting('contribution_help_aside_' . $steps['step'] . $asideThese) ?: $this->partial('contribute/site/contribution/aside') ?>
@@ -96,10 +103,11 @@ $asideThese = $template && strtolower($template->label()) === 'thèse' ? '_these
     <?php if ($contribution->isUpdatable()): ?>
     <ul id="page-actions" class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
         <?php if ($contribution->userIsAllowed('update')): ?>
-            <?php if ($contribution->proposalMedias()): ?>
+            <?php $missingMedias = $minFiles ? $minFiles - count($contribution->proposalMedias()) : 0; ?>
+            <?php if ($missingMedias <= 0): ?>
         <li><a class="button submit-button submit-contribution form-button" href="<?= $escapeAttr($contribution->url('submit')) ?>"><?= $escape($translate('Confirmer le dépôt')) ?></a></li>
             <?php else: ?>
-        <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>?next=edit-fichiers"><?= $escape($translate('Fichier manquant')) ?></a></li>
+        <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>?next=edit-fichiers"><?= $escape($missingMedias === 1 ? $translate('Fichier manquant') : sprintf($translate('%d fichiers manquants', $missingMedias))) ?></a></li>
             <?php endif; ?>
         <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>"><?= $escape($translate('Éditer')) ?></a></li>
         <?php endif; ?>

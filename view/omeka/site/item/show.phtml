@@ -118,41 +118,37 @@ $themeFunctions->appendVarsToRootView([
                 </ul>
                 <?php else: ?>
                 <ul class="media-list">
+                    <?php /** @var \Omeka\Api\Representation\MediaRepresentation $media */ ?>
                     <?php foreach ($medias as $media):
-                        /** @var \Omeka\Api\Representation\MediaRepresentation $mediaRes */
-                        $mediaRes = $media['resource'];
-                        if ($mediaRes) {
-                            $title = $mediaRes->displayTitle();
-                            $accessLevelMedia = $themeFunctions->accessLevel($mediaRes);
-                            $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
-                            $originalUrl = $mediaRes->originalUrl();
-                            // Attention : en cas d'accès restreint, le message est différent selon les documents et selon l'embargo.
-                            // Pour les travaux étudiants = accès restreint UT2
-                            // Pour les thèses = accès restreint communauté universitaire
-                            // Si embargo, ajouter : jusqu'au JJ/MM/AAAA
-                            if ($accessLevelMedia === 'reserved') {
-                                $accessLabelMedia = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
-                            }
-                            if ($accessLevelMedia !== 'free') {
-                                $embargo = null;
-                                if ($accessStatus) {
-                                    $accessStatusMedia = $accessStatus($mediaRes);
-                                    if ($accessStatusMedia) {
-                                        if ($accessStatusMedia->isUnderEmbargo()) {
-                                            $embargo = $accessStatusMedia->embargoEnd();
-                                        }
-                                    } else {
-                                        $embargo = $mediaRes->value('curation:end');
+                        $title = $media->displayTitle();
+                        $accessLevelMedia = $themeFunctions->accessLevel($media);
+                        $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
+                        $originalUrl = $media->originalUrl();
+                        // Attention : en cas d'accès restreint, le message est différent selon les documents et selon l'embargo.
+                        // Pour les travaux étudiants = accès restreint UT2
+                        // Pour les thèses = accès restreint communauté universitaire
+                        // Si embargo, ajouter : jusqu'au JJ/MM/AAAA
+                        if ($accessLevelMedia === 'reserved') {
+                            $accessLabelMedia = $isThese ? 'Accès restreint communauté universitaire' : 'Accès restreint UT2J';
+                        }
+                        if ($accessLevelMedia !== 'free') {
+                            $embargo = null;
+                            if ($accessStatus) {
+                                $accessStatusMedia = $accessStatus($media);
+                                if ($accessStatusMedia) {
+                                    if ($accessStatusMedia->isUnderEmbargo()) {
+                                        $embargo = $accessStatusMedia->embargoEnd();
                                     }
                                 } else {
-                                    $embargo = $mediaRes->value('curation:end');
+                                    $embargo = $media->value('curation:end');
                                 }
-                                if ($embargo) {
-                                    $date = $embargo instanceof DateTime ? $embargo : DateTime::createFromFormat('Y-m-d', $embargo->value());
-                                    if (!$date) {
-                                        $this->logger()->err('Date incorrecte dans curation:end du media #' . $mediaRes->id());
-                                    }
-                                    $accessLabelMedia .= ' jusqu’au ' . ($date ? $date->format('d-m-Y') : $embargo->value());
+                            } else {
+                                $embargo = $media->value('curation:end');
+                            }
+                            if ($embargo) {
+                                $date = $embargo instanceof DateTime ? $embargo : DateTime::createFromFormat('Y-m-d', $embargo->value());
+                                if (!$date) {
+                                    $this->logger()->err('Date incorrecte dans curation:end du media #' . $media->id());
                                 }
                             }
                         } else {
@@ -171,13 +167,13 @@ $themeFunctions->appendVarsToRootView([
                         <div class="document-edition">
 
                             <?php if ($accessLevelMedia === 'free'
-                                || ($mediaRes && $themeFunctions->accessMedia($mediaRes))
+                                || ($media && $themeFunctions->accessMedia($media))
                             ): ?>
 
                             <ul class="form-buttons">
                                 <?php if ($originalUrl): ?>
                                 <li><a href="<?= $originalUrl ?>" class="form-button preview-button"><?= $translate('Visualiser') ?></a></li>
-                                <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="download"><?= $translate('Télécharger') ?></a></li>
+                                <li><a href="<?= $originalUrl ?>" class="form-button download-button" download="download" target="_self"><?= $translate('Télécharger') ?></a></li>
                                 <?php else: ?>
                                 <li><a href="" class="form-button ask-copy-button"><?= $translate('Fichier manquant : demander une copie') ?></a></li>
                                 <?php endif; ?>
