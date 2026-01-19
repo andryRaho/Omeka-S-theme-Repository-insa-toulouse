@@ -51,7 +51,7 @@ $isBrowse = $query->isBrowse();
 <?php if (isset($displayParts['total_results'])): ?>
 <?php $totalResults = $response->getTotalResults(); ?>
 <p class="search-results-count-total search-results-details">
-    <?= sprintf($translate($translatePlural('Vous avez %s résultat.', 'Vous avez %s résultats.', $totalResults)), $totalResults) ?>
+    <?= sprintf($translatePlural('Vous avez %s résultat.', 'Vous avez %s résultats.', $totalResults), $totalResults) ?>
 </p>
 <?php endif; ?>
 
