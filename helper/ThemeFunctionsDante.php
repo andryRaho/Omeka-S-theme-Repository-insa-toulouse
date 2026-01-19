@@ -185,32 +185,6 @@ SQL;
         return $author ? $author->value('foaf:familyName', ['default' => $user->getName()]) : $user->getName();
     }
 
-    /**
-     * Pour gérer les options spécifiques directement.
-     */
-    public function templatePropertyThemeOption(
-        ?\Omeka\Api\Representation\ResourceTemplatePropertyRepresentation $templateProperty,
-        ?string $metadata = null
-        ) {
-            if (!$templateProperty || !$templateProperty instanceof \AdvancedResourceTemplate\Api\Representation\ResourceTemplatePropertyRepresentation) {
-                return null;
-            }
-            $val = $templateProperty->mainDataValueMetadata('settings', $metadata);
-            if ($metadata === 'multilang') {
-                $ls = [];
-                foreach (array_map('trim', explode('|', trim((string) $val))) as $keyValue) {
-                    list($key, $value) = strpos($keyValue, '=') === false
-                    ? [$keyValue, null]
-                    : array_map('trim', explode('=', $keyValue, 2));
-                    if ($key !== '') {
-                        $ls[$key] = $value;
-                    }
-                }
-                return $ls;
-            }
-            return $val;
-    }
-
     public function advancedTemplateValues($templateOrResourceOrContribution, $values): array
     {
         if (!$templateOrResourceOrContribution) {
