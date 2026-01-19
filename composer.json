@@ -2,6 +2,6 @@
     "name": "daniel-km/omeka-s-theme-repository",
     "type": "omeka-s-theme",
     "require": {
-        "omeka/omeka-s": "^4.0.0"
+        "omeka/omeka-s": "^4.1.0"
     }
 }
