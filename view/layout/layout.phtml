@@ -221,11 +221,28 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                         <?php if (trim($html)): ?>
                         <p><?= $translate('Contacter l’auteur pour pouvoir consulter le document') ?></p>
                         <?= $html ?>
-                        <?php else: ?>
+                        <?php elseif ($user && ($html = $themeSetting('access_warning_user'))): ?>
+                        <?= $html ?>
+                        <?php elseif (!$user && ($html = $themeSetting('access_warning_anonymous'))): ?>
+                        <?= $html ?>
+                        <?php elseif ($user): ?>
+                        <?php /*
                         <p><?= $escape($translate('L’auteur ne peut pas être contacté directement.')) ?></p>
+                        */?>
+                        <p><?= $escape($translate('Demander à l’administrateur du site pour plus d’information.')) ?></p>
+                        <?php else: ?>
+                        <p><?= $escape($translate('L’accès au document est réservé aux utilisateurs authentifiés. Connectez-vous pour consulter ce document.')) ?></p>
                         <p><?= $escape($translate('Demander à l’administrateur du site pour plus d’information.')) ?></p>
                         <?php endif; ?>
+                        <?php // Sans contact us. ?>
+                        <?php elseif ($user && ($html = $themeSetting('access_warning_user'))): ?>
+                        <?= $html ?>
+                        <?php elseif (!$user && ($html = $themeSetting('access_warning_anonymous'))): ?>
+                        <?= $html ?>
+                        <?php elseif ($user): ?>
+                        <p><?= $escape($translate('Demander à l’administrateur du site pour plus d’information.')) ?></p>
                         <?php else: ?>
+                        <p><?= $escape($translate('L’accès au document est réservé aux utilisateurs authentifiés. Connectez-vous pour consulter ce document.')) ?></p>
                         <p><?= $escape($translate('Demander à l’administrateur du site pour plus d’information.')) ?></p>
                         <?php endif; ?>
                     </div>
