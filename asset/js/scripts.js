@@ -2,6 +2,8 @@
 
 $(document).ready(function () {
 
+    const showEmbargo = ['Accès restreint', 'Non consultable'];
+
     const body = $('body');
 
     const burgerBtn = $('.open-header-menu');
@@ -220,6 +222,28 @@ $(document).ready(function () {
     if ( $('body.edit .edit-button').length ) {
         $('body.edit').addClass('without-delete-button');
     }
+
+    /**
+     * Affiche le champ embargo uniquement quand visibilité est sur "Accès restreint" ou "Non consultable".
+     * Réinitialise le champ embargo si la visibilité est modifiée.
+     */
+    function changeAccessEmbargo() {
+        const accessField = $('.property.form-content[data-term="curation:access"]');
+        const embargoField = $('.property.form-content[data-term="curation:end"]');
+        const selectedValue = accessField.find('select').val();
+        if (showEmbargo.includes(selectedValue)) {
+            embargoField.show();
+        } else {
+            embargoField.hide();
+            embargoField.find('input').val('');
+            embargoField.find('select').prop('selectedIndex', -1);
+        }
+    }
+
+    $('.property.form-content[data-term="curation:access"]').on('change', 'select', changeAccessEmbargo);
+
+    // On load.
+    changeAccessEmbargo();
 
     /*
     $('a.duplicate-fields-button').on('click', function(e) {
