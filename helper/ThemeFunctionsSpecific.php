@@ -218,11 +218,16 @@ trait ThemeFunctionsSpecific
 
     public function sommaire(?string $pageSlugs, $tags = ['h1', 'h2']): array
     {
+        // Avoid an infinite loop with a sommaire on multiple pages.
+        static $usedPages = [];
+
         /** @var \Omeka\Api\Representation\SitePageRepresentation $page */
         $page = $this->currentPage();
         if (!$page && !$pageSlugs) {
             return [];
         }
+
+        $pageSlugs = array_filter(array_map('trim', explode("\n", $pageSlugs)), 'strlen');
 
         if (!is_array($tags)) {
             $tags = [$tags];
@@ -236,7 +241,11 @@ trait ThemeFunctionsSpecific
 
         $headers = [];
         $api = $this->view->api();
-        foreach (array_map('trim', explode("\n", $pageSlugs)) as $pageSlug) {
+        foreach ($pageSlugs as $pageSlug) {
+            if (isset($usedPages[$pageSlug])) {
+                continue;
+            }
+            $usedPages[$pageSlug] = true;
             /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
             $sitePage = $api->searchOne('site_pages', ['site_id' => $siteId, 'slug' => $pageSlug])->getContent();
             if ($sitePage) {
@@ -287,7 +296,6 @@ trait ThemeFunctionsSpecific
         } catch (\Exception $e) {
             $html = mb_substr($html, 5, -7);
         }
-
         return $html;
     }
 
@@ -313,7 +321,13 @@ trait ThemeFunctionsSpecific
         foreach ($page->blocks() as $block) {
             $layout = $block->layout();
             if (($layout === 'html' || $layout === 'block')
-                && strpos((string) $block->dataValue('template'), 'aside')
+                && (
+                    // Old Omeka S < 4.1.
+                    strpos((string) $block->dataValue('template'), 'aside')
+                    // New Omeka S.
+                    || (method_exists($block, 'layoutDataValue')
+                        && strpos((string) $block->layoutDataValue('template_name'), 'aside'))
+                )
             ) {
                 continue;
             }

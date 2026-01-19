@@ -7,7 +7,6 @@
 
 // Comme html-aside-sommaire.
 $html = $params;
-$divclass = null;
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
@@ -19,7 +18,7 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : null;
 ?>
 
-<aside class="aside-sommaire-page<?= empty($divclass) ? '' : ' ' . $escapeAttr($divclass) ?>">
+<aside class="aside-sommaire-page">
     <div class="open-science-menu-header">
         <a class="items-list-close-page-menu" href=""></a>
         <a class="items-list-toggle-page-menu" href="">Menu</a>
@@ -51,8 +50,8 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
                     $deep += $current['level'] - $prevLevel;
                     $html .= str_repeat("                    </ul>\n                </li>\n", $prevLevel - $current['level']);
                 }
-                // Commencer la ligne en cours.
-                $html .= '                <li>'
+                // Commencer la ligne en cours. Eventuellement ajouter le numéro, mais dans ce cas <ol> est plus simple.
+                $html .= '                <li>' // . " [$deep] "
                     . '<a href="' . $href . '">' . $escape($current['label']) . '</a>';
                 // Ouvrir le prochain niveau ou fermer la ligne en cours.
                 if ($next && $current['level'] < $next['level']) {

@@ -5,6 +5,7 @@
  */
 
 // Comme block-aside-sommaire.
+$html = $block->dataValue('html', '');
 
 $plugins = $this->getHelperPluginManager();
 $url = $plugins->get('url');
@@ -32,7 +33,7 @@ $html = $block->dataValue('html', '');
         // Si html est vide, c'est une liste simple pour la page en cours.
         $sommaire = $themeFunctions->sommaire($html);
         if ($sommaire) {
-            $currentPageSlug = $themeFunctions->currentPage()->slug();
+            $currentPageSlug = $block->page()->slug();
             $prevLevel = 0;
             // On ne met pas le titre des pages (déjà inclus dans le html), donc la profondeur commence à 1.
             $deep = 1;
@@ -41,6 +42,8 @@ $html = $block->dataValue('html', '');
                 $next = $sommaire[$index + 1] ?? null;
                 // On ne met pas le titre des pages, car déjà inclus dans la page.
                 if (!$current['level']) continue;
+                // Pas les "footnotes" non plus.
+                if (strpos($current['#id'], '#footnotes') !== false) continue;
 
                 $href = $currentPageSlug === $current['page_slug'] ? $current['#id'] : $current['page_url#id'];
                 // Fermer les ul/li précédents quand on revient à un niveau supérieur.
@@ -48,8 +51,8 @@ $html = $block->dataValue('html', '');
                     $deep += $current['level'] - $prevLevel;
                     $html .= str_repeat("                    </ul>\n                </li>\n", $prevLevel - $current['level']);
                 }
-                // Commencer la ligne en cours.
-                $html .= "                <li>" . " [$deep] "
+                // Commencer la ligne en cours. Eventuellement ajouter le numéro, mais dans ce cas <ol> est plus simple.
+                $html .= '                <li>' // . " [$deep] "
                     . '<a href="' . $href . '">' . $escape($current['label']) . '</a>';
                 // Ouvrir le prochain niveau ou fermer la ligne en cours.
                 if ($next && $current['level'] < $next['level']) {
