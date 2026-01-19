@@ -1137,11 +1137,6 @@ p:empty {
         background: url(../img/effacer.svg) center left 12px / auto 17px no-repeat;
     }
 
-    .form-button.clear-button  {
-        padding-left: 40px;
-        background: url(../img/effacer.svg) center left 12px / auto 17px no-repeat;
-    }
-
     .form-button.submit-button {
         padding-left: 45px;
         background: url(../img/loupe_champ.svg) center left 12px / auto 17px no-repeat;
@@ -1713,7 +1708,7 @@ p:empty {
     main .block.aside + .block,
     main > aside + .content {
         flex: calc( 100% - 390px ) 0 0;
-        padding-left: 72px;
+        padding-left: 20px;
     }
 
     main .page-layout-normal h1,
@@ -1743,7 +1738,7 @@ p:empty {
         margin-left: 30px;
         text-align: left;
         text-transform: none;
-        font-size: 22px;
+        font-size: 25px;
         font-weight: 700;
         line-height: 33px;
     }
@@ -2698,9 +2693,19 @@ p:empty {
         transform: rotate(180deg);
     }
 
+    main.resources-list-and-filters aside .resources-filters > li > .collapse + .collapsible {
+        padding: 0;
+    }
+
+    .facet-items [type="tel"],
+    .facet-items [type="number"],
     li.facet-item [type="checkbox"] + label {
         font-size: 12px;
         line-height: 19px;
+    }
+
+    .facet-items.facet-range-double {
+        gap: 2em;
     }
 
     li.facet-item [type="checkbox"] + label span {

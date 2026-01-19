@@ -41,7 +41,7 @@ $displayPartsFooter = array_filter($displayParts, fn ($v) => in_array($v, ['foot
 $displayFacets = $displayParts ? $displayParts['facets'] ?? 'before' : 'none';
 
 if ($itemSet && $site) {
-    $redirectItemSets = $this->siteSetting('advancedsearch_redirect_itemsets', ['default' => 'browse']);
+    $redirectItemSets = $this->siteSetting('advancedsearch_item_sets_redirects', ['default' => 'browse']);
     $redirectItemSet = $redirectItemSets[$itemSet->id()] ?? $redirectItemSets['default'] ?? 'browse';
     $displayItemSet = $redirectItemSet === 'all' || ($redirectItemSet === 'first' && $response->getCurrentPage() === 1);
 } else {
@@ -134,7 +134,9 @@ $themeFunctions->appendVarToRootView('ariane', $ariane);
     <?php else: ?>
 
         <?php $this->htmlElement('body')->appendAttribute('class', 'search-page resource browse'); ?>
-        <?= $this->pageTitle($translate('Documents')) ?>
+        <?= $this->pageTitle($translate($isBrowse
+            ? 'Documents'
+            : 'Résultats de recherche')) ?>
 
     <?php endif; ?>
 

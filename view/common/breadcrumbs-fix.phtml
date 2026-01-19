@@ -26,7 +26,7 @@ $last = mb_strripos($ariane, '</a>');
         <li><a href="<?= $escapeAttr($url('site', ['site-slug' => $site->slug()])) ?>"><?= $escape($translate('Accueil')) ?></a></li>
         <?php endif; ?>
         <?= $last
-            ? str_replace(['<a ', '</a>'], ['<li><a ', "</a></li>\n"], mb_substr($ariane, 0, $last + 4))
+            ? strtr(mb_substr($ariane, 0, $last + 4), ['<a ' => '<li><a ', '</a>' => "</a></li>\n"])
                 . '<li><span>' . mb_substr($ariane, $last + 4) . "</span><li>\n"
             : '<li><span>' . $ariane . "</span></li>\n" ?>
     </ul>
