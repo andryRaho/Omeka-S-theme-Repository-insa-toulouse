@@ -16,6 +16,7 @@ $siteSetting = $plugins->get('siteSetting');
 $escapeAttr = $plugins->get('escapeHtmlAttr');
 $accessStatus = $plugins->has('accessStatus') ? $plugins->get('accessStatus') : null;
 $themeFunctions = $plugins->get('ThemeFunctions');
+$isAllowedMediaContent = $plugins->has('isAllowedMediaContent') ? $plugins->get('isAllowedMediaContent') : null;
 
 $this->htmlElement('body')->appendAttribute('class', 'item resource show');
 
@@ -170,7 +171,8 @@ $themeFunctions->appendVarsToRootView([
                         <div class="document-edition">
 
                             <?php if ($accessLevelMedia === 'free'
-                                || ($media && $themeFunctions->accessMedia($media))
+                                || ($isAllowedMediaContent && $isAllowedMediaContent($media))
+                                || (!$isAllowedMediaContent && $media && $themeFunctions->accessMedia($media))
                             ): ?>
 
                             <ul class="form-buttons">
