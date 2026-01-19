@@ -347,7 +347,10 @@ $(document).ready(function () {
         body.removeClass('advanced-search-popup-opened');
     });
 
-    $('a.clear-button').on('click', function(e) {
+    /**
+     * Do not use this method for form of module AdvancedSearch.
+     */
+    $('a.clear-button:not(.form-search)').on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         $('.advanced-search-popup form input').val('');
@@ -363,6 +366,7 @@ $(document).ready(function () {
         });
     });
 
+    /*
     advancedSearchForm.on('click', function(e) {
         e.stopPropagation();
         const target = $(e.target);
@@ -373,6 +377,7 @@ $(document).ready(function () {
             advancedSearchTemplateTarget.append(clone);
         }
     });
+    */
 
     exportSelect.on('change', function(e) {
         const select = $(this);

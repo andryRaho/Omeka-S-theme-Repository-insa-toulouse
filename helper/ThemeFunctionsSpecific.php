@@ -246,9 +246,9 @@ trait ThemeFunctionsSpecific
                 continue;
             }
             $usedPages[$pageSlug] = true;
-            /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
-            $sitePage = $api->searchOne('site_pages', ['site_id' => $siteId, 'slug' => $pageSlug])->getContent();
-            if ($sitePage) {
+            try {
+                /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
+                $sitePage = $api->read('site_pages', ['site' => $siteId, 'slug' => $pageSlug])->getContent();
                 $pageUrl = $sitePage->siteUrl();
                 // Page en cours.
                 $headers[] = [
@@ -261,8 +261,9 @@ trait ThemeFunctionsSpecific
                    '#id' => null,
                    'label' => $sitePage->title(),
                    'page_url#id' => $pageUrl,
-               ];
+                ];
                 $headers = array_merge($headers, $this->extractTags($sitePage, $tags));
+            } catch (\Exception $e) {
             }
         }
         return $headers;

@@ -75,7 +75,11 @@ class ThemeFunctions extends AbstractHelper
             return null;
         }
         $site = $this->currentSite();
-        return $this->view->page = $this->view->api()->searchOne('site_pages', ['site_id' => $site->id(), 'slug' => $pageSlug])->getContent();
+        try {
+            return $this->view->page = $this->view->api()->read('site_pages', ['site' => $site->id(), 'slug' => $pageSlug])->getContent();
+        } catch (\Exception $e) {
+            return $this->view->page = null;
+        }
     }
 
     /**
@@ -325,9 +329,18 @@ class ThemeFunctions extends AbstractHelper
                 && strpos($urlOrSlug, '/') === false
             ) {
                 if ($noLabel) {
-                    /** @var \Omeka\Api\Representation\SitePageRepresentation $page */
-                    $page = $api->searchOne('site_pages', ['site_slug' => $siteSlug, 'slug' => $urlOrSlug])->getContent();
-                    $label = $page ? $page->title() : $urlOrSlug;
+                    try {
+                        /**
+                         * @var \Omeka\Api\Representation\SiteRepresentation $site
+                         * @var \Omeka\Api\Representation\SitePageRepresentation $page
+                         */
+                        $site = $api->read('sites', ['slug' => $siteSlug])->getContent();
+                        $page = $api->read('site_pages', ['site' => $site->id(), 'slug' => $urlOrSlug])->getContent();
+                        $label = $page->title();
+                    } catch (\Exception $e) {
+                        $page = null;
+                        $label = $urlOrSlug;
+                    }
                 }
                 $urlOrSlug = $baseSiteUrl . 'page/' . $urlOrSlug;
             } elseif ($noLabel) {
@@ -388,7 +401,7 @@ class ThemeFunctions extends AbstractHelper
      */
     public function fixEndOfLine($string): string
     {
-        return str_replace(["\r\n", "\n\r", "\r"], ["\n", "\n", "\n"], (string) $string);
+        return strtr((string) $string, ["\r\n" => "\n", "\n\r" => "\n", "\r" => "\n"]);
     }
 
     /**
@@ -1266,11 +1279,10 @@ class ThemeFunctions extends AbstractHelper
     public function hasMappingOrMarkers(?int $siteId = null): bool
     {
         static $hasMappingInAllSites;
-        static $isOldVersion;
         static $results = [];
 
         if (is_null($hasMappingInAllSites)) {
-            $hasMappingInAllSites = $this->isModuleActive('Mapping');
+            $hasMappingInAllSites = class_exists('Mapping\Module', false);
             if (!$hasMappingInAllSites) {
                 return false;
             }
@@ -1280,10 +1292,7 @@ class ThemeFunctions extends AbstractHelper
             } catch (\Exception $e) {
                 return false;
             }
-            $isOldVersion = !$this->isModuleActive('Mapping', '2.0');
-            $markers = $isOldVersion
-                ? $api->search('mapping_markers')->getTotalResults()
-                : $api->search('mapping_features')->getTotalResults();
+            $markers = $api->search('mapping_features')->getTotalResults();
             $hasMappingInAllSites = $results[$siteId] = ($mapping + $markers) > 0;
         }
 
@@ -1293,9 +1302,7 @@ class ThemeFunctions extends AbstractHelper
 
         if (!isset($results[$siteId])) {
             $mapping = $api->search('mappings', ['site_id' => $siteId])->getTotalResults();
-            $markers = $isOldVersion
-                ? $api->search('mapping_markers', ['site_id' => $siteId])->getTotalResults()
-                : $api->search('mapping_features', ['site_id' => $siteId])->getTotalResults();
+            $markers = $api->search('mapping_features', ['site_id' => $siteId])->getTotalResults();
             $results[$siteId] = ($mapping + $markers) > 0;
         }
 
@@ -1325,12 +1332,12 @@ class ThemeFunctions extends AbstractHelper
         if (!isset($results[$siteId][$resourceId])) {
             if ($resource instanceof \Omeka\Api\Representation\ItemRepresentation) {
                 $mapping = $api->search('mappings', ['site_id' => $siteId, 'item_id' => $resourceId, 'limit' => 1])->getTotalResults();
-                $markers = $api->search('mapping_markers', ['site_id' => $siteId, 'item_id' => $resourceId, 'limit' => 1])->getTotalResults();
-                $results[$siteId][$resourceId] = ($mapping + $markers) > 0;
+                $features = $api->search('mapping_features', ['site_id' => $siteId, 'item_id' => $resourceId, 'limit' => 1])->getTotalResults();
+                $results[$siteId][$resourceId] = ($mapping + $features) > 0;
             } elseif ($resource instanceof \Omeka\Api\Representation\MediaRepresentation) {
                 $itemId = $resource->item()->id();
-                $markers = $api->search('mapping_markers', ['site_id' => $siteId, 'item_id' => $itemId, 'media_id' => $resourceId, 'limit' => 1])->getTotalResults();
-                $results[$siteId][$resourceId] = $markers > 0;
+                $features = $api->search('mapping_features', ['site_id' => $siteId, 'item_id' => $itemId, 'media_id' => $resourceId, 'limit' => 1])->getTotalResults();
+                $results[$siteId][$resourceId] = $features > 0;
             } else {
                 $results[$siteId][$resourceId] = false;
                 return false;

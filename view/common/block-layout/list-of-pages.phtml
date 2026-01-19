@@ -27,21 +27,23 @@ $iterate = null;
     <li class="open-science-item-card"><?= $escape($translate('[Missing Page]')) ?></li>
             <?php else:
             if ($pageMetadata && !empty($pageData['data']['id']) && $pageData['type'] === 'page') {
-                $sitePage = $api->searchOne('site_pages', ['id' => $pageData['data']['id']])->getContent();
-                if ($sitePage) {
+                try {
+                    /** @var \Omeka\Api\Representation\SitePageRepresentation $sitePage */
+                    $sitePage = $api->read('site_pages', ['id' => $pageData['data']['id']])->getContent();
                     $cover = $pageMetadata('main_image', $sitePage);
                     if ($cover) {
                         $cover = $cover instanceof \Omeka\Api\Representation\AssetRepresentation
                             ? $cover->getFileUrl('asset', $cover->filename())
                             : $cover->thumbnailDisplayUrl('large');
                     }
+                } catch (\Exception $e) {
                 }
             } elseif (!empty($pageData['data']['id']) && $pageData['type'] === 'resource') {
                 try {
                     /** @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource */
                     $resource = $api->read('resources', ['id' => $pageData['data']['id']])->getContent();
                     $cover = $resource->thumbnailDisplayUrl('large');
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                 }
             }
             ?>

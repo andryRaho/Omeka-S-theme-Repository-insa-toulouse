@@ -5,8 +5,9 @@ Dante (theme for Omeka S)
 > are available on [GitLab], which seems to respect users and privacy better
 > than the previous repository.__
 
-[Dante] is a theme for [Omeka S] designed for the digital repository of student
-works and thesis [dante] of [Université de Toulouse Jean-Jaurès].
+[Repository] is a theme for [Omeka S] designed for the digital repository of student
+works and thesis. It was initialy designed for [Dante] of [Université de Toulouse Jean-Jaurès]
+and is now used in many other places.
 
 
 Installation
@@ -108,7 +109,7 @@ See commits for full list of contributors and copyright of the libraries.
 
 [Repository]: https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository
 [Omeka S]: https://omeka.org/s
-[dante]: https://dante.univ-tlse2.fr
+[Dante]: https://dante.univ-tlse2.fr
 [Université de Toulouse Jean-Jaurès]: https://www.univ-tlse2.fr
 [Installing a module]: https://omeka.org/s/docs/user-manual/modules/#installing-modules
 [Repository.zip]: https://github.com/Daniel-KM/Omeka-S-theme-Repository/releases
