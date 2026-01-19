@@ -1,10 +1,14 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var array $values
- * @var array $templateProperties If any.
- * Options:
  * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var array|\AppendIterator $values
+ * @var array $templateProperties
+ *
+ * Warning: this template is used by default by value-annotations.
+ * In that case, only $values is available in version 4.0.
+ * The same issue was fixed in #1634 and #1958.
+ * @var \Omeka\Api\Representation\ValueAnnotationRepresentation|null $valueAnnotation
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -43,7 +47,7 @@ if ($resource) {
             <span class="field-term">(<?= $escape($propertyData['property']->vocabulary()->label()) ?>)</span>
             <?php endif; ?>
         </label>
-        <ul>
+        <ul data-property="<?= $term ?>">
         <?php foreach ($propertyData['values'] as $value): ?>
             <?php
             // TODO A supprimer après réimport des données sans notice utilisateur.
