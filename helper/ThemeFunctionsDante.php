@@ -10,6 +10,9 @@ use Omeka\Entity\User;
 
 trait ThemeFunctionsDante
 {
+    /**
+     * @deprecated Utiliser les nouvelles options du module Access.
+     */
     public function accessMedia(MediaRepresentation $media): bool
     {
         $accessLevel = $this->accessLevel($media);
@@ -55,6 +58,35 @@ trait ThemeFunctionsDante
     }
 
     /**
+     * Get the html citation from an item.
+     */
+    public function citation(ItemRepresentation $resource, bool $short = false): string
+    {
+        static $escape;
+
+        if (is_null($escape)) {
+            $escape = $this->view->plugin('escapeHtml');
+        }
+
+        $auteur = $this->formatAuthor($resource);
+        $annee = $this->year($resource);
+        $titre = $resource->displayTitle('sans titre');
+
+        if ($short) {
+            return sprintf(
+                '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span>',
+                $auteur, $escape($annee), $escape($titre)
+            );
+        }
+
+        $documentType = $this->documentType($resource);
+        return sprintf(
+            '<span class="dcterms-creator">%s</span> (<span class="dcterms:created">%s</span>), <span class="document-title dcterms-title">%s</span> [<span class="dcterms-type">%s</span>]',
+            $auteur, $escape($annee), $escape($titre), $escape($documentType)
+        );
+    }
+
+    /**
      * Tous les médias doivent être listés, y compris les médias privés (quand
      * l'item est accessible), afin de pouvoir afficher l'information "non consultable".
      *
@@ -64,6 +96,8 @@ trait ThemeFunctionsDante
      *
      * Néanmoins, ces fichiers sont mis en privé/réservé justement pour éviter
      * cela et cela devrait pouvoir être évité.
+     *
+     * @deprecated Utiliser les nouvelles options du module Access et ne pas mettre les documents en privés.
      */
     public function mediaItem(ItemRepresentation $item): array
     {
