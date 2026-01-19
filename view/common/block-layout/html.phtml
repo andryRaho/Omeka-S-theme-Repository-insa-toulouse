@@ -1,16 +1,11 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var string $html
- * @var string $divclass
- * @var string $heading
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
  */
 
-$html ??= '';
 ?>
-<div class="page-block block-html<?= empty($divclass) ? '' : ' ' . $escapeAttr($divclass) ?>">
-    <?php if (!empty($heading)): ?>
-    <h2><?= $this->escapeHtml($heading) ?></h2>
-    <?php endif; ?>
-    <?= $html ?>
+
+<div class="page-block block-html">
+    <?= $block->dataValue('html', '') ?>
 </div>

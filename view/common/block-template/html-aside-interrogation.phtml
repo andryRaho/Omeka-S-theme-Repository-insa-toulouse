@@ -1,21 +1,13 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var string $html
- * @var string $divclass
- * @var string $heading
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
  */
 
-$plugins = $this->getHelperPluginManager();
-$escape = $plugins->get('escapeHtml');
-$escapeAttr = $plugins->get('escapeHtmlAttr');
 ?>
 
-<aside class="aside-interrogation<?= empty($divclass) ? '' : ' ' . $escapeAttr($divclass) ?>">
+<aside class="aside-interrogation">
     <div class="aside-content">
-        <?php if ($heading): ?>
-        <h4><?= $escape($heading) ?></h4>
-        <?php endif; ?>
-        <?= $html ?>
+        <?= $block->dataValue('html', '') ?>
     </div>
 </aside>

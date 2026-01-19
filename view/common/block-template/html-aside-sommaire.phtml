@@ -1,9 +1,7 @@
 <?php
 /**
  * @var \Laminas\View\Renderer\PhpRenderer $this
- * @var string $html
- * @var string $divclass
- * @var string $heading
+ * @var \Omeka\Api\Representation\SitePageBlockRepresentation $block
  */
 
 // Comme block-aside-sommaire.
@@ -16,9 +14,11 @@ $themeFunctions = $plugins->get('ThemeFunctions');
 
 /** @var \BlockPlus\View\Helper\PageMetadata $pageMetadata */
 $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : null;
+
+$html = $block->dataValue('html', '');
 ?>
 
-<aside class="aside-sommaire-page<?= empty($divclass) ? '' : ' ' . $escapeAttr($divclass) ?>">
+<aside class="aside-sommaire-page">
     <div class="open-science-menu-header">
         <a class="items-list-close-page-menu" href=""></a>
         <a class="items-list-toggle-page-menu" href="">Menu</a>
@@ -27,9 +27,6 @@ $pageMetadata = $plugins->has('pageMetadata') ? $plugins->get('pageMetadata') : 
         <div class="back-to-list">
             <a href="<?= $pageMetadata && ($p = $pageMetadata('subroot')) ? $p->siteUrl() : $url('site', [], true) ?>">Retour au sommaire</a>
         </div>
-        <?php if ($heading): ?>
-        <h4><?= $escape($heading) ?></h4>
-        <?php endif; ?>
         <?php
         // Un seul niveau et sous-niveau.
         // Si html est vide, c'est une liste simple pour la page en cours.
