@@ -282,6 +282,7 @@ trait ThemeFunctionsSpecific
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         try {
+            // TODO The "@" avoids the deprecation notice. Replace by html_entity_decode/htmlentities. Or see polyfill mbstring.
             $html = '<div>' . @mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
             @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
             /** @var \DOMElement $element */
@@ -337,7 +338,8 @@ trait ThemeFunctionsSpecific
             $dom->preserveWhiteSpace = false;
             $dom->formatOutput = true;
             try {
-                $html = '<div>' . mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
+                // TODO The "@" avoids the deprecation notice. Replace by html_entity_decode/htmlentities. Or see polyfill mbstring.
+                $html = '<div>' . @mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
                 @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
                 /** @var \DOMElement $element */
                 if (count($tags) === 1) {
