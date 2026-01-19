@@ -133,9 +133,7 @@ $themeFunctions->appendVarToRootView('ariane', $ariane);
     <?php else: ?>
 
         <?php $this->htmlElement('body')->appendAttribute('class', 'search-page resource browse'); ?>
-        <?= $this->pageTitle($translate($isBrowse
-            ? 'Documents'
-            : 'Résultats de recherche')) ?>
+        <?= $this->pageTitle($translate('Documents')) ?>
 
     <?php endif; ?>
 

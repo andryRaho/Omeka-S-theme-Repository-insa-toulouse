@@ -164,7 +164,7 @@ $themeFunctions->appendVarsToRootView([
                     <li class="document-parts">
                         <span class="document-part-name"><?= $title ?></span>
                         <?php if ($isThese): ?>
-                        <div class="document-part-name document-version">Version : <span class="dante-version"><?= $escape($mediaData['dante-version'] ?: '[indéfini]') ?></span></div>
+                        <div class="document-part-name document-version">Version : <span class="dante-version"><?= $escape($mediaData['dante:version'] ?: '[indéfini]') ?></span></div>
                         <?php endif; ?>
                         <div class="document-access access-<?= $accessLevelMedia ?>"><?= $accessLabelMedia ?></div>
                         <div class="document-edition">

@@ -992,33 +992,33 @@ class ThemeFunctions extends AbstractHelper
                 $thumb = $escapeAttr($media->thumbnailUrl('large'));
                 $rendered = $escapeAttr('<div class="media-render">' . $media->render(['class' => 'lg-video-object lg-html5', 'preload' => 'none']) . '</div>');
                 $html .= <<<HTML
-<li data-html="$rendered" data-thumb="$thumb"$titleTitle data-poster="$thumb" class="media resource">
-    <div class="media-render video">
-        <a href="$source">
-            <img src="$thumb">
-        </a>
-    </div>
-</li>
-HTML;
+                    <li data-html="$rendered" data-thumb="$thumb"$titleTitle data-poster="$thumb" class="media resource">
+                        <div class="media-render video">
+                            <a href="$source">
+                                <img src="$thumb">
+                            </a>
+                        </div>
+                    </li>
+                    HTML;
             } else {
                 $thumb = $escapeAttr($media->thumbnailUrl('large'));
                 // TODO Display image with iiif inside lightgallery when present.
                 if (substr($media->mediaType(), 0, 5) === 'image') {
                     $rendered = <<<HTML
-<div class="media-render image">
-    <a href="$source">
-        <img src="$thumb">
-    </a>
-</div>
-HTML;
+                        <div class="media-render image">
+                            <a href="$source">
+                                <img src="$thumb">
+                            </a>
+                        </div>
+                        HTML;
                 } else {
                     $rendered = $media->render();
                 }
                 $html .= <<<HTML
-<li data-src="$source" data-thumb="$thumb"$titleTitle class="media resource">
-    $rendered
-</li>
-HTML;
+                    <li data-src="$source" data-thumb="$thumb"$titleTitle class="media resource">
+                        $rendered
+                    </li>
+                    HTML;
             }
         }
 
@@ -1214,14 +1214,14 @@ HTML;
 
             // Filter empty locale directly? Not here, in order to manage complex cases.
             $sql = <<<'SQL'
-SELECT
-    site.slug AS site_slug,
-    REPLACE(site_setting.value, '"', "") AS localeId
-FROM site_setting
-JOIN site ON site.id = site_setting.site_id
-WHERE site_setting.id = :setting_id
-ORDER BY site.id ASC
-SQL;
+                SELECT
+                    site.slug AS site_slug,
+                    REPLACE(site_setting.value, '"', "") AS localeId
+                FROM site_setting
+                JOIN site ON site.id = site_setting.site_id
+                WHERE site_setting.id = :setting_id
+                ORDER BY site.id ASC
+                SQL;
             $bind = ['setting_id' => 'locale'];
             if ($isPublic) {
                 $sql .= ' AND site.is_public = :is_public';

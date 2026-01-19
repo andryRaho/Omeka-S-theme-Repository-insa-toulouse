@@ -2,8 +2,6 @@
 
 namespace OmekaTheme\Helper;
 
-use Contribute\Api\Representation\ContributionRepresentation;
-use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
 use Omeka\Entity\User;
@@ -103,19 +101,19 @@ trait ThemeFunctionsDante
     {
         // 275 = dante:version
         $sql = <<<'SQL'
-SELECT
-    `resource`.`id` AS "id",
-    `resource`.`id` AS "o:id",
-    "" AS "resource",
-    `resource`.`title` AS "o:title",
-    `resource`.`is_public` AS "o:is_public",
-    `value`.`value` AS "dante:version"
-FROM `resource`
-JOIN `media` ON `media`.`id` = `resource`.`id`
-LEFT JOIN `value` ON `value`.`resource_id` = `media`.`id` AND `value`.`property_id` = 275
-WHERE `media`.`item_id` = :item_id
-;
-SQL;
+            SELECT
+                `resource`.`id` AS "id",
+                `resource`.`id` AS "o:id",
+                "" AS "resource",
+                `resource`.`title` AS "o:title",
+                `resource`.`is_public` AS "o:is_public",
+                `value`.`value` AS "dante:version"
+            FROM `resource`
+            JOIN `media` ON `media`.`id` = `resource`.`id`
+            LEFT JOIN `value` ON `value`.`resource_id` = `media`.`id` AND `value`.`property_id` = 275
+            WHERE `media`.`item_id` = :item_id
+            ;
+            SQL;
         /** @var \Doctrine\DBAL\Connection $connection */
         $connection = $item->getServiceLocator()->get('Omeka\Connection');
         $medias = $connection
