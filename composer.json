@@ -1,7 +1,33 @@
 {
     "name": "daniel-km/omeka-s-theme-repository",
+    "description": "Thème pour un entrepôt institutionnel, conçu pour Dante (Dépôt et Archivage Numérique des Travaux Étudiants) de l’université Toulouse – Jean Jaurès [https://dante.univ-tlse2.fr].",
     "type": "omeka-s-theme",
-    "require": {
-        "omeka/omeka-s": "^4.1.0"
-    }
+    "license": "CECILL-2.1",
+    "authors": [
+        {
+            "name": "Flore Leclerc"
+        },
+        {
+            "name": "Véronica Holguin",
+            "email": "veronica@miloeil.net"
+        },
+        {
+            "name": "Denis Chiron"
+        },
+        {
+            "name": "Daniel Berthereau",
+            "email": "Daniel.git@Berthereau.net"
+        }
+    ],
+    "homepage": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository",
+    "support": {
+        "issues": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository/-/issues",
+        "forum": "https://forum.omeka.org/"
+    },
+    "keywords": [
+        "Omeka S",
+        "Omeka S theme",
+        "digital library",
+        "institutional repository"
+    ]
 }
