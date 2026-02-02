@@ -13,6 +13,12 @@ $(document).ready(function () {
     const headerSearchBtn = $('.search-menu-toggle');
     const headerTopMenu = $('.header-top .search-form-parent');
 
+    // Clone de contact pour le menu mobile
+    const headerBottomMenuItemsParent = $(".header-bottom > ul");
+    headerBottomMenuItemsParent.append("<li class='contact'>");
+    const contactLinkClone = $('header .contact-link').clone();
+    $('li.contact', headerBottomMenuItemsParent).append(contactLinkClone);
+
     const $searchResultsWrapper = $('.search-results-wrapper');
     $searchResultsWrapper.prepend("<button class='mobile-facets-toggle resources-list-toggle-filters'>Facettes</button>");
 
