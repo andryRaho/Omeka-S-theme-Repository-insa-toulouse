@@ -75,6 +75,13 @@ $(document).ready(function () {
     });
 
     function checkFiles(event) {
+        // Ne vérifier les fichiers qu'au passage vers le dépôt,
+        // pas lors de la navigation ou sauvegarde temporaire.
+        const btn = $(event.target).closest('[name=next], [type=submit]');
+        const nextValue = btn.attr('name') === 'next' ? btn.val() : '';
+        if (nextValue && nextValue !== 'show-depot') {
+            return;
+        }
         let hasAlert = false;
         $('#edit-resource').find('.contribute-media input[type=file]').each(function () {
             const fileInput = $(this);
