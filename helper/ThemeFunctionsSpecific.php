@@ -325,8 +325,7 @@ trait ThemeFunctionsSpecific
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
         try {
-            // TODO The "@" avoids the deprecation notice. Replace by html_entity_decode/htmlentities. Or see polyfill mbstring.
-            $html = '<div>' . @mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
+            $html = '<div>' . mb_encode_numericentity($html, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8') . '</div>';
             @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
             /** @var \DOMElement $element */
             foreach ($tags as $tag) {
@@ -399,8 +398,7 @@ trait ThemeFunctionsSpecific
             $dom->preserveWhiteSpace = false;
             $dom->formatOutput = true;
             try {
-                // TODO The "@" avoids the deprecation notice. Replace by html_entity_decode/htmlentities. Or see polyfill mbstring.
-                $html = '<div>' . @mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8') . '</div>';
+                $html = '<div>' . mb_encode_numericentity($html, [0x80, 0x10FFFF, 0, 0x1FFFFF], 'UTF-8') . '</div>';
                 @$dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NOERROR | LIBXML_NOENT);
                 /** @var \DOMElement $element */
                 if (count($tags) === 1) {

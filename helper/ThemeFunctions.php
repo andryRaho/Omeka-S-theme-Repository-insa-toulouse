@@ -438,7 +438,7 @@ class ThemeFunctions extends AbstractHelper
      * @deprecated Use a filter on value. Integrated in module AdvancedResourceTemplate.
      * @see \AdvancedResourceTemplate\Module
      */
-    public function browseValueForTerm(ValueRepresentation $value, string $termOrField, $lang = null): array
+    public function browseValueForTerm(ValueRepresentation $value, string $termOrField, $lang = null, ?string $valueLabel = null): array
     {
         static $hasModuleAdvancedSearch;
         static $useSearchSolr;
@@ -536,6 +536,9 @@ class ThemeFunctions extends AbstractHelper
             $val['value'] = (string) $value->value();
             $val['url'] = $baseSearchUrl . '?'
                 . strtr($baseSearchQuery, ['__FIELD__' => rawurlencode($termOrField), '__VALUE__' => rawurlencode($val['value'])]);
+        }
+        if ($valueLabel !== null) {
+            $val['value'] = $valueLabel;
         }
         $val['link'] = $hyperlink($val['value'], $val['url'], ['class' => $val['class']]);
 
@@ -660,7 +663,7 @@ class ThemeFunctions extends AbstractHelper
                     }
                 } else {
                     // Normally cleaned on save.
-                    $output = strtr($text, ["\n\r" => "\n", "\r\n" => "\n", "\r" => "\n"], $text);
+                    $output = strtr($text, ["\n\r" => "\n", "\r\n" => "\n", "\r" => "\n"]);
                     $pos = mb_strpos($output, "\n\n");
                     if ($pos) {
                         $more = mb_substr($output, $pos + 1);
@@ -993,7 +996,7 @@ class ThemeFunctions extends AbstractHelper
 
             $title = $media->displayTitle('');
             if (strlen($title)) {
-                $titleEsc = $titleEsc = $escapeAttr($title);
+                $titleEsc = $escapeAttr($title);
                 $titleTitle = ' alt="' . $titleEsc . '" title="' . $titleEsc . '"';
             } else {
                 $titleTitle = '';
@@ -1280,6 +1283,7 @@ class ThemeFunctions extends AbstractHelper
     {
         static $hasMappingInAllSites;
         static $results = [];
+        static $api;
 
         if (is_null($hasMappingInAllSites)) {
             $hasMappingInAllSites = class_exists('Mapping\Module', false);
