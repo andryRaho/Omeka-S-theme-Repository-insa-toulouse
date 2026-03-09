@@ -30,6 +30,10 @@ $siteSlug = $site->slug();
 
 $searchingUrl = $plugins->has('searchingUrl') ? $plugins->get('searchingUrl')() : $url('site/resource', ['site-slug' => $siteSlug]);
 
+$resourceClass = $resource->resourceClass();
+$resourceClassTerm = $resourceClass ? $resourceClass->term() : null;
+$isThese = $resourceClassTerm === 'bibo:Thesis';
+
 $documentType = $resource->displayResourceTemplateLabel();
 
 $accessLevel = $themeFunctions->accessLevel($resource);
@@ -156,7 +160,9 @@ $displayPermalink = $themeSetting('item_display_permalink');
                         $accessLabelMedia = $themeFunctions->accessLabel($accessLevelMedia);
                         $originalUrl = $media->originalUrl();
                         if ($accessLevelMedia === 'reserved') {
-                            $accessLabelMedia = $translate('Document en accès restreint');
+                            $accessLabelMedia = $isThese
+                                ? 'Accès restreint communauté universitaire'
+                                : 'Accès restreint UT2J';
                         }
                         if ($accessLevelMedia !== 'free') {
                             $embargo = null;
