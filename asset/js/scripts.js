@@ -116,7 +116,7 @@ $(document).ready(function () {
             } else if (filesMin > 1 && fileLoaded < filesMin) {
                 alert('Vous devez ajouter au moins ' + filesMin + ' fichiers.');
             }
-            e.stopPropagation();
+            event.stopPropagation();
             event.preventDefault();
             return false;
         }

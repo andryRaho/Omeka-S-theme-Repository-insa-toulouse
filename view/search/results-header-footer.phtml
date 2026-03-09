@@ -166,7 +166,7 @@ $isBrowse = $query->isBrowse();
     <li class="search-results-display">
         <a class="search-view-type search-view-type-list<?= $gridListMode === 'list' ? ' active' : '' ?>" href="#"><?= $translate('list') ?></a>
         |
-        <a class="search-view-type search-view-type-grid<?= $gridListMode === 'grid' ? ' active' : '' ?>" href="#"><?= $translate('grid') ?></a>
+        <a class="search-view-type search-view-type-grid<?= in_array($gridListMode, ['grid', 'auto']) ? ' active' : '' ?>" href="#"><?= $translate('grid') ?></a>
     </li>
     <?php endif; ?>
 

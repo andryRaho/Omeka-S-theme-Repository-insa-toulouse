@@ -31,26 +31,26 @@ if ($isHomePage):
 else:
 
     // Fil d'Ariane.
-if ($hasBreadcrumbs) {
-    if ($activePage) {
-        if ($activePage['depth'] !== 0) {
-            $this->vars()->offsetSet('ariane', trim($nav->breadcrumbs()->setSeparator('')));
-            $themeFunctions->appendVarToRootView('ariane', $this->partial('common/breadcrumbs-fix'));
-        } else {
-            // On affiche le fil pour la page de niveau 0 en ajoutant Accueil.
-            $url = $plugins->get('url');
-            $escape = $plugins->get('escapeHtml');
-            $translate = $plugins->get('translate');
-            $ariane = '<nav class="breadcrumbs content-with-margin">
-                <ul>
-                    <li><a href="' . $url('site', ['site-slug' => $site->slug()]) . '">' . $escape($translate('Accueil')) . '</a></li>
-                    <li><span>' . $escape($page->title()) . '</span></li>
-                </ul>
-            </nav>';
-            $themeFunctions->appendVarsToRootView(['ariane' => $ariane]);
+    if ($hasBreadcrumbs) {
+        if ($activePage) {
+            if ($activePage['depth'] !== 0) {
+                $this->vars()->offsetSet('ariane', trim($nav->breadcrumbs()->setSeparator('')));
+                $themeFunctions->appendVarToRootView('ariane', $this->partial('common/breadcrumbs-fix'));
+            } else {
+                // On affiche le fil pour la page de niveau 0 en ajoutant Accueil.
+                $url = $plugins->get('url');
+                $escape = $plugins->get('escapeHtml');
+                $translate = $plugins->get('translate');
+                $ariane = '<nav class="breadcrumbs content-with-margin">
+                    <ul>
+                        <li><a href="' . $url('site', ['site-slug' => $site->slug()]) . '">' . $escape($translate('Accueil')) . '</a></li>
+                        <li><span>' . $escape($page->title()) . '</span></li>
+                    </ul>
+                </nav>';
+                $themeFunctions->appendVarsToRootView(['ariane' => $ariane]);
+            }
         }
     }
-}
     /* // TODO On ne gère qu'un seul niveau de menu pour l'instant. ?>
     <?php if ($activePage && $displayNavigation && $activePage['page']->hasPages()): ?>
     <nav class="sub-menu"><?= $nav->menu()->renderSubMenu() ?></nav>
