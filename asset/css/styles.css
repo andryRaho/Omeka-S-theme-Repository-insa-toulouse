@@ -710,7 +710,9 @@ p:empty {
     }
     /* */
 
-    .header-bottom a {
+    .header-bottom a,
+    .header-bottom a:link,
+    .header-bottom a:visited {
         padding-left: 20px;
         color: var(--title-color);
         font-family: 'League Spartan', sans-serif;
