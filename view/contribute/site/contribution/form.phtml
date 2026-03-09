@@ -107,8 +107,8 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 
 <?= $this->form()->openTag($form->setAttribute('class', $form->getAttribute('class') . ' etape-' . $steps['stepNumber'])) ?>
 <?php // Afficher l'étape permet de la cacher via le css. ?>
-<fieldset class="etape-2"<?= $disabled ?> data-resource-template-id="<?= $templateMedia ? $templateMedia->id() : '' ?>" data-resource-class-id="<?= $templateMedia && $templateMedia->resourceClass() ? $templateMedia->resourceClass()->id() : '' ?>">
-    <h2><?= $escape($translate('2. Détails')) ?></h2>
+<fieldset class="etape-<?= $steps['stepNumbers']['notice'] ?>"<?= $disabled ?> data-resource-template-id="<?= $templateMedia ? $templateMedia->id() : '' ?>" data-resource-class-id="<?= $templateMedia && $templateMedia->resourceClass() ? $templateMedia->resourceClass()->id() : '' ?>">
+    <h2><?= $escape($steps['stepNumbers']['notice'] . '. ' . $translate('Détails')) ?></h2>
     <?php // Le même en bas et dans la sous-forme pour les fichiers. ?>
     <ul id="page-actions" class="form-buttons">
         <?php if ($mode === 'read'): ?>
@@ -178,8 +178,8 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
         $vars->offsetSet('indexFieldInput', $indexFieldInput);
         $vars->offsetSet('templateProperty', $templateProperty);
         // Evite les champs cachés en required dans l'autre étape.
-        if (($isMainForm && $steps['stepNumber'] === 3)
-            || (!$isMainForm && $steps['stepNumber'] === 2)
+        if (($isMainForm && $steps['step'] === 'fichiers')
+            || (!$isMainForm && $steps['step'] === 'notice')
         ) {
             $vars->offsetSet('readonly', 'readonly');
         } elseif ($vars->offsetExists('readonly')) {
@@ -344,9 +344,9 @@ $contributionId = isset($contribution) ? $contribution->id() : null;
 </fieldset>
 
     <?php if (!empty($templateMedia)): ?>
-<fieldset class="contribute-medias etape-3" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?> data-files-min="<?= $minFiles ?>">
+<fieldset class="contribute-medias etape-<?= $steps['stepNumbers']['fichiers'] ?>" data-next-index-media="<?= count($fieldsByMedia) ?>"<?= $disabled ?> data-files-min="<?= $minFiles ?>">
     <?php // For end user, "media" means "files". ?>
-    <h2><?= $escape($translate('3. Téléversement')) ?></h2>
+    <h2><?= $escape($steps['stepNumbers']['fichiers'] . '. ' . $translate('Téléversement')) ?></h2>
     <ul class="actions form-buttons">
         <?php if ($mode === 'read'): ?>
         <li><a href="<?= $contribution ? $contribution->url('edit') : '' ?>?next=fichiers" class="form-button edit-button">Éditer</a></li>

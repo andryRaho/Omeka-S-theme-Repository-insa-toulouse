@@ -33,7 +33,17 @@ $this->htmlElement('body')->appendAttribute('class', 'contribution resource show
 
 $siteSlug = $site->slug();
 
-$steps = $themeFunctions->currentProcess('show', $contribution);
+$setting = $plugins->get('setting');
+$contributeConfig = $setting('contribute_config') ?: [];
+$contributables = $contributeConfig['contribute_template_contributable'] ?? [];
+$hasTemplateStep = count($contributables) > 1;
+$template = $contribution ? $contribution->resourceTemplate() : null;
+$hasFilesStep = $template
+    && !empty($template->dataValue('contribute_templates_media'));
+$steps = $themeFunctions->currentProcess(
+    'show', $contribution, null, null,
+    $hasTemplateStep, $hasFilesStep
+);
 $this->vars()->offsetSet('steps', $steps);
 
 $ariane = '<nav class="breadcrumbs content-with-margin">
@@ -103,7 +113,7 @@ if ($template) {
 <?php // TODO Supprimer le form (css). ?>
 <form>
 
-    <?= $this->pageTitle($translate('4. Prévisualisation et confirmation du dépôt'), 2) ?>
+    <?= $this->pageTitle($steps['stepNumbers']['depot'] . '. ' . $translate('Prévisualisation et confirmation du dépôt'), 2) ?>
     <?php if ($contribution->isUpdatable()): ?>
     <ul id="page-actions" class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
         <?php if ($contribution->userIsAllowed('update')): ?>

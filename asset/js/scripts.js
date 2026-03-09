@@ -88,7 +88,7 @@ $(document).ready(function () {
                 event.preventDefault();
             }
         });
-        const filesMin = $('.contribute-medias.etape-3').data('files-min');
+        const filesMin = $('.contribute-medias').data('files-min');
         const fileDefault = $('#edit-resource').find('.contribute-media').length;
         const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
         const fileUploading = $('#edit-resource').find('.file-uploading').length;
@@ -103,13 +103,13 @@ $(document).ready(function () {
         }
     }
 
-    $('.etape-courante-3').on('click', '.mode-edit[type=submit]', checkFiles);
+    $('.contribute-medias').closest('.container.content').on('click', '.mode-edit[type=submit]', checkFiles);
 
-    $('.etape-courante-3 #edit-resource').on('click', '[type=submit]', checkFiles);
+    $('.contribute-medias').closest('.container.content').find('#edit-resource').on('click', '[type=submit]', checkFiles);
 
     $('.submit-contribution').on('click submit', function (event) {
         if (!$('.document-preview').length) {
-            const filesMin = $('.contribute-medias.etape-3').data('min-files');
+            const filesMin = $('.contribute-medias').data('min-files');
             const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
             if (filesMin == 1 && fileLoaded < 1) {
                 alert('Vous devez ajouter au moins 1 fichier.');

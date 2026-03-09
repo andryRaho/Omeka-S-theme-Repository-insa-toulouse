@@ -153,7 +153,9 @@ trait ThemeFunctionsSpecific
         ?string $action = null,
         ?ContributionRepresentation $contribution = null,
         ?array $fields = null,
-        ?string $mode = null
+        ?string $mode = null,
+        bool $hasTemplateStep = true,
+        bool $hasFilesStep = true
     ): array {
         static $steps;
 
@@ -189,13 +191,30 @@ trait ThemeFunctionsSpecific
 
         $current = "$action-$step";
 
-        $stepNumbers = [
-            'template' => 1,
-            'notice' => 2,
-            'fichiers' => 3,
-            'depot' => 4,
-        ];
+        // Calcul dynamique des étapes actives.
+        $activeSteps = [];
+        if ($hasTemplateStep) {
+            $activeSteps[] = 'template';
+        }
+        $activeSteps[] = 'notice';
+        if ($hasFilesStep) {
+            $activeSteps[] = 'fichiers';
+        }
+        $activeSteps[] = 'depot';
+
+        $stepNumbers = [];
+        foreach ($activeSteps as $i => $s) {
+            $stepNumbers[$s] = $i + 1;
+        }
+        $totalSteps = count($activeSteps);
         $stepNumber = $stepNumbers[$step] ?? 1;
+
+        // Navigation prev/next.
+        $currentIndex = array_search($step, $activeSteps);
+        $prevStep = $currentIndex !== false && $currentIndex > 0
+            ? $activeSteps[$currentIndex - 1] : null;
+        $nextStep = $currentIndex !== false && $currentIndex < $totalSteps - 1
+            ? $activeSteps[$currentIndex + 1] : null;
 
         return $steps = [
             'currentActionStep' => $current,
@@ -203,6 +222,13 @@ trait ThemeFunctionsSpecific
             'step' => $step,
             'mode' => $mode,
             'stepNumber' => $stepNumber,
+            'activeSteps' => $activeSteps,
+            'stepNumbers' => $stepNumbers,
+            'totalSteps' => $totalSteps,
+            'hasTemplateStep' => $hasTemplateStep,
+            'hasFilesStep' => $hasFilesStep,
+            'prevStep' => $prevStep,
+            'nextStep' => $nextStep,
         ];
     }
 

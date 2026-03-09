@@ -32,7 +32,14 @@ $siteSlug = $site->slug();
 
 $this->htmlElement('body')->appendAttribute('class', 'edit contribution ' . $this->params()->fromRoute('resource') . ' resource');
 
-$steps = $themeFunctions->currentProcess($action, $contribution ?? null, $fields ?? null, $mode ?? 'write');
+$hasTemplateStep = isset($form)
+    && method_exists($form, 'getTemplates')
+    && count($form->getTemplates()) > 1;
+$hasFilesStep = !empty($templateMedia);
+$steps = $themeFunctions->currentProcess(
+    $action, $contribution ?? null, $fields ?? null,
+    $mode ?? 'write', $hasTemplateStep, $hasFilesStep
+);
 $this->vars()->offsetSet('steps', $steps);
 
 $ariane = '<nav class="breadcrumbs content-with-margin">
@@ -43,9 +50,9 @@ $ariane = '<nav class="breadcrumbs content-with-margin">
         <li><span>' . $escape('Nouveau dépôt') . '</span></li>
 -->
         <li><span>'
-        . ($action === 'add'
-            ? ($steps['stepNumber'] === 1 ? $escape($translate('Type de document')) : $escape($translate('Détails')))
-            : ($steps['stepNumber'] === 3 ? $escape($translate('Téléversement')) : $escape($translate('Détails')))
+        . ($steps['step'] === 'template' ? $escape($translate('Type de document'))
+            : ($steps['step'] === 'fichiers' ? $escape($translate('Téléversement'))
+            : $escape($translate('Détails')))
         ) . '</span></li>
     </ul>
 </nav>';
@@ -107,7 +114,7 @@ $specificHelp = $specificHelp ? '_' . $specificHelp : '';
         ?>
         <?= $partial('contribute/site/contribution/steps') ?>
         <?= $this->form()->openTag($form) ?>
-        <h2 for="template"><?= $escape($translate('1. Type de document')) ?></h2>
+        <h2 for="template"><?= $escape($steps['stepNumbers']['template'] . '. ' . $translate('Type de document')) ?></h2>
         <fieldset class="form-content"<?= $mode === 'read' ? ' disabled="disabled"' : '' ?>>
             <ul class="form-radio-buttons">
                 <?php foreach ($form->getTemplates() as $selectTemplateId => $selectTemplateLabel): ?>
