@@ -110,13 +110,6 @@ $(document).ready(function () {
     $('.contribute-medias').closest('.container.content').find('#edit-resource').on('click', '[type=submit]', checkFiles);
 
     $('.submit-contribution').on('click submit', function (event) {
-        var $accept = $('#accept_rights');
-        if ($accept.length && !$accept.is(':checked')) {
-            event.stopPropagation();
-            event.preventDefault();
-            $accept.closest('.warn-acceptation').addClass('warn-highlight');
-            return false;
-        }
         if (!$('.document-preview').length) {
             const filesMin = $('.contribute-medias').data('min-files');
             const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;

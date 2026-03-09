@@ -32,10 +32,20 @@ $siteSlug = $site->slug();
 
 $this->htmlElement('body')->appendAttribute('class', 'edit contribution ' . $this->params()->fromRoute('resource') . ' resource');
 
-// Étape template : visible si > 1 type contributable.
+$this->vars()->offsetSet('skipContributeCss', true);
+$partial('contribute/site/contribution/asset-include');
+
+// Étape template : visible si > 1 type contributable ou si
+// l'acceptation des droits est affichée au début.
 $contributeConfig = $setting('contribute_config') ?: [];
 $contributables = $contributeConfig['contribute_template_contributable'] ?? [];
-$hasTemplateStep = count($contributables) > 1;
+$templateId = isset($contribution) && $contribution && $contribution->resourceTemplate()
+    ? $contribution->resourceTemplate()->id() : null;
+$acceptStep = ($templateId && isset($contributeConfig['contribute_accept_step'][$templateId])
+    ? $contributeConfig['contribute_accept_step'][$templateId] : null)
+    ?: $setting('contribute_accept_step');
+$acceptationAtStart = $acceptStep === 'start';
+$hasTemplateStep = count($contributables) > 1 || $acceptationAtStart;
 // Fichiers : connu dès que le template est sélectionné, sinon par
 // défaut si le template n'est pas encore choisi.
 $hasFilesStep = !empty($templateMedia) || empty($fields);
@@ -182,6 +192,16 @@ $specificHelp = $specificHelp ? '_' . $specificHelp : '';
                 </li>
                 <?php endforeach; ?>
             </ul>
+            <?php
+            $msgAccept = ($templateId && isset($contributeConfig['contribute_message_accept'][$templateId])
+                ? $contributeConfig['contribute_message_accept'][$templateId] : null)
+                ?: $setting('contribute_message_accept');
+            if ($acceptStep === 'start' && $msgAccept): ?>
+            <div class="warn-acceptation">
+                <input type="checkbox" required="required" name="accept_rights" id="accept_rights" form="edit-resource" value=""/>
+                <label for="accept_rights"><?= $msgAccept ?></label>
+            </div>
+            <?php endif; ?>
         </fieldset>
         <?= $formElement($form->get('step')) ?>
         <?= $formElement($form->get('next')) ?>

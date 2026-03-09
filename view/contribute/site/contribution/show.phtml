@@ -45,7 +45,13 @@ $isFirstPass = $sessionKey
 if ($sessionKey) {
     $session->offsetSet($sessionKey, 'done');
 }
-$hasTemplateStep = count($contributables) > 1;
+$contributeConfig = $setting('contribute_config') ?: [];
+$templateId = $contribution && $contribution->resourceTemplate() ? $contribution->resourceTemplate()->id() : null;
+$acceptStep = ($templateId && isset($contributeConfig['contribute_accept_step'][$templateId])
+    ? $contributeConfig['contribute_accept_step'][$templateId] : null)
+    ?: $setting('contribute_accept_step');
+$acceptationAtStart = $acceptStep === 'start';
+$hasTemplateStep = count($contributables) > 1 || $acceptationAtStart;
 $template = $contribution ? $contribution->resourceTemplate() : null;
 $hasFilesStep = $template
     && !empty($template->dataValue('contribute_templates_media'));
@@ -129,10 +135,17 @@ if ($template) {
     <ul id="page-actions" class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
         <?php if ($contribution->userIsAllowed('update')): ?>
             <?php $missingMedias = $minFiles ? $minFiles - count($contribution->proposalMedias()) : 0; ?>
-            <?php if ($missingMedias <= 0): ?>
-            <?php if ($msg = $themeSetting('contribution_message_acceptation')): ?>
-        <li class="warn-acceptation"><?= $msg ?></li>
+            <?php
+            $msgAccept = ($templateId && isset($contributeConfig['contribute_message_accept'][$templateId])
+                ? $contributeConfig['contribute_message_accept'][$templateId] : null)
+                ?: $setting('contribute_message_accept');
+            if ($acceptStep === 'end' && $msgAccept): ?>
+        <li class="warn-acceptation">
+            <input type="checkbox" required="required" name="accept_rights" id="accept_rights" value=""/>
+            <label for="accept_rights"><?= $msgAccept ?></label>
+        </li>
             <?php endif; ?>
+            <?php if ($missingMedias <= 0): ?>
         <li><a class="button submit-button submit-contribution form-button" href="<?= $escapeAttr($contribution->url('submit')) ?>"><?= $escape($translate('Confirmer le dépôt')) ?></a></li>
             <?php else: ?>
         <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>?next=edit-fichiers"><?= $escape($missingMedias === 1 ? $translate('Fichier manquant') : sprintf($translate('%d fichiers manquants'), $missingMedias)) ?></a></li>
