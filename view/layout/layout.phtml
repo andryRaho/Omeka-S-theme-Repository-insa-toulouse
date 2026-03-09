@@ -125,7 +125,7 @@ $baseAssetUrl = $assetUrl('', null, false, false);
 $baseSiteUrl = $site->url('site', [], true);
 
 $mainColor = strtoupper($themeSetting('main_color', '')) ?: '#EA3535';
-$accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
+$accentColor = strtoupper($themeSetting('accent_color', '')) ?: '#BA0000';
 ?>
 <?= $this->doctype() ?>
 <?= $this->htmlElement('html') ?>

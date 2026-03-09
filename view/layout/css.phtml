@@ -8,8 +8,17 @@
  */
 ?>
 
-<?php if (strtoupper($mainColor) !== '#BA0000'): ?>
-/* DESKTOP DANTE */
+<?php if (strtoupper($mainColor) !== '#EA3535' || strtoupper($accentColor) !== '#BA0000'): ?>
+html {
+    --primary-color: <?= $mainColor ?>;
+    --primary-link-color: <?= $accentColor ?>;
+    --header-bottom-border-color: <?= $mainColor ?>;
+    --menu-pages-hover-color: <?= $mainColor ?>;
+}
+<?php endif; ?>
+
+<?php if (strtoupper($mainColor) !== '#EA3535'): ?>
+/* DESKTOP */
 @media screen {
     .header-bottom {
         background-color: <?= $mainColor ?>;
@@ -83,7 +92,7 @@
 }
 <?php endif; ?>
 
-<?php if (strtoupper($accentColor) !== '#BA0000'): ?>
+<?php if (strtoupper($accentColor) !== '#BA0000' && strtoupper($accentColor) !== '#EA3535'): ?>
 a:link,
 a:visited {
     color: <?= $accentColor ?>;
