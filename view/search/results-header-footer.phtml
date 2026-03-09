@@ -68,6 +68,7 @@ $isBrowse = $query->isBrowse();
 <ul class="search-results-part <?= $isHeader ? 'search-results-header' : 'search-results-footer' ?> search-results-tools">
 
     <?php if ($exporters):
+        // TODO Il est conseillé d'utiliser la requête initiale $response->getQuery()->getQuerier()->getPreparedQuery().
         $ids = $response->getAllResourceIds();
         if ($ids):
             $siteSlug = $site->slug();

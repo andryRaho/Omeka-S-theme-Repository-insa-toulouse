@@ -111,7 +111,7 @@ if (!empty($itemSet)) {
                     <?= $facetElements($name, $facetValues, $facetParams) ?>
                     <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox', 'CheckboxFilter', 'Link', 'Tree', 'TreeLink', 'Thesaurus', 'ThesaurusLink']) && count($facetValues) > (int) $facetParams['more']): ?>
                     <div class="facet-see-more">
-                        <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-per-page="<?= (int) ($facetParams['per_page'] ?? 0) ?>" data-label-see-more="<?= $escapeAttr($translate('Voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('Voir moins')) ?>" data-label-page="<?= $escapeAttr($translate('Page')) ?>"><?= $escape($translate('Voir plus')) ?></button>
+                        <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-per-page="<?= (int) ($facetParams['per_page'] ?? 0) ?>" data-label-see-more="<?= $escapeAttr($translate('Voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('Voir moins')) ?>" data-label-page="<?= $escapeAttr($translate('Page')) ?>" data-label-page-prev="<?= $escapeAttr($translate('Previous page')) ?>" data-label-page-next="<?= $escapeAttr($translate('Next page')) ?>"><?= $escape($translate('Voir plus')) ?></button>
                     </div>
                     <?php endif; ?>
                 </div>

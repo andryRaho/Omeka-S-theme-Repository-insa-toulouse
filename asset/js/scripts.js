@@ -122,7 +122,7 @@ $(document).ready(function () {
             return false;
         }
         if (!$('.document-preview').length) {
-            const filesMin = $('.contribute-medias').data('min-files');
+            const filesMin = $('.contribute-medias').data('files-min');
             const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
             if (filesMin == 1 && fileLoaded < 1) {
                 alert('Vous devez ajouter au moins 1 fichier.');

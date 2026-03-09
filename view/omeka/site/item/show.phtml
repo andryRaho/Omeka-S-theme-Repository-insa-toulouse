@@ -64,7 +64,7 @@ if ($user) {
     $msgRestricted = $themeSetting('access_msg_request_copy_user') ?: $translate('Document non accessible');
 } else {
     $msgMissing = $themeSetting('access_msg_missing_file') ?: $translate('Fichier manquant : contacter le service');
-    $msgRestricted = $themeSetting('access_msg_request_copy') ?: $translate('Connectez-vous');
+    $msgRestricted = $themeSetting('access_msg_request_copy') ?: $translate('Demander une copie');
 }
 
 $displayViewer = $themeSetting('item_display_viewer');
@@ -189,7 +189,7 @@ $displayPermalink = $themeSetting('item_display_permalink');
                     ?>
                     <li class="document-parts">
                         <span class="document-part-name"><?= $title ?></span>
-                        <div class="document-access access-<?= $accessLevelMedia ?>"><?= $accessLabelMedia ?></div>
+                        <div class="document-access access-<?= $accessLevelMedia ?>"><?php if (!$user && $accessLevelMedia === 'reserved'): ?><a href="<?= $escapeAttr($url('site/guest', ['site-slug' => $siteSlug, 'action' => 'login'], ['query' => ['redirect' => $item->siteUrl()]])) ?>"><?= $escape($accessLabelMedia) ?></a><?php else: ?><?= $accessLabelMedia ?><?php endif; ?></div>
                         <div class="document-edition">
 
                             <?php if ($accessLevelMedia === 'free'
