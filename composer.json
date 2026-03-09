@@ -1,33 +1,29 @@
 {
     "name": "daniel-km/omeka-s-theme-repository",
-    "description": "Thème pour un entrepôt institutionnel, basé sur le thème pour Dante, pour INSA Toulouse [https://www.insa-toulouse.fr].",
     "type": "omeka-s-theme",
-    "license": "CECILL-2.1",
-    "authors": [
-        {
-            "name": "Flore Leclerc"
-        },
-        {
-            "name": "Véronica Holguin",
-            "email": "veronica@miloeil.net"
-        },
-        {
-            "name": "Denis Chiron"
-        },
-        {
-            "name": "Daniel Berthereau",
-            "email": "Daniel.git@Berthereau.net"
-        }
-    ],
-    "homepage": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository",
-    "support": {
-        "issues": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository/-/issues",
-        "forum": "https://forum.omeka.org/"
-    },
+    "description": "Theme for Omeka S: Pour un entrepôt institutionnel, basé sur le thème pour Dante, pour INSA Toulouse [https://www.insa-toulouse.fr].",
     "keywords": [
         "Omeka S",
         "Omeka S theme",
         "digital library",
         "institutional repository"
-    ]
+    ],
+    "license": "CeCILL-2.1",
+    "homepage": "https://gitlab.com/Daniel-KM/Omeka-S-theme-Repository",
+    "authors": [
+        {
+            "name": "Flore Leclerc, Véronica Holguin, Denis Chiron et Daniel Berthereau pour https://sempiternelia.net",
+            "homepage": "https://sempiternelia.net/"
+        }
+    ],
+    "support": {
+        "issues": "https://gitlab.com/Daniel-KM/Omeka-s-theme-Repository/-/issues",
+        "forum": "https://forum.omeka.org/"
+    },
+    "_require (not set until Omeka S merges PR #2432)": {
+        "omeka/omeka-s": "^4.1"
+    },
+    "extra": {
+        "installer-name": "repository"
+    }
 }
