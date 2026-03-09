@@ -2337,12 +2337,11 @@ p:empty {
 
     footer {
         position: relative;
+        background-color: var(--title-color);
+        height: 70px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        min-height: 70px;
-        padding: 25px 0;
-        background-color: #353535;
     }
 
     /* Logos du footer */
@@ -2399,6 +2398,25 @@ p:empty {
 
     footer > ul > li > a:hover {
         text-decoration: underline !important;
+    }
+
+    footer > .logos-footer {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 0 30px;
+    }
+
+    footer > .logos-footer > ul {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 28px;
+    }
+
+    footer > .logos-footer > ul > li > a > img {
+        height: 50px;
+        width: auto;
     }
 
 
@@ -5354,12 +5372,20 @@ p:empty {
         align-items: center;
         padding: 28px 10px;
         height: auto;
+        flex-direction: column;
+    }
+
+    footer > .logos-footer {
+        width: 100%;
+        justify-content: center;
     }
 
     footer > .logos-footer > ul {
         justify-content: center;
-        flex-wrap: wrap;
-        gap: 0 20px;
+    }
+
+    footer > .logos-footer > ul > li > a > img {
+        height: 40px;
     }
 
     footer > .logos-footer > ul > li > a > img {

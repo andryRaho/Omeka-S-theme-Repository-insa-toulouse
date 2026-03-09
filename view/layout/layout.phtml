@@ -222,6 +222,23 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
             <?= $this->content ?>
         </main>
         <footer id="footer" class="content-with-padding" aria-label="<?= $translate('Footer navigation') ?>" role="navigation">
+            <?php if ($footerLogoUrl = $themeSettingAssetUrl('footer_logo')): ?>
+            <div class="logos-footer">
+                <ul><li>
+                    <a href="<?= $themeSetting('footer_logo_url')
+                        ? $escapeAttr($themeSetting('footer_logo_url'))
+                        : $site->url() ?>"
+                       title="<?= $escapeAttr(
+                           $themeSetting('footer_logo_title') ?: $siteTitle
+                       ) ?>">
+                        <img src="<?= $footerLogoUrl ?>"
+                             alt="<?= $escapeAttr(
+                                 $themeSetting('footer_logo_title') ?: $siteTitle
+                             ) ?>" />
+                    </a>
+                </li></ul>
+            </div>
+            <?php else: // Codés en dur si aucun logo choisi dans la config du thème. ?>
             <div class="logos-footer">
                 <ul>
                     <li>
@@ -241,6 +258,7 @@ $accentColor = strtoupper($themeSetting('theme_color', '')) ?: '#BA0000';
                     </li>
                 </ul>
             </div>
+            <?php endif; ?>
             <?= ($navMenu ? $navMenu('footer') : '') ?: $themeFunctions->navMenu('footer_menu') ?: $themeSetting('footer') ?: $partial('layout/footer') ?>
             <a href="" class="cd-top footer-back-to-top"></a>
         </footer>
