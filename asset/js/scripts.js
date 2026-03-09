@@ -6,7 +6,6 @@ $(document).ready(function () {
 
     const body = $('body');
 
-    const burgerIcon = $('.c-hamburger');
     const burgerBtn = $('.open-header-menu');
     const headerBottomMenu = $('.header-bottom');
 
@@ -29,18 +28,16 @@ $(document).ready(function () {
     const documentListCloseFilterMenu = $('main.resources-list-and-filters aside .resources-list-close-filters');
     const documentListFilterCheckboxes = $('main.resources-list-and-filters aside input[type=checkbox]');
 
-    const $asidePageMainBlocksInner = $('main.aside-page .block-breadcrumbs');
-    $asidePageMainBlocksInner.after("<button class='mobile-aside-menu-toggle toggle-aside-page-menu'>Menu</button>");
+    const $asidePageMainBlocksInner = $('main.aside-page');
+    $asidePageMainBlocksInner.prepend("<button class='mobile-aside-menu-toggle toggle-aside-page-menu content-with-margin'>Menu</button>");
 
-    const openSciencePageToggle = $('.toggle-aside-page-menu');
-    const openSciencePageMenu = $('main.aside-page .aside-sommaire-page');
+    const openSciencePageToggle = $('.mobile-aside-menu-toggle');
+    const openSciencePageMenu = $('.aside-sommaire-page');
     const openScienceCloseMenu = $('main.aside-page .items-list-toggle-page-menu, main.aside-page .items-list-close-page-menu');
 
     const advancedSearchForm = $('.advanced-search-form');
     const advancedSearchTemplate = $('.advanced-search-form > .search-filters > li:first-child');
     const advancedSearchTemplateTarget = $('.advanced-search-form > .more-filters > .search-filters');
-
-    $('.facet.search-facet.toggle-parent').not(':has(.toggle)').prepend('<a href="#" class="toggle"></a>')
 
     const exportSelect = $('.export-select select[name=format]');
     const exportButton = $('.export-button');
@@ -116,7 +113,14 @@ $(document).ready(function () {
 
     $('.contribute-medias').closest('.container.content').find('#edit-resource').on('click', '[type=submit]', checkFiles);
 
+    // Protection contre le double-clic sur le bouton de soumission.
+    let submitContributionInProgress = false;
     $('.submit-contribution').on('click submit', function (event) {
+        if (submitContributionInProgress) {
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+        }
         if (!$('.document-preview').length) {
             const filesMin = $('.contribute-medias').data('min-files');
             const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
@@ -129,6 +133,12 @@ $(document).ready(function () {
             event.preventDefault();
             return false;
         }
+        submitContributionInProgress = true;
+        $(this).addClass('submitting').css('pointer-events', 'none');
+        setTimeout(function () {
+            submitContributionInProgress = false;
+            $('.submit-contribution').removeClass('submitting').css('pointer-events', '');
+        }, 15000);
     });
 
     // Toggle des étapes uniquement pour les liens same-page (#).
@@ -155,7 +165,7 @@ $(document).ready(function () {
     burgerBtn.on('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
-        burgerIcon.toggleClass('active');
+        burgerBtn.toggleClass('active');
         headerBottomMenu.toggleClass('opened');
         headerTopMenu.removeClass('opened');
     });
@@ -165,7 +175,7 @@ $(document).ready(function () {
         e.stopPropagation();
         headerTopMenu.toggleClass('opened');
         headerBottomMenu.removeClass('opened');
-        burgerIcon.removeClass('active');
+        burgerBtn.removeClass('active');
     });
 
     body.on('click', function (e) {
@@ -173,7 +183,7 @@ $(document).ready(function () {
         headerTopMenu.removeClass('opened');
         documentListFilterMenu.removeClass('opened');
         openSciencePageMenu.removeClass('opened');
-        burgerIcon.removeClass('active');
+        burgerBtn.removeClass('active');
     });
 
     headerBottomMenu.on('click', function (e) {
@@ -188,17 +198,18 @@ $(document).ready(function () {
 
     const seeAllDocumentsLimit = 10;
 
-    let documentsParents = $('.home-content ul.resources-list > li');
-    documentsParents.each(function(no, item) {
-        const documentItem = $(item);
-        if (!documentItem.hasClass('resources-list-more-link')) {
-            if (no + 1 > seeAllDocumentsLimit) {
-                documentItem.addClass('displayed-with-toggle')
+    $('ul.resources-list:has(.resources-list-more-link)').each(function () {
+        $(this).children('li').each(function (no, item) {
+            const documentItem = $(item);
+            if (!documentItem.hasClass('resources-list-more-link')) {
+                if (no + 1 > seeAllDocumentsLimit) {
+                    documentItem.addClass('displayed-with-toggle')
+                }
             }
-        }
+        });
     });
 
-    $('.home-content .resources-list-more-link a').on('click', function(e) {
+    $('.resources-list-more-link a').on('click', function (e) {
         e.preventDefault();
         $(this).closest('ul').toggleClass('opened');
     });
