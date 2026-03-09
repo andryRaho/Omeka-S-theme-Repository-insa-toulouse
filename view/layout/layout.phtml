@@ -40,12 +40,16 @@ $hasGuest = $plugins->has('guestWidget');
 $navMenu = $plugins->has('navMenu') ? $plugins->get('navMenu') : null;
 $contactUs = $plugins->has('contactUs') ? $plugins->get('contactUs') : null;
 // $isSitePage = $simpleRoute['controller'] === 'page' && $simpleRoute['action'] === 'show';
-// $isHomePage = $themeFunctions->isHomePage();
+$isHomePage = $themeFunctions->isHomePage();
 
 $this->htmlElement('html')
     ->setAttribute('lang', $this->lang());
 $this->htmlElement('body')
     ->appendAttribute('class', 'body-inner');
+if ($isHomePage) {
+    $this->htmlElement('body')
+        ->appendAttribute('class', 'home-page');
+}
 $headMeta = $this->headMeta()
     ->setCharset('utf-8')
     ->appendName('viewport', 'width=device-width, initial-scale=1');
