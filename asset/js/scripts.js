@@ -370,7 +370,7 @@ $(document).ready(function () {
 
     $('.toggle').on('click', function (e) {
         e.preventDefault();
-        $(this).closest('.toggle-parent').toggleClass('closed');
+        $(this).closest('.toggle-parent').toggleClass('opened');
     });
 
     /* */
