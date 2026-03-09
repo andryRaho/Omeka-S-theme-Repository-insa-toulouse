@@ -64,7 +64,7 @@ if ($allThumbnail) {
             <div class="document-index"><?= $index ?>.</div>
             <div class="document-details">
                 <?php if (!$noThumbnail): ?>
-                <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType); ?>
+                <?php $resourceThumbnail = $thumbnail($resource, $thumbnailType, ['loading' => 'lazy']); ?>
                 <div class="resource-thumbnail<?= $resourceThumbnail ? '' : ($allThumbnail ? ' default-thumbnail' : '') ?>">
                     <?php if ($resourceThumbnail || $allThumbnail): ?>
                     <?= $hyperlink->raw($resourceThumbnail ?: $defaultThumbnail, $resourceUrl, ['class' => 'resource-link']) ?>

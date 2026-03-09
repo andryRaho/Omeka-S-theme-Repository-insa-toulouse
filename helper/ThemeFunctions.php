@@ -270,24 +270,27 @@ class ThemeFunctions extends AbstractHelper
                     'controller' => $controller,
                     'action' => $action,
                 ];
-            } elseif ($standardController === 'Guest\Controller\Site\GuestController') {
-                $simpleRoute = [
-                    'controller' => 'guest',
-                    'action' => $params['action'] ?? 'me',
-                    'route' => 'site/guest/guest',
-                ];
-            } elseif ($standardController === 'Contribute\Controller\Site\GuestBoard') {
-                $simpleRoute = [
-                    'controller' => 'guest',
-                    'action' => 'contribution',
-                    'route' => 'site/guest/contribution',
-                ];
-            } elseif ($standardController === 'Selection\Controller\Site\GuestBoard') {
-                $simpleRoute = [
-                    'controller' => 'guest',
-                    'action' => 'selection',
-                    'route' => 'site/guest/selection',
-                ];
+            } elseif ($controller === 'guest') {
+                $namespace = strtolower($params['__NAMESPACE__'] ?? '');
+                if (strpos($namespace, 'contribute') !== false) {
+                    $simpleRoute = [
+                        'controller' => 'guest',
+                        'action' => 'contribution',
+                        'route' => 'site/guest/contribution',
+                    ];
+                } elseif (strpos($namespace, 'selection') !== false) {
+                    $simpleRoute = [
+                        'controller' => 'guest',
+                        'action' => 'selection',
+                        'route' => 'site/guest/selection',
+                    ];
+                } else {
+                    $simpleRoute = [
+                        'controller' => 'guest',
+                        'action' => $params['action'] ?? 'me',
+                        'route' => 'site/guest/guest',
+                    ];
+                }
             }
         }
 

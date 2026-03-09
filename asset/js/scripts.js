@@ -40,7 +40,7 @@ $(document).ready(function () {
     const advancedSearchTemplate = $('.advanced-search-form > .search-filters > li:first-child');
     const advancedSearchTemplateTarget = $('.advanced-search-form > .more-filters > .search-filters');
 
-    $('.facet.search-facet.toggle-parent').prepend('<a href="#" class="toggle"></a>')
+    $('.facet.search-facet.toggle-parent').not(':has(.toggle)').prepend('<a href="#" class="toggle"></a>')
 
     const exportSelect = $('.export-select select[name=format]');
     const exportButton = $('.export-button');

@@ -91,7 +91,7 @@ $siteSlug = $site->slug();
                     <a href="<?= $resourceUrl ?>" class="resource-link"><?= $citation ?></a>
                 </div>
                 <?php if ($showThumbnail): ?>
-                <?= $resource->linkRaw($thumbnail($resource, 'medium', ['title' => $heading])) ?>
+                <?= $resource->linkRaw($thumbnail($resource, 'medium', ['loading' => 'lazy', 'title' => $heading])) ?>
                 <?php endif; ?>
             </div>
         </li>
