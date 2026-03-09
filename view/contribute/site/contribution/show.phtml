@@ -36,6 +36,15 @@ $siteSlug = $site->slug();
 $setting = $plugins->get('setting');
 $contributeConfig = $setting('contribute_config') ?: [];
 $contributables = $contributeConfig['contribute_template_contributable'] ?? [];
+// Premier passage : lire le flag avant de le marquer terminé.
+$contributionId = $contribution ? $contribution->id() : null;
+$session = new \Laminas\Session\Container('Contribute');
+$sessionKey = $contributionId ? 'first_pass_' . $contributionId : null;
+$isFirstPass = $sessionKey
+    && $session->offsetGet($sessionKey) === 'active';
+if ($sessionKey) {
+    $session->offsetSet($sessionKey, 'done');
+}
 $hasTemplateStep = count($contributables) > 1;
 $template = $contribution ? $contribution->resourceTemplate() : null;
 $hasFilesStep = $template
@@ -44,6 +53,7 @@ $steps = $themeFunctions->currentProcess(
     'show', $contribution, null, null,
     $hasTemplateStep, $hasFilesStep
 );
+$steps['isFirstPass'] = $isFirstPass;
 $this->vars()->offsetSet('steps', $steps);
 
 $ariane = '<nav class="breadcrumbs content-with-margin">
@@ -59,7 +69,8 @@ $ariane = '<nav class="breadcrumbs content-with-margin">
 
 $themeFunctions->appendVarsToRootView([
     'ariane' => $ariane,
-    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber'],
+    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber']
+        . ($isFirstPass ? '' : ' depot-free-nav'),
 ]);
 
 $partial('contribute/site/contribution/form-include');
@@ -113,12 +124,15 @@ if ($template) {
 <?php // TODO Supprimer le form (css). ?>
 <form>
 
-    <?= $this->pageTitle($steps['stepNumbers']['depot'] . '. ' . $translate('Prévisualisation et confirmation du dépôt'), 2) ?>
+    <?= $this->pageTitle($steps['stepNumbers']['depot'] . '. ' . $steps['stepLabels']['depot'], 2) ?>
     <?php if ($contribution->isUpdatable()): ?>
     <ul id="page-actions" class="form-buttons actions" data-message-remove-contribution="<?= $escapeAttr($translate('Êtes-vous sûr de vouloir supprimer ce dépôt ?')) ?>">
         <?php if ($contribution->userIsAllowed('update')): ?>
             <?php $missingMedias = $minFiles ? $minFiles - count($contribution->proposalMedias()) : 0; ?>
             <?php if ($missingMedias <= 0): ?>
+            <?php if ($msg = $themeSetting('contribution_message_acceptation')): ?>
+        <li class="warn-acceptation"><?= $msg ?></li>
+            <?php endif; ?>
         <li><a class="button submit-button submit-contribution form-button" href="<?= $escapeAttr($contribution->url('submit')) ?>"><?= $escape($translate('Confirmer le dépôt')) ?></a></li>
             <?php else: ?>
         <li><a class="button edit-button edit-contribution form-button" href="<?= $escapeAttr($contribution->url('edit')) ?>?next=edit-fichiers"><?= $escape($missingMedias === 1 ? $translate('Fichier manquant') : sprintf($translate('%d fichiers manquants'), $missingMedias)) ?></a></li>

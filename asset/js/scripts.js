@@ -110,6 +110,13 @@ $(document).ready(function () {
     $('.contribute-medias').closest('.container.content').find('#edit-resource').on('click', '[type=submit]', checkFiles);
 
     $('.submit-contribution').on('click submit', function (event) {
+        var $accept = $('#accept_rights');
+        if ($accept.length && !$accept.is(':checked')) {
+            event.stopPropagation();
+            event.preventDefault();
+            $accept.closest('.warn-acceptation').addClass('warn-highlight');
+            return false;
+        }
         if (!$('.document-preview').length) {
             const filesMin = $('.contribute-medias').data('min-files');
             const fileLoaded = $('#edit-resource').find('.file.already-loaded').length;
@@ -124,44 +131,25 @@ $(document).ready(function () {
         }
     });
 
+    // Toggle des étapes uniquement pour les liens same-page (#).
     depotContentEtape1.on('click', function (e) {
+        if (this.getAttribute('href') !== '#') return;
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-1');
     });
 
     depotContentEtape2.on('click', function (e) {
+        if (this.getAttribute('href') !== '#') return;
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-2');
     });
 
     depotContentEtape3.on('click', function (e) {
+        if (this.getAttribute('href') !== '#') return;
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-3');
     });
 
     depotContentEtape4.on('click', function (e) {
+        if (this.getAttribute('href') !== '#') return;
         depotContent.removeClass('depot-form-1 depot-form-2 depot-form-3 depot-form-4').addClass('depot-form-4');
-    });
-
-    navigationDepotSuivant.on('click', function (e) {
-        e.preventDefault();
-        if (depotContent.hasClass('depot-form-1')) {
-            // TODO Charger le bon formulaire.
-            depotContent.removeClass('depot-form-1').addClass('depot-form-2');
-        } else if (depotContent.hasClass('depot-form-2')) {
-            depotContent.removeClass('depot-form-2').addClass('depot-form-3');
-        } else if (depotContent.hasClass('depot-form-3')) {
-            depotContent.removeClass('depot-form-3').addClass('depot-form-4');
-        }
-    });
-
-    navigationDepotPrecedent.on('click', function (e) {
-        e.preventDefault();
-        if (depotContent.hasClass('depot-form-2')) {
-            // TODO Alerte sur le chargement de formulaire.
-            depotContent.removeClass('depot-form-2').addClass('depot-form-1');
-        } else if (depotContent.hasClass('depot-form-3')) {
-            depotContent.removeClass('depot-form-3').addClass('depot-form-2');
-        } else if (depotContent.hasClass('depot-form-4')) {
-            depotContent.removeClass('depot-form-4').addClass('depot-form-3');
-        }
     });
 
     burgerBtn.on('click', function (e) {

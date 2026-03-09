@@ -56,11 +56,17 @@ $currentActionStep = $steps['currentActionStep'];
 $action = $steps['action'];
 $step = $steps['step'];
 $mode = $steps['mode'];
+$isFirstPass = $steps['isFirstPass'] ?? true;
+$visitedBeforeDepot = !empty($steps['visitedBeforeDepot']);
 
 $hasContribution = $contribution && $contribution->id();
+$addTemplateUrl = $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true));
+$editTemplateFreeUrl = $hasContribution
+    ? $escapeAttr($contribution->url('edit') . '?step=template')
+    : $addTemplateUrl;
 $urls = [
-    'add-template' => $hasContribution ? $escapeAttr($contribution->url('add')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
-    'edit-template' => $hasContribution ? $escapeAttr($contribution->url('add')) : '#',
+    'add-template' => $addTemplateUrl,
+    'edit-template' => $hasContribution ? $addTemplateUrl : '#',
     'add-notice' => $hasContribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
     'edit-notice' => $hasContribution ? $escapeAttr($contribution->url('edit')) : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true)),
     'edit-fichiers' => $hasContribution ? $escapeAttr($contribution->url('edit') . '?next=fichiers') : $escapeAttr($url('site/contribution', ['resource'=> 'contribution', 'action' => 'add'], true) . '?step=fichiers'),
@@ -75,13 +81,8 @@ $action = $action ?? 'show';
 
 $classes = $mode === 'read' && $action !== 'show' ? 'class="mode-read"' : 'class="mode-edit"';
 
-// Labels des étapes.
-$stepLabels = [
-    'template' => $translate('Type de document'),
-    'notice' => $translate('Détails'),
-    'fichiers' => $translate('Téléversement'),
-    'depot' => $translate('Dépôt'),
-];
+// Labels des étapes (centralisés dans currentProcess()).
+$stepLabels = $steps['stepLabels'];
 
 // Valeurs de formulaire pour la barre d'étapes (write).
 $stepBarValues = [
@@ -93,9 +94,27 @@ $stepBarValues = [
 
 // URLs en mode lecture.
 $stepReadUrls = [
-    'template' => $urls['add-template'],
+    'template' => $isFirstPass ? $urls['add-template'] : $editTemplateFreeUrl,
     'notice' => $urls['edit-notice'] . '?mode=read',
     'fichiers' => $urls['edit-fichiers'] . '&mode=read',
+    'depot' => $urls['show-depot'],
+];
+
+// URLs en navigation libre (write, après premier passage).
+// Barre d'étapes : notice et fichiers sont sur la même page
+// (edit.phtml) donc "#" pour éviter le rechargement.
+$samePageSteps = ['notice', 'fichiers'];
+$stepFreeBarUrls = [
+    'template' => $editTemplateFreeUrl,
+    'notice' => in_array($step, $samePageSteps) ? '#' : $urls['edit-notice'],
+    'fichiers' => in_array($step, $samePageSteps) ? '#' : $urls['edit-fichiers'],
+    'depot' => $urls['show-depot'],
+];
+// Prev/next : toujours des vraies URLs (rechargement).
+$stepFreeNavUrls = [
+    'template' => $editTemplateFreeUrl,
+    'notice' => $urls['edit-notice'],
+    'fichiers' => $urls['edit-fichiers'],
     'depot' => $urls['show-depot'],
 ];
 
@@ -103,26 +122,19 @@ $stepReadUrls = [
 $prevStep = $steps['prevStep'];
 $nextStep = $steps['nextStep'];
 
-// Valeurs pour navigation arrière (write).
-$prevStepValues = [
-    'template' => 'add-template',
-    'notice' => 'edit-notice',
-    'fichiers' => 'edit-fichiers',
-];
-// Valeurs pour navigation avant (write).
+// Valeurs pour navigation avant (write, premier passage).
 $nextStepValues = [
     'notice' => $action . '-notice',
     'fichiers' => 'edit-fichiers',
     'depot' => 'show-depot',
 ];
-
-$prevActionStep = $prevStep
-    ? ($prevStepValues[$prevStep] ?? null) : null;
 $nextActionStep = $nextStep
     ? ($nextStepValues[$nextStep] ?? null) : null;
-// Exception : retour en arrière vers template depuis
-// add-notice = lien simple (pas de sauvegarde).
-$prevIsLink = $prevStep === 'template' && $action === 'add';
+
+// Index de l'étape courante : les étapes précédentes sont
+// toujours navigables librement (liens, pas de submit).
+$activeStepsOrder = array_flip($steps['activeSteps']);
+$currentStepIndex = $activeStepsOrder[$step] ?? 0;
 
 $prevReadUrl = $prevStep ? ($stepReadUrls[$prevStep] ?? null) : null;
 $nextReadUrl = $nextStep ? ($stepReadUrls[$nextStep] ?? null) : null;
@@ -138,8 +150,8 @@ $nextReadUrl = $nextStep ? ($stepReadUrls[$nextStep] ?? null) : null;
         $label = $stepLabels[$activeStep];
     ?>
     <li class="<?= $isActive ? 'active' : 'inactive' ?>">
-        <?php if ($activeStep === 'template' && $currentActionStep === 'add-notice'): ?>
-        <a href="<?= $urls['add-template'] ?>"><span><?= $escape($label) ?></span></a>
+        <?php if (!$isFirstPass || ($activeStepsOrder[$activeStep] ?? 99) < $currentStepIndex || ($visitedBeforeDepot && $activeStep !== 'depot')): ?>
+        <a href="<?= $isActive ? '#' : $stepFreeBarUrls[$activeStep] ?>"><span><?= $escape($label) ?></span></a>
         <?php elseif ($isActive || ($activeStep === 'depot' && $step === 'template')): ?>
         <button type="button" <?= $classes ?>><span><?= $escape($label) ?></span></button>
         <?php else: ?>
@@ -150,23 +162,24 @@ $nextReadUrl = $nextStep ? ($stepReadUrls[$nextStep] ?? null) : null;
 </ul>
 <?php endif; ?>
 
-<?php if ($prevActionStep || $nextActionStep):
-    $navClass = $prevActionStep && $nextActionStep
+<?php
+$hasPrev = (bool) $prevStep;
+$hasNext = ($isFirstPass && !$visitedBeforeDepot) ? (bool) $nextActionStep : (bool) $nextStep;
+if ($hasPrev || $hasNext):
+    $navClass = $hasPrev && $hasNext
         ? 'precedent-suivant'
-        : ($prevActionStep ? 'precedent' : 'suivant');
+        : ($hasPrev ? 'precedent' : 'suivant');
 ?>
 <ul class="navigation <?= $navClass ?> navigation-<?= $stepPart ?>">
-    <?php if ($prevActionStep): ?>
-    <li>
-        <?php if ($prevIsLink): ?>
-        <a href="<?= $urls['add-template'] ?>"><span>Étape précédente</span></a>
-        <?php else: ?>
-        <button type="submit" <?= $classes ?> name="next" value="<?= $prevActionStep ?>" form="<?= $formId ?>">Étape précédente</button>
-        <?php endif; ?>
-    </li>
+    <?php if ($hasPrev): ?>
+    <li><a href="<?= $stepFreeNavUrls[$prevStep] ?>">Étape précédente</a></li>
     <?php endif; ?>
-    <?php if ($nextActionStep): ?>
+    <?php if ($hasNext): ?>
+        <?php if ($isFirstPass && !$visitedBeforeDepot): ?>
     <li><button type="submit" <?= $classes ?> name="next" value="<?= $nextActionStep ?>" form="<?= $formId ?>">Étape suivante</button></li>
+        <?php else: ?>
+    <li><a href="<?= $stepFreeNavUrls[$nextStep] ?>">Étape suivante</a></li>
+        <?php endif; ?>
     <?php endif; ?>
 </ul>
 <?php endif; ?>

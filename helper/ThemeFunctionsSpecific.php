@@ -157,11 +157,6 @@ trait ThemeFunctionsSpecific
         bool $hasTemplateStep = true,
         bool $hasFilesStep = true
     ): array {
-        static $steps;
-
-        if (isset($steps)) {
-            return $steps;
-        }
 
         $params = $this->view->params();
 
@@ -216,7 +211,16 @@ trait ThemeFunctionsSpecific
         $nextStep = $currentIndex !== false && $currentIndex < $totalSteps - 1
             ? $activeSteps[$currentIndex + 1] : null;
 
-        return $steps = [
+        $translate = $this->view->plugin('translate');
+        $allLabels = [
+            'template' => $translate('Type de document'),
+            'notice' => $translate('Détails'),
+            'fichiers' => $translate('Téléversement'),
+            'depot' => $translate('Dépôt'),
+        ];
+        $stepLabels = array_intersect_key($allLabels, $stepNumbers);
+
+        return [
             'currentActionStep' => $current,
             'action' => $action,
             'step' => $step,
@@ -224,6 +228,7 @@ trait ThemeFunctionsSpecific
             'stepNumber' => $stepNumber,
             'activeSteps' => $activeSteps,
             'stepNumbers' => $stepNumbers,
+            'stepLabels' => $stepLabels,
             'totalSteps' => $totalSteps,
             'hasTemplateStep' => $hasTemplateStep,
             'hasFilesStep' => $hasFilesStep,

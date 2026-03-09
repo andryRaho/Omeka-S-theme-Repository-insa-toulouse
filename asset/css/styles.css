@@ -1509,6 +1509,28 @@ p:empty {
         margin: 5px 10px 25px;
     }
 
+    li.warn-acceptation {
+        list-style: none;
+        margin: 10px 0;
+        padding: 10px 15px;
+        background-color: var(--bg-color);
+        font-size: 14px;
+    }
+
+    li.warn-acceptation label {
+        cursor: pointer;
+    }
+
+    li.warn-acceptation.warn-highlight {
+        outline: 2px solid var(--main-color, #EA3535);
+        animation: warn-pulse 0.3s ease-in-out;
+    }
+
+    @keyframes warn-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+    }
+
     main.depot-content .content ul.bilan-depot {
         color: #000000;
         font-family: 'Open Sans', sans-serif;
@@ -2547,6 +2569,14 @@ p:empty {
         background-color: var(--bg-color);
         opacity: 1;
         pointer-events: auto;
+    }
+
+    main.depot-free-nav ul.navigation.etapes-depot li a,
+    main.depot-free-nav ul.navigation.etapes-depot li a:link {
+        pointer-events: auto;
+        opacity: 1;
+        background-color: var(--bg-color);
+        cursor: pointer;
     }
 
     .depot-content ul.navigation.etapes-depot li:nth-child(1) > *:hover,

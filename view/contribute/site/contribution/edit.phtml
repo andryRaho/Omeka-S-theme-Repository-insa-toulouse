@@ -32,14 +32,39 @@ $siteSlug = $site->slug();
 
 $this->htmlElement('body')->appendAttribute('class', 'edit contribution ' . $this->params()->fromRoute('resource') . ' resource');
 
-$hasTemplateStep = isset($form)
-    && method_exists($form, 'getTemplates')
-    && count($form->getTemplates()) > 1;
-$hasFilesStep = !empty($templateMedia);
+// Étape template : visible si > 1 type contributable.
+$contributeConfig = $setting('contribute_config') ?: [];
+$contributables = $contributeConfig['contribute_template_contributable'] ?? [];
+$hasTemplateStep = count($contributables) > 1;
+// Fichiers : connu dès que le template est sélectionné, sinon par
+// défaut si le template n'est pas encore choisi.
+$hasFilesStep = !empty($templateMedia) || empty($fields);
+// Premier passage via session (flag posé en edit, supprimé au dépôt).
+$contributionId = isset($contribution) ? $contribution->id() : null;
+$sessionKey = $contributionId ? 'first_pass_' . $contributionId : null;
+$session = new \Laminas\Session\Container('Contribute');
+if ($sessionKey && !$session->offsetExists($sessionKey)) {
+    $session->offsetSet($sessionKey, 'active');
+}
+$isFirstPass = $action === 'add'
+    || ($sessionKey && $session->offsetGet($sessionKey) === 'active');
 $steps = $themeFunctions->currentProcess(
     $action, $contribution ?? null, $fields ?? null,
     $mode ?? 'write', $hasTemplateStep, $hasFilesStep
 );
+$steps['isFirstPass'] = $isFirstPass;
+// Forcer l'étape template quand demandé explicitement.
+// Pas de formulaire sur cette page : les étapes déjà visitées
+// (tout sauf dépôt) sont navigables librement.
+if ($this->params()->fromQuery('step') === 'template'
+    && $hasTemplateStep
+) {
+    $steps['step'] = 'template';
+    $steps['stepNumber'] = $steps['stepNumbers']['template'] ?? 1;
+    $steps['prevStep'] = null;
+    $steps['nextStep'] = 'notice';
+    $steps['visitedBeforeDepot'] = true;
+}
 $this->vars()->offsetSet('steps', $steps);
 
 $ariane = '<nav class="breadcrumbs content-with-margin">
@@ -49,17 +74,14 @@ $ariane = '<nav class="breadcrumbs content-with-margin">
 <!--
         <li><span>' . $escape('Nouveau dépôt') . '</span></li>
 -->
-        <li><span>'
-        . ($steps['step'] === 'template' ? $escape($translate('Type de document'))
-            : ($steps['step'] === 'fichiers' ? $escape($translate('Téléversement'))
-            : $escape($translate('Détails')))
-        ) . '</span></li>
+        <li><span>' . $escape($steps['stepLabels'][$steps['step']] ?? $translate('Détails')) . '</span></li>
     </ul>
 </nav>';
 
 $themeFunctions->appendVarsToRootView([
     'ariane' => $ariane,
-    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber'],
+    'mainClass' => 'depot-content depot-form-' . $steps['stepNumber']
+        . ($isFirstPass ? '' : ' depot-free-nav'),
 ]);
 
 $template = $contribution ? $contribution->resourceTemplate() : null;
@@ -76,7 +98,41 @@ $specificHelp = $specificHelp ? '_' . $specificHelp : '';
     <div class="messages">
         <?= $this->messages() ?>
     </div>
-    <?php if (count($fields) && $form):
+    <?php
+    // Navigation libre : affichage du template en lecture seule.
+    $stepTemplate = $this->params()->fromQuery('step') === 'template';
+    if ($stepTemplate && $contribution && $contribution->resourceTemplate()):
+        $rt = $contribution->resourceTemplate();
+        $escapeAttr = $plugins->get('escapeHtmlAttr');
+        $api = $plugins->get('api');
+        $contributableTemplates = [];
+        foreach (array_keys($contributables) as $tplId) {
+            try {
+                $tpl = $api->read('resource_templates', $tplId)->getContent();
+                $contributableTemplates[(int) $tplId] = $tpl->label();
+            } catch (\Exception $e) {
+            }
+        }
+        $this->vars()->offsetSet('stepPart', 'top');
+    ?>
+        <?= $partial('contribute/site/contribution/steps') ?>
+        <h2><?= $escape($steps['stepNumbers']['template'] . '. ' . $steps['stepLabels']['template']) ?></h2>
+        <fieldset class="form-content" disabled="disabled">
+            <ul class="form-radio-buttons">
+                <?php foreach ($contributableTemplates as $tplId => $tplLabel): ?>
+                <li>
+                    <label>
+                        <input type="radio" disabled="disabled" <?= $tplId === (int) $rt->id() ? 'checked="checked"' : '' ?>/>
+                        <span><?= $escape($tplLabel) ?></span>
+                    </label>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+        </fieldset>
+        <?php $this->vars()->offsetSet('stepPart', 'bottom'); ?>
+        <?= $partial('contribute/site/contribution/steps') ?>
+
+    <?php elseif (count($fields) && $form):
         // The two lists of fields are merged in one form by default.
         $this->trigger("view.$action.before");
         echo $partial('contribute/site/contribution/form', [
@@ -114,7 +170,7 @@ $specificHelp = $specificHelp ? '_' . $specificHelp : '';
         ?>
         <?= $partial('contribute/site/contribution/steps') ?>
         <?= $this->form()->openTag($form) ?>
-        <h2 for="template"><?= $escape($steps['stepNumbers']['template'] . '. ' . $translate('Type de document')) ?></h2>
+        <h2 for="template"><?= $escape($steps['stepNumbers']['template'] . '. ' . $steps['stepLabels']['template']) ?></h2>
         <fieldset class="form-content"<?= $mode === 'read' ? ' disabled="disabled"' : '' ?>>
             <ul class="form-radio-buttons">
                 <?php foreach ($form->getTemplates() as $selectTemplateId => $selectTemplateLabel): ?>
@@ -126,11 +182,6 @@ $specificHelp = $specificHelp ? '_' . $specificHelp : '';
                 </li>
                 <?php endforeach; ?>
             </ul>
-            <?php if ($msg = $themeSetting('contribution_message_acceptation')): ?>
-            <div class="warn-acceptation">
-                <?= $msg ?>
-            </div>
-            <?php endif; ?>
         </fieldset>
         <?= $formElement($form->get('step')) ?>
         <?= $formElement($form->get('next')) ?>
