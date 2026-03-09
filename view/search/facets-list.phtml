@@ -45,13 +45,14 @@ if (!empty($itemSet)) {
 }
 ?>
 
-<aside id="search-facets" class="facets search-facets">
+<?php $facetToggleLabel = $searchConfig->subSetting('facet', 'label', 'Facets'); ?>
+<aside id="search-facets" class="facets search-facets" data-text-toggle="<?= $escapeAttr($translate($facetToggleLabel)) ?>">
 
     <form id="facets-form" class="resources-list-filters-and-toggle toggle-parent">
         <a class="resources-list-close-filters" href=""></a>
 
-        <?php if ($label = $searchConfig->subSetting('facet', 'label', 'Facets')): ?>
-        <a class="resources-list-toggle-filters" href=""><?= $escape($translate($label)) ?></a>
+        <?php if ($facetToggleLabel): ?>
+        <a class="resources-list-toggle-filters" href=""><?= $escape($translate($facetToggleLabel)) ?></a>
         <?php endif; ?>
 
         <?php if ($displayActive && count($activeFacets)): ?>
@@ -62,7 +63,7 @@ if (!empty($itemSet)) {
         <?php endif; ?>
 
         <?php if ($displayFacetButton): ?>
-        <?= $this->hiddenInputsFromFilteredQuery(null, ['facet', 'page', 'limit', 'offset', 'per_page']) ?>
+        <?= $this->hiddenInputsFromFilteredQuery(null, ['facet', 'refine', 'page', 'limit', 'offset', 'per_page']) ?>
         <?php endif; ?>
 
         <?php $displayButtonReset = $displayReset === 'above' || $displayReset === 'both'; ?>
@@ -108,9 +109,9 @@ if (!empty($itemSet)) {
                 <?php endif; ?>
                 <div class="facet-elements <?= $hasState ? ' collapsible' : '' ?>"<?= $hasState && $facetParams['state'] === 'collapse' ? ' hidden="hidden"' : '' ?>>
                     <?= $facetElements($name, $facetValues, $facetParams) ?>
-                    <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox', 'Link', 'Tree', 'TreeLink', 'Thesaurus', 'ThesaurusLink']) && count($facetValues) > (int) $facetParams['more']): ?>
+                    <?php if (($facetParams['more'] ?? '') !== '' && in_array($facetParams['type'] ?? '', ['', 'Checkbox', 'CheckboxFilter', 'Link', 'Tree', 'TreeLink', 'Thesaurus', 'ThesaurusLink']) && count($facetValues) > (int) $facetParams['more']): ?>
                     <div class="facet-see-more">
-                        <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-label-see-more="<?= $escapeAttr($translate('Voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('Voir moins')) ?>"><?= $escape($translate('Voir plus')) ?></button>
+                        <button type="button" class="facet-see-more-or-less expand" data-default-count="<?= (int) $facetParams['more'] ?>" data-more-count="<?= count($facetValues) - (int) $facetParams['more'] ?>" data-per-page="<?= (int) ($facetParams['per_page'] ?? 0) ?>" data-label-see-more="<?= $escapeAttr($translate('Voir plus')) ?>" data-label-see-less="<?= $escapeAttr($translate('Voir moins')) ?>" data-label-page="<?= $escapeAttr($translate('Page')) ?>"><?= $escape($translate('Voir plus')) ?></button>
                     </div>
                     <?php endif; ?>
                 </div>

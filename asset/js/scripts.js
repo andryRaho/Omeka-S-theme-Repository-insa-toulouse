@@ -20,7 +20,9 @@ $(document).ready(function () {
     $('li.contact', headerBottomMenuItemsParent).append(contactLinkClone);
 
     const $searchResultsWrapper = $('.search-results-wrapper');
-    $searchResultsWrapper.prepend("<button class='mobile-facets-toggle resources-list-toggle-filters'>Facettes</button>");
+    const facetLabel = $("#search-facets").data("text-toggle") || "Facettes";
+    $searchResultsWrapper.prepend("<button class='mobile-facets-toggle resources-list-toggle-filters'>"
+        + facetLabel + "</button>");
 
     const documentListFilterToggle = $('.content .resources-list-toggle-filters');
     const documentListFilterMenu = $('main.resources-list-and-filters aside');
