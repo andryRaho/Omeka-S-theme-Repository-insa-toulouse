@@ -1,5 +1,7 @@
-Dante (theme for Omeka S)
+INSA-TOULOUSE (theme for Omeka S)
 =========================
+
+Ceci est un fork du theme Repository de Daniel Berthereau.
 
 > __New versions of this module and support for Omeka S version 3.0 and above
 > are available on [GitLab], which seems to respect users and privacy better
