@@ -94,8 +94,10 @@ $displayPermalink = $themeSetting('item_display_permalink');
            $media = reset($medias);
            $mediaType = $media->mediaType();
            $mainMediaType = strtok((string) $mediaType, '/');
+           $sortedMedia = $this->sortMedia($medias);
+           $accessLevelMedia = $themeFunctions->accessLevel($media);
            if (in_array($mainMediaType, ['image', 'video', 'audio'])): ?>
-           <?= $plugins->has('mirador') ? $plugins->get('mirador')($item) : $this->thumbnail($media, 'medium') ?>
+           <?= $plugins->has('mirador') ? $plugins->get('mirador')($item) : $this->lightGalleryOutput($sortedMedia['lightMedia']) ?>
         <?php elseif ($mediaType === 'application/pdf'): ?>
            <?= $media->render() ?>
         <?php else: ?>
@@ -161,8 +163,8 @@ $displayPermalink = $themeSetting('item_display_permalink');
                         $originalUrl = $media->originalUrl();
                         if ($accessLevelMedia === 'reserved') {
                             $accessLabelMedia = $isThese
-                                ? 'Accès restreint communauté universitaire'
-                                : 'Accès restreint UT2J';
+                                ? 'Accès restreint INSA'
+                                : 'Accès restreint INSA';
                         }
                         if ($accessLevelMedia !== 'free') {
                             $embargo = null;
